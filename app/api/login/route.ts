@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { findUser } from '../../../lib/users';
+import { findUser, passwordCorrect } from '../../../lib/users';
 
 export async function POST(request: Request) {
   try {
     const { emailorUserName, password} = await request.json();
-    const user = findUser(emailorUserName);
+    const [isUserExist, user] = passwordCorrect(emailorUserName, password);
 
-    if (user && user.password === password) {
+    if (isUserExist) {
       return NextResponse.json({ success: true, user });
     } else {
       return NextResponse.json({ success: false, message: 'Invalid credentials' }, { status: 401 });

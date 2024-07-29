@@ -4,16 +4,18 @@ import { addUser, findUser } from '../../../lib/users';
 export async function POST(request: Request) {
   try {
     const { email, password, userName, dob, firstName, lastName } = await request.json();
-
-    if (findUser(email)) {
+    
+    const [isEmailExist, user] = findUser(email);
+    const [isUserExist, userRef] = findUser(userName);
+    if (isEmailExist) {
       return NextResponse.json({ success: false, message: 'Email already exists' }, { status: 400 });
     }
-    if (findUser(userName)) {
+    if (isUserExist) {
       return NextResponse.json({ success: false, message: 'Username already exists' }, { status: 400 });
     }
     const isActive = true;
-    addUser({ email, password, userName, dob, firstName, lastName, isActive });
-    return NextResponse.json({ success: true, message: 'Account Registered Successfully'});
+    const [isUserAdded, newUser] = addUser({ email, password, userName, dob, firstName, lastName, isActive });
+    return NextResponse.json({ success: isUserAdded, user: newUser, message: 'Account Registered Successfully'}, {status: 200});
   } catch (error) {
     console.error('Registration error:', error);
     return NextResponse.json({ success: false, message: 'An unexpected error occurred' }, { status: 500 });
