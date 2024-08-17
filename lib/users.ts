@@ -5,8 +5,8 @@ export interface User {
     userName: string;
     password: string;
     dob: Date;
-    firstName: string;
-    lastName: string;
+    fullName: string;
+    phoneNumber: string,
     isActive: boolean;
     role: string;
     chatPerson: ChatPerson[];

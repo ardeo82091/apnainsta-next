@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import styles from '../../styles/login.module.css';
 import axios from 'axios';
 
 const LoginPage = () => {
@@ -13,10 +12,10 @@ const LoginPage = () => {
 
   const navigationHandle = (event: string) => {
     if (event === 'register') {
-      router.push('/register');
+      router.push('/components/register');
     }
     else {
-      router.push('/forgotPassword');
+      router.push('/components/forgotPassword');
     }
   }
 

@@ -1,9 +1,13 @@
+/* dashboard.module.css */
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: calc(100vh - 4rem); /* Adjust height to account for Header */
+  overflow-y: auto;
+  padding: 1rem;
+  margin-left: 4rem; /* Adjust margin to make space for Sidebar */
 }
 
 .button {
