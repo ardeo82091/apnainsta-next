@@ -233,13 +233,13 @@ const ChatWithPerson: React.FC = () => {
                         >
                             Send
                         </button>
-                        <button className="ml-2 p-2 text-gray-500">
+                        <button className="ml-2 p-2 text-gray-500 hover:text-lg">
                             📷
                         </button>
-                        <button className="ml-2 p-2 text-gray-500">
+                        <button className="ml-2 p-2 text-gray-500 hover:text-lg">
                             📁
                         </button>
-                        <button className="ml-2 p-2 text-gray-500">
+                        <button className="ml-2 p-2 text-gray-500 hover:text-lg">
                             🎤
                         </button>
                     </div>
