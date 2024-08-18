@@ -2,10 +2,34 @@
 'use client';
 
 import { StatItem } from '@/lib/hoc/ProfileStatsBar';
-import { SidebarIcon } from '@/lib/hoc/SidebarIconProps';
+import Image from 'next/image';
 import { FC } from 'react';
 
-import { FaUser, FaUserTag, FaCalendarAlt, FaBell } from 'react-icons/fa';
+import { FaUser, FaUserTag, FaCalendarAlt, FaBell, FaVideo, FaHeart } from 'react-icons/fa';
+import { FaMessage } from 'react-icons/fa6';
+
+interface Post {
+  id: number;
+  src: string;
+  isVideo?: boolean;
+  likes?: number;
+  comments?: number;
+}
+
+const posts: Post[] = [
+  { id: 1, src: '/images/profile.jpg' },
+  { id: 1, src: '/images/profile.jpg' },
+  { id: 2, src: '/images/profile.jpg', likes: 12, comments: 3 },
+  { id: 1, src: '/images/profile.jpg' },
+  { id: 2, src: '/images/profile.jpg', likes: 42, comments: 5 },
+  { id: 1, src: '/images/profile.jpg' },
+  { id: 2, src: '/images/profile.jpg', likes: 42, comments: 3 },
+  { id: 1, src: '/images/profile.jpg' },
+  { id: 2, src: '/images/profile.jpg', likes: 42, comments: 3 },
+  { id: 1, src: '/images/profile.jpg' },
+  { id: 2, src: '/images/profile.jpg', likes: 42, comments: 3 },
+  { id: 3, src: '/images/profile.jpg', isVideo: true },
+];
 
 const Header: FC = () => {
   const notifications = [
@@ -60,7 +84,7 @@ const Header: FC = () => {
       
       <div className="border-t-2 border-gray-300 mx-4 my-4 rounded-full"></div>
 
-      <div className="flex flex-col h-[22rem] ml-4 mr-4 bg-gray-100 rounded-b-lg p-4">
+      {/* <div className="flex flex-col h-[22rem] ml-4 mr-4 bg-gray-100 rounded-b-lg p-4">
         <div className="flex items-center justify-between  mb-2">
           <span className="text-gray-900 text-lg font-bold">Notifications</span>
           <FaBell className="text-gray-900 text-xl mr-2" />
@@ -74,6 +98,45 @@ const Header: FC = () => {
           ))}
         </div>
         <button className="text-[14px] pt-4 font-bold underline hover:text-blue-600">View all</button>
+      </div> */}
+
+      <div className="flex flex-col h-[22rem] ml-4 mr-4 bg-gray-100 rounded-b-lg p-4">
+        <div className="grid grid-cols-3 gap-2 overflow-y-auto">
+          {posts.map((post) => (
+            <div key={post.id} className="relative">
+              <Image
+                src={post.src}
+                alt={`Post ${post.id}`}
+                width={200}
+                height={200}
+                className="object-cover w-full h-full"
+              />
+              {post.isVideo && (
+                <div className="absolute top-2 left-2 text-white">
+                  <FaVideo className="text-blue-400 text-sm " />
+                </div>
+              )}
+              {(post.likes || post.comments) && (
+                <div className="absolute bottom-2 left-2 text-white">
+                  <div className="flex space-x-2">
+                    {post.likes && (
+                      <div className="flex items-center">
+                        <FaHeart className="text-red-600 text-sm" />
+                        <span className="ml-1">{post.likes}</span>
+                      </div>
+                    )}
+                    {post.comments && (
+                      <div className="flex items-center">
+                        <FaMessage className="text-blue-200 text-sm" />
+                        <span className="ml-1">{post.comments}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
