@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import ChatTab from "../chat";
 import Header from "../header";
 import Sidebar from "../sidebar";
+import ChatBook from "./ChatBook";
 
 interface Message {
     messageId: string;
@@ -188,10 +189,10 @@ const ChatWithPerson: React.FC = () => {
     return (
         <div className="flex flex-col h-screen">
             <Sidebar />
-            <div className="flex flex-row-reverse flex-1">
-                <Header />
+            <div className="flex flex-row-reverse">
+                <ChatBook />
                 <div className="flex-1 flex flex-col ml-16">
-                <div className="flex flex-col h-screen bg-gray-100 shadow-md ">
+                <div className="flex flex-col h-screen bg-gray-100 shadow-md">
                     <div className="flex border-b border-gray-300">
                         {chats.map((chat, index) => (
                             <ChatTab

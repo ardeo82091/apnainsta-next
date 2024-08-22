@@ -1,0 +1,443 @@
+[
+    {
+      "email": "aman.kumar@example.com",
+      "userName": "amankumar",
+      "password": "password123",
+      "dob": "1990-05-14T00:00:00.000Z",
+      "fullName": "Aman Kumar",
+      "phoneNumber": "+1234567890",
+      "isActive": true,
+      "role": "user",
+      "followers": [
+        { "userName": "ankitraj" },
+        { "userName": "divyasingh" }
+      ],
+      "following": [
+        { "userName": "abhisheksharma" },
+        { "userName": "rajverma" }
+      ],
+      "chatPerson": [
+        {
+          "person": {
+            "username": "divyasingh",
+            "name": "Divya Singh"
+          },
+          "messages": [
+            {
+              "sender": "amankumar",
+              "content": "Hey, how are you?",
+              "read": true
+            },
+            {
+              "sender": "divyasingh",
+              "content": "I’m good, thanks! How about you?",
+              "read": true
+            }
+          ]
+        }
+      ],
+      "posts": [
+        {
+          "id": 1,
+          "src": "http://example.com/image1.jpg",
+          "isVideo": false,
+          "likes": [
+            { "userName": "abhisheksharma" },
+            { "userName": "rajverma" }
+          ],
+          "comments": [
+            {
+              "userName": "divyasingh",
+              "comment": [
+                { "userName": "amankumar", "replies": "Nice photo!" }
+              ]
+            }
+          ]
+        }
+      ],
+      "notifications": [
+        {
+          "id": 1,
+          "type": "like",
+          "message": "User1 liked your post.",
+          "timestamp": "2024-08-21T10:30:00Z",
+          "read": false
+        },
+        {
+          "id": 2,
+          "type": "comment",
+          "message": "User2 commented on your post.",
+          "timestamp": "2024-08-21T11:00:00Z",
+          "read": false
+        },
+        {
+          "id": 3,
+          "type": "follow",
+          "message": "User3 started following you.",
+          "timestamp": "2024-08-21T11:30:00Z",
+          "read": false
+        },
+        {
+          "id": 4,
+          "type": "like",
+          "message": "User4 liked your comment.",
+          "timestamp": "2024-08-21T12:00:00Z",
+          "read": false
+        },
+        {
+          "id": 5,
+          "type": "comment",
+          "message": "User5 commented: 'Great post!'",
+          "timestamp": "2024-08-21T12:30:00Z",
+          "read": true
+        },
+        {
+          "id": 6,
+          "type": "follow",
+          "message": "User6 started following you.",
+          "timestamp": "2024-08-21T13:00:00Z",
+          "read": true
+        },
+        {
+          "id": 7,
+          "type": "like",
+          "message": "User7 liked your photo.",
+          "timestamp": "2024-08-21T13:30:00Z",
+          "read": false
+        }
+      ]      
+    },
+    {
+      "email": "ankit.raj@example.com",
+      "userName": "ankitraj",
+      "password": "password123",
+      "dob": "1985-10-22T00:00:00.000Z",
+      "fullName": "Ankit Raj",
+      "phoneNumber": "+1987654321",
+      "isActive": true,
+      "role": "user",
+      "followers": [
+        { "userName": "aman.kumar" }
+      ],
+      "following": [
+        { "userName": "divyasingh" },
+        { "userName": "abhisheksharma" }
+      ],
+      "chatPerson": [
+        {
+          "person": {
+            "username": "abhisheksharma",
+            "name": "Abhishek Sharma"
+          },
+          "messages": [
+            {
+              "sender": "ankitraj",
+              "content": "Are you coming to the event?",
+              "read": true
+            },
+            {
+              "sender": "abhisheksharma",
+              "content": "Yes, I’ll be there!",
+              "read": true
+            }
+          ]
+        }
+      ],
+      "posts": [
+        { "id": 1, "src": "/images/profile.jpg" },
+        { "id": 2, "src": "/images/profile.jpg" },
+        { "id": 3, "src": "/images/profile.jpg", "likes": [
+            { "userName": "abhisheksharma" },
+            { "userName": "rajverma" }
+          ],
+          "comments": [
+            {
+              "userName": "divyasingh",
+              "comment": [
+                { "userName": "amankumar", "replies": "Nice photo!" }
+              ]
+            }
+          ] },
+        { "id": 4, "src": "/images/profile.jpg" },
+        { "id": 5, "src": "/images/profile.jpg", "likes": [
+            { "userName": "abhisheksharma" },
+            { "userName": "rajverma" }
+          ],
+          "comments": [
+            {
+              "userName": "divyasingh",
+              "comment": [
+                { "userName": "amankumar", "replies": "Nice photo!" }
+              ]
+            }
+          ] },
+        { "id": 6, "src": "/images/profile.jpg" },
+        { "id": 7, "src": "/images/profile.jpg", "likes": [
+            { "userName": "abhisheksharma" },
+            { "userName": "rajverma" }
+          ],
+          "comments": [
+            {
+              "userName": "divyasingh",
+              "comment": [
+                { "userName": "amankumar", "replies": "Nice photo!" }
+              ]
+            }
+          ] },
+        { "id": 8, "src": "/images/profile.jpg" },
+        { "id": 9, "src": "/images/profile.jpg", "likes": [
+            { "userName": "abhisheksharma" },
+            { "userName": "rajverma" }
+          ],
+          "comments": [
+            {
+              "userName": "divyasingh",
+              "comment": [
+                { "userName": "amankumar", "replies": "Nice photo!" }
+              ]
+            }
+          ] },
+        { "id": 10, "src": "/images/profile.jpg" },
+        { "id": 11, "src": "/images/profile.jpg", "likes": [
+            { "userName": "abhisheksharma" },
+            { "userName": "rajverma" }
+          ],
+          "comments": [
+            {
+              "userName": "divyasingh",
+              "comment": [
+                { "userName": "amankumar", "replies": "Nice photo!" }
+              ]
+            }
+          ] },
+        { "id": 12, "src": "/images/profile.jpg", "isVideo": true }
+      ],
+      "notifications": [
+        {
+          "id": 1,
+          "type": "like",
+          "message": "User1 liked your post.",
+          "timestamp": "2024-08-21T10:30:00Z",
+          "read": false
+        },
+        {
+          "id": 2,
+          "type": "comment",
+          "message": "User2 commented on your post.",
+          "timestamp": "2024-08-21T11:00:00Z",
+          "read": false
+        },
+        {
+          "id": 3,
+          "type": "follow",
+          "message": "User3 started following you.",
+          "timestamp": "2024-08-21T11:30:00Z",
+          "read": false
+        },
+        {
+          "id": 4,
+          "type": "like",
+          "message": "User4 liked your comment.",
+          "timestamp": "2024-08-21T12:00:00Z",
+          "read": false
+        },
+        {
+          "id": 5,
+          "type": "comment",
+          "message": "User5 commented: 'Great post!'",
+          "timestamp": "2024-08-21T12:30:00Z",
+          "read": true
+        },
+        {
+          "id": 6,
+          "type": "follow",
+          "message": "User6 started following you.",
+          "timestamp": "2024-08-21T13:00:00Z",
+          "read": true
+        },
+        {
+          "id": 7,
+          "type": "like",
+          "message": "User7 liked your photo.",
+          "timestamp": "2024-08-21T13:30:00Z",
+          "read": false
+        },
+        {
+          "id": 8,
+          "type": "comment",
+          "message": "User8 commented: 'Nice picture!'",
+          "timestamp": "2024-08-21T14:00:00Z",
+          "read": false
+        },
+        {
+          "id": 9,
+          "type": "follow",
+          "message": "User9 started following you.",
+          "timestamp": "2024-08-21T14:30:00Z",
+          "read": false
+        }
+      ]      
+    },
+    {
+      "email": "abhishek.sharma@example.com",
+      "userName": "abhisheksharma",
+      "password": "password123",
+      "dob": "1993-07-19T00:00:00.000Z",
+      "fullName": "Abhishek Sharma",
+      "phoneNumber": "+1123456789",
+      "isActive": false,
+      "role": "user",
+      "followers": [
+        { "userName": "rajverma" }
+      ],
+      "following": [
+        { "userName": "amankumar" },
+        { "userName": "ankitraj" }
+      ],
+      "chatPerson": [
+        {
+          "person": {
+            "username": "rajverma",
+            "name": "Raj Verma"
+          },
+          "messages": [
+            {
+              "sender": "abhisheksharma",
+              "content": "Do you have the notes from the meeting?",
+              "read": false
+            },
+            {
+              "sender": "rajverma",
+              "content": "I’ll send them over.",
+              "read": true
+            }
+          ]
+        }
+      ],
+      "posts": [
+        {
+          "id": 2,
+          "src": "http://example.com/image2.jpg",
+          "isVideo": false,
+          "likes": [
+            { "userName": "aman.kumar" }
+          ],
+          "comments": []
+        }
+      ],
+      "notifications": []
+    },
+    {
+      "email": "raj.verma@example.com",
+      "userName": "rajverma",
+      "password": "password123",
+      "dob": "1988-12-05T00:00:00.000Z",
+      "fullName": "Raj Verma",
+      "phoneNumber": "+1239876543",
+      "isActive": true,
+      "role": "user",
+      "followers": [
+        { "userName": "divyasingh" }
+      ],
+      "following": [
+        { "userName": "amankumar" }
+      ],
+      "chatPerson": [
+        {
+          "person": {
+            "username": "divyasingh",
+            "name": "Divya Singh"
+          },
+          "messages": [
+            {
+              "sender": "rajverma",
+              "content": "Have you seen the latest movie?",
+              "read": true
+            },
+            {
+              "sender": "divyasingh",
+              "content": "Not yet, but I want to!",
+              "read": true
+            }
+          ]
+        }
+      ],
+      "posts": [],
+      "notifications": []
+    },
+    {
+      "email": "divya.singh@example.com",
+      "userName": "divyasingh",
+      "password": "password123",
+      "dob": "1995-03-11T00:00:00.000Z",
+      "fullName": "Divya Singh",
+      "phoneNumber": "+1098765432",
+      "isActive": false,
+      "role": "user",
+      "followers": [],
+      "following": [
+        { "userName": "rajverma" }
+      ],
+      "chatPerson": [
+        {
+          "person": {
+            "username": "amankumar",
+            "name": "Aman Kumar"
+          },
+          "messages": [
+            {
+              "sender": "divyasingh",
+              "content": "Let’s catch up soon!",
+              "read": false
+            },
+            {
+              "sender": "amankumar",
+              "content": "Definitely! When are you free?",
+              "read": true
+            }
+          ]
+        }
+      ],
+      "posts": [
+        {
+          "id": 3,
+          "src": "http://example.com/image3.jpg",
+          "isVideo": true,
+          "likes": [],
+          "comments": []
+        }
+      ],
+      "notifications": []
+    },
+    {
+      "email": "vikas.yadav@example.com",
+      "userName": "vikasyadav",
+      "password": "password456",
+      "dob": "1992-04-15T00:00:00.000Z",
+      "fullName": "Vikas Yadav",
+      "phoneNumber": "+919876543210",
+      "isActive": true,
+      "role": "user",
+      "followers": [],
+      "following": [],
+      "chatPerson": [],
+      "posts": [],
+      "notifications": []
+    },
+    {
+      "email": "ritu.mehta@example.com",
+      "userName": "ritumehta",
+      "password": "password789",
+      "dob": "1994-09-30T00:00:00.000Z",
+      "fullName": "Ritu Mehta",
+      "phoneNumber": "+918765432109",
+      "isActive": true,
+      "role": "user",
+      "followers": [],
+      "following": [],
+      "chatPerson": [],
+      "posts": [],
+      "notifications": []
+    }
+]
+  

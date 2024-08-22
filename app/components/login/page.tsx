@@ -24,9 +24,10 @@ const LoginPage = () => {
 
     try {
       const response = await axios.post('/api/login', { emailorUserName, password });
-
-      if (response.data.success) {
-        router.push('/dashboard');
+      const res = response.data;
+      const userName = res.user.userName;
+      if (res.success) {
+        router.push(`/components/dashboard/${userName}`);
       } else {
         setError(response.data.message || 'Login failed');
       }

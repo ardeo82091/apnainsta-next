@@ -15,7 +15,7 @@ export async function POST(request: Request) {
     }
     const isActive = true;
     const role = 'user';
-    const [isUserAdded, newUser] = addUser({ email, password, userName, dob, fullName, phoneNumber, isActive, role, chatPerson: [] });
+    const [isUserAdded, newUser] = addUser({ email, password, userName, dob, fullName, phoneNumber, isActive, role, followers: [], following: [], chatPerson: [], posts: [], notifications: [], });
     return NextResponse.json({ success: isUserAdded, user: newUser, message: 'Account Registered Successfully'}, {status: 200});
   } catch (error) {
     console.error('Registration error:', error);

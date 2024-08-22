@@ -6,14 +6,13 @@ import { SidebarIcon } from '@/lib/hoc/SidebarIconProps';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import LiveAndVibe from '@/public/images/positive-vibes1.png';
-import ChatSidebar from './chatSlidebar';
+import ChatSidebar from './chat/ChatProfileBar';
 import ViewedBySlideBar from './viewedBySideBar';
 import SearchSlideBar from './serchSideBar';
 
 const Sidebar: FC = () => {
     const router = useRouter();
     const [isSearchSidebarOpen, setIsSearchSidebarOpen] = useState(false);
-    const [isChatSidebarOpen, setIsChatSidebarOpen] = useState(false);
     const [isViewedByOpen, setIsViewedByOpen] = useState(false);
 
     const handlePages = (page: string) => {
@@ -23,9 +22,6 @@ const Sidebar: FC = () => {
     const rightSidebar = (sideBar : string) => {
         if(sideBar === 'search') {
             setIsSearchSidebarOpen(!isSearchSidebarOpen);
-        }
-        else if(sideBar === 'chat') {
-            setIsChatSidebarOpen(!isChatSidebarOpen);
         }
         else if(sideBar === 'viewedBy') {
             setIsViewedByOpen(!isViewedByOpen);
@@ -44,7 +40,7 @@ const Sidebar: FC = () => {
                     <SidebarIcon icon={FaUser} onClick={() => handlePages('myprofile')} />
                     <SidebarIcon icon={FaUserFriends} onClick={() => handlePages('friendsandreq')} />
                     <SidebarIcon icon={FaSearch} onClick={() => rightSidebar('search')} />
-                    <SidebarIcon icon={FaRocketchat} onClick={() => rightSidebar('chat')} />
+                    <SidebarIcon icon={FaRocketchat} onClick={() => handlePages('chat')} />
                     <SidebarIcon icon={FaVideo} onClick={() => handlePages('viewfeed')} />
                     <SidebarIcon icon={FaEye} onClick={() => rightSidebar('viewedBy')} />
                     <SidebarIcon icon={FaCog} onClick={() => handlePages('settings')} />
@@ -65,13 +61,6 @@ const Sidebar: FC = () => {
                 <ViewedBySlideBar
                 isOpen={isViewedByOpen}
                 onClose={() => rightSidebar('viewedBy')}
-                />
-            )}
-
-            {isChatSidebarOpen && (
-                <ChatSidebar
-                isOpen={isChatSidebarOpen}
-                onClose={() => rightSidebar('chat')}
                 />
             )}
         </>
