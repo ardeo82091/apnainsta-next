@@ -5,8 +5,7 @@ import { StatItem } from '@/lib/hoc/ProfileStatsBar';
 import { User } from '@/lib/users';
 import { FC, useState } from 'react';
 
-import { FaUser, FaUserTag, FaCalendarAlt, FaBell, FaVideo, FaHeart, FaThumbsUp, FaComment, FaUserPlus } from 'react-icons/fa';
-import { FaMessage } from 'react-icons/fa6';
+import { FaUser, FaUserTag, FaCalendarAlt, FaBell, FaThumbsUp, FaComment, FaUserPlus } from 'react-icons/fa';
 
 const Header: FC<{ user: User | null }> = ({ user }) => {
   const [clickedNoty, setClickedNoty] = useState(null);
