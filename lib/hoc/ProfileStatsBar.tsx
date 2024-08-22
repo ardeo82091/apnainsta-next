@@ -6,8 +6,8 @@ interface ProfileStatsProps {
 }
   
 export const StatItem: FC<ProfileStatsProps> = ({ label, value }) => (
-    <div className="flex flex-col h-4 w-24 pl-4">
-        <div className="text-white text-lg font-bold">{label}</div>
-        <div className="text-white text-lg font-bold ml-4">{value}</div>
+    <div className="flex flex-col h-auto w-auto p-4">
+        <div className="text-white text-base sm:text-md font-bold">{label}</div>
+        <div className="text-white text-base sm:text-md font-bold ml-2">{value}</div>
     </div>
 );

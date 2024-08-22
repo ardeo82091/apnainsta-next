@@ -134,22 +134,22 @@ const ChatProfileBar: FC<ChatSidebarProps> = ({ isOpen, onClose }) => {
         <div className="flex flex-col mt-4 ml-4">
           <div className="flex items-center mb-2">
             <FaUser className="text-gray-900 text-md mr-2" />
-            <span className="text-gray-900 text-xl font-bold">Ankit Raj</span>
+            <span className="text-gray-900 text-lg font-bold">Ankit Raj</span>
           </div>
           <div className="flex items-center mb-2">
             <FaUserTag className="text-gray-900 text-md mr-2" />
-            <div className="text-gray-900 text-lg">@ankit1</div>
+            <div className="text-gray-900 text-md">@ankit1</div>
           </div>
           <div className="flex items-center">
             <FaCalendarAlt className="text-gray-900 text-md mr-2" />
-            <div className="text-gray-900 text-lg font-extrabold">November 17, 2000</div>
+            <div className="text-gray-900 text-md font-extrabold">November 17, 2000</div>
           </div>
         </div>
         <div className="flex-1 mb-10">
           <MdClose className="text-gray-600 text-4xl hover:text-red-600 cursor-pointer" onClick={onClose} />
         </div>
       </div>
-      <div className="flex bg-gray-800 h-14 mt-3 ml-4 mr-4">
+      <div className="flex bg-gray-800 h-14 mt-3 mx-4 justify-around items-center">
           <StatItem label="Posts" value={405} />
           <StatItem label="Followers" value={100} />
           <StatItem label="Following" value={3} />
@@ -165,7 +165,7 @@ const ChatProfileBar: FC<ChatSidebarProps> = ({ isOpen, onClose }) => {
         </div>
       <div className="border-t-2 border-gray-300 mb-4 ml-4 mr-4 rounded-full"></div>
 
-      <div className="flex flex-col h-[22rem] ml-4 mr-4 bg-gray-100 rounded-b-lg p-4">
+      <div className="flex flex-col h-auto min-h-[20rem] ml-4 mr-4 bg-gray-100 rounded-b-lg p-4">
         <div className="grid grid-cols-3 gap-2 overflow-y-auto">
           {posts.map((post) => (
             <div key={post.id} className="relative">

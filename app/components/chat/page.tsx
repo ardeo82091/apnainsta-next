@@ -193,7 +193,7 @@ const ChatWithPerson: React.FC = () => {
                 <ChatBook />
                 <div className="flex-1 flex flex-col ml-16">
                 <div className="flex flex-col h-screen bg-gray-100 shadow-md">
-                    <div className="flex border-b border-gray-300">
+                    <div className="flex border-b border-gray-300 text-sm">
                         {chats.map((chat, index) => (
                             <ChatTab
                                 key={chat.chatId}
@@ -212,7 +212,7 @@ const ChatWithPerson: React.FC = () => {
                                 className={`mb-2 flex ${message.sender === 'Ankit Raj' ? 'justify-end' : 'justify-start'}`}
                             >
                                 <div className={`flex flex-col ${message.sender === 'Ankit Raj' ? 'items-end' : 'items-start'}`}>
-                                    <div className={`bg-${message.sender === 'Ankit Raj' ? 'blue-500' : 'gray-400'} p-2 rounded-lg`}>
+                                    <div className={`bg-${message.sender === 'Ankit Raj' ? 'blue-500' : 'gray-700'} text-sm text-white p-2 rounded-lg`}>
                                         {message.content}
                                     </div>
                                 </div>
