@@ -1,27 +1,22 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
-import styles from '@/styles/dashboard.module.css';
+import { useParams } from 'next/navigation';
 import Sidebar from '../../sidebar';
 import Header from '../../header';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 
 const DashboardPage = () => {
-    const router = useRouter();
     const { userName } = useParams();
     const [user, setUser] = useState(null);
     const [error, setError] = useState('');
 
     useEffect(() => {
         const fetchUserData = async () => {
-            try {
-                console.log(userName);
-                const response = await axios.get(`/api/users/${userName}`);
-                console.log(response.data);
+            const response = await axios.get(`/api/users/${userName}`);
+            if (response.data) {
                 setUser(response.data);
-            } catch (error) {
-                console.error(error);
+            } else {
                 setError("User not found");
             }
         };
@@ -30,14 +25,6 @@ const DashboardPage = () => {
             fetchUserData();
         }
     }, [userName]);
-
-    if (error) {
-        return <div>Error: {error}</div>;
-    }
-
-    const handleLogout = () => {
-        router.push('/login');
-    };
 
     return (
         <>

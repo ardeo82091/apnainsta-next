@@ -1,37 +1,16 @@
 import { StatItem } from '@/lib/hoc/ProfileStatsBar';
-import Image from 'next/image';
-import { FC } from 'react';
+import { User } from '@/lib/users';
+import axios from 'axios';
+import { FC, useEffect, useState } from 'react';
 import { FaCalendarAlt, FaHeart, FaTimes, FaUser, FaUserMinus, FaUserTag, FaVideo } from 'react-icons/fa';
 import { FaEye, FaMessage } from 'react-icons/fa6';
 import { MdClose } from 'react-icons/md';
 
 interface ChatSidebarProps {
+  userName: string | undefined;
   isOpen: boolean;
   onClose: () => void;
 }
-
-interface Post {
-  id: number;
-  src: string;
-  isVideo?: boolean;
-  likes?: number;
-  comments?: number;
-}
-
-const posts: Post[] = [
-  { id: 1, src: '/images/profile.jpg' },
-  { id: 1, src: '/images/profile.jpg' },
-  { id: 2, src: '/images/profile.jpg', likes: 12, comments: 3 },
-  { id: 1, src: '/images/profile.jpg' },
-  { id: 2, src: '/images/profile.jpg', likes: 42, comments: 5 },
-  { id: 1, src: '/images/profile.jpg' },
-  { id: 2, src: '/images/profile.jpg', likes: 42, comments: 3 },
-  { id: 1, src: '/images/profile.jpg' },
-  { id: 2, src: '/images/profile.jpg', likes: 42, comments: 3 },
-  { id: 1, src: '/images/profile.jpg' },
-  { id: 2, src: '/images/profile.jpg', likes: 42, comments: 3 },
-  { id: 3, src: '/images/profile.jpg', isVideo: true },
-];
 
 const chats = 
 [
@@ -121,7 +100,27 @@ const chats =
     ]
   }
 ]
-const ChatProfileBar: FC<ChatSidebarProps> = ({ isOpen, onClose }) => {
+const ChatProfileBar: FC<ChatSidebarProps> = ({userName, isOpen, onClose }) => {
+
+  const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const response = await axios.get(`/api/users/${userName}`);
+      if (response.data) {
+          setUser(response.data);
+      } else {
+          setError("User not found");
+      }
+    };
+
+    if (userName) {
+        fetchUserData();
+    }
+  }, [userName]);
+
+
   return (
     isOpen && (
       <div className="flex flex-col h-screen w-1/4 bg-white shadow-md ">
@@ -134,15 +133,21 @@ const ChatProfileBar: FC<ChatSidebarProps> = ({ isOpen, onClose }) => {
         <div className="flex flex-col mt-4 ml-4">
           <div className="flex items-center mb-2">
             <FaUser className="text-gray-900 text-md mr-2" />
-            <span className="text-gray-900 text-lg font-bold">Ankit Raj</span>
+            <span className="text-gray-900 text-lg font-bold">{user?.fullName}</span>
           </div>
           <div className="flex items-center mb-2">
             <FaUserTag className="text-gray-900 text-md mr-2" />
-            <div className="text-gray-900 text-md">@ankit1</div>
+            <div className="text-gray-900 text-md">@{user?.userName}</div>
           </div>
           <div className="flex items-center">
             <FaCalendarAlt className="text-gray-900 text-md mr-2" />
-            <div className="text-gray-900 text-md font-extrabold">November 17, 2000</div>
+            <div className="text-gray-900 text-md font-extrabold">
+              {(user) ? new Date(user.dob).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+              }) : "N/A" }
+            </div>
           </div>
         </div>
         <div className="flex-1 mb-10">
@@ -150,9 +155,9 @@ const ChatProfileBar: FC<ChatSidebarProps> = ({ isOpen, onClose }) => {
         </div>
       </div>
       <div className="flex bg-gray-800 h-14 mt-3 mx-4 justify-around items-center">
-          <StatItem label="Posts" value={405} />
-          <StatItem label="Followers" value={100} />
-          <StatItem label="Following" value={3} />
+        <StatItem label="Posts" value={user?.posts.length || 0} />
+        <StatItem label="Followers" value={user?.followers.length || 0} />
+        <StatItem label="Following" value={user?.following.length || 0} />
       </div>
       <div className="border-t-2 border-gray-300 mt-4 ml-4 mr-4 rounded-full"></div>
         <div className="flex justify-between">
@@ -167,7 +172,7 @@ const ChatProfileBar: FC<ChatSidebarProps> = ({ isOpen, onClose }) => {
 
       <div className="flex flex-col h-auto min-h-[20rem] ml-4 mr-4 bg-gray-100 rounded-b-lg p-4">
         <div className="grid grid-cols-3 gap-2 overflow-y-auto">
-          {posts.map((post) => (
+          {/* {user.map(() => (
             <div key={post.id} className="relative">
               <Image
                 src={post.src}
@@ -187,20 +192,20 @@ const ChatProfileBar: FC<ChatSidebarProps> = ({ isOpen, onClose }) => {
                     {post.likes && (
                       <div className="flex items-center">
                         <FaHeart className="text-red-600 text-sm" />
-                        <span className="ml-1">{post.likes}</span>
+                        <span className="ml-1">{post.likes.length}</span>
                       </div>
                     )}
                     {post.comments && (
                       <div className="flex items-center">
                         <FaMessage className="text-blue-200 text-sm" />
-                        <span className="ml-1">{post.comments}</span>
+                        <span className="ml-1">{post.comments.length}</span>
                       </div>
                     )}
                   </div>
                 </div>
               )}
             </div>
-          ))}
+          ))} */}
         </div>
       </div>
     </div>

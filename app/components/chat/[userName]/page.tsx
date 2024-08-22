@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import ChatTab from "../chat";
-import Header from "../header";
-import Sidebar from "../sidebar";
-import ChatBook from "./ChatBook";
+import ChatTab from "../../chat";
+import Sidebar from "../../sidebar";
+import ChatBook from "../ChatBook";
+import { useParams } from "next/navigation";
+import axios from "axios";
 
 interface Message {
     messageId: string;
@@ -28,7 +29,28 @@ const ChatWithPerson: React.FC = () => {
     const [activeTab, setActiveTab] = useState<number>(0);
     const [formattedMessages, setFormattedMessages] = useState<Message[]>([]);
     const [messageInput, setMessageInput] = useState<string>("");
+    const [user, setUser] = useState(null);
+    const [error, setError] = useState('');
+
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+    const { userName } = useParams();
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const response = await axios.get(`/api/users/${userName}`);
+            if (response.data) {
+                setUser(response.data);
+            } else {
+                setError("User not found");
+            }
+        };
+
+        if (userName) {
+            fetchUserData();
+        }
+    }, [userName]);
+
     const [chats, setChats] = useState<Chat[]>([
         {
             chatId: 'chat1',
@@ -190,7 +212,7 @@ const ChatWithPerson: React.FC = () => {
         <div className="flex flex-col h-screen">
             <Sidebar />
             <div className="flex flex-row-reverse">
-                <ChatBook />
+                <ChatBook user= {user}/>
                 <div className="flex-1 flex flex-col ml-16">
                 <div className="flex flex-col h-screen bg-gray-100 shadow-md">
                     <div className="flex border-b border-gray-300 text-sm">
