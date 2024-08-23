@@ -1,40 +1,30 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import ChatTab from "../../chat";
+import ChatTab from "../chat";
 import Sidebar from "../../sidebar";
-import ChatBook from "../ChatBook";
+import ChatSidebar from '../ChatProfileBar';
 import { useParams } from "next/navigation";
 import axios from "axios";
+import { ChatPerson, Messages, User } from "@/lib/users";
 
-interface Message {
-    messageId: string;
-    timestamp: string;
-    sender: string;
-    content: string;
-    read: boolean;
-    formattedTimestamp?: string;
-}
-
-interface Chat {
-    chatId: string;
-    person: {
-        username: string;
-        name: string;
-    };
-    messages: Message[];
-}
 
 const ChatWithPerson: React.FC = () => {
     const [activeTab, setActiveTab] = useState<number>(0);
-    const [formattedMessages, setFormattedMessages] = useState<Message[]>([]);
+    const [multipleActiveTab, setMultipleActiveTab] = useState<ChatPerson[]>([]);
+    const [formattedMessages, setFormattedMessages] = useState<Messages[]>([]);
     const [messageInput, setMessageInput] = useState<string>("");
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState<User | null>(null);
     const [error, setError] = useState('');
-
+    const [isChatProfileOpen, setIsChatProfileOpen] = useState(false);
+    const [chatProfileUserName, setChatProfileUserName] = useState('');
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
     const { userName } = useParams();
+
+    const viewChatProfile = () => {
+        setIsChatProfileOpen(!isChatProfileOpen);
+    }
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -51,222 +41,159 @@ const ChatWithPerson: React.FC = () => {
         }
     }, [userName]);
 
-    const [chats, setChats] = useState<Chat[]>([
-        {
-            chatId: 'chat1',
-            person: {
-                username: '@naman123',
-                name: 'Naman',
-            },
-            messages: [
-                {
-                    messageId: 'msg1',
-                    timestamp: '2024-08-17T10:00:00Z',
-                    sender: 'Naman',
-                    content: 'Hello, Ankit! How are you?',
-                    read: false,
-                },
-                {
-                    messageId: 'msg2',
-                    timestamp: '2024-08-17T10:05:00Z',
-                    sender: 'Ankit Raj',
-                    content: "Hey Naman! I'm good, just busy with some coding.",
-                    read: true,
-                },
-            ],
-        },
-        {
-            chatId: 'chat2',
-            person: {
-                username: '@shivay456',
-                name: 'Shivay',
-            },
-            messages: [
-                {
-                    messageId: 'msg3',
-                    timestamp: '2024-08-17T11:00:00Z',
-                    sender: 'Shivay',
-                    content: 'Are you coming to the meeting today?',
-                    read: true,
-                },
-                {
-                    messageId: 'msg4',
-                    timestamp: '2024-08-17T11:05:00Z',
-                    sender: 'Ankit Raj',
-                    content: "Yes, I'll be there in 10 minutes.",
-                    read: true,
-                },
-                {
-                    messageId: 'msg7',
-                    timestamp: '2024-08-17T13:00:00Z',
-                    sender: 'Divya',
-                    content: 'So gya',
-                    read: true,
-                },
-                {
-                    messageId: 'msg7',
-                    timestamp: '2024-08-17T13:00:00Z',
-                    sender: 'Divya',
-                    content: 'Bol',
-                    read: true,
-                },
-                {
-                    messageId: 'msg7',
-                    timestamp: '2024-08-17T13:00:00Z',
-                    sender: 'Divya',
-                    content: 'Bol bhi yaar',
-                    read: true,
-                },
-                {
-                    messageId: 'msg8',
-                    timestamp: '2024-08-17T13:15:00Z',
-                    sender: 'Ankit Raj',
-                    content: "hn! are kuch nhi kaam krra tha",
-                    read: true,
-                },
-                {
-                    messageId: 'msg7',
-                    timestamp: '2024-08-17T13:00:00Z',
-                    sender: 'Divya',
-                    content: 'Proj bn gya tera',
-                    read: true,
-                },
-                {
-                    messageId: 'msg8',
-                    timestamp: '2024-08-17T13:15:00Z',
-                    sender: 'Ankit Raj',
-                    content: "wahi bna rha",
-                    read: true,
-                },
-                {
-                    messageId: 'msg7',
-                    timestamp: '2024-08-17T13:00:00Z',
-                    sender: 'Divya',
-                    content: 'kitta bna ?',
-                    read: true,
-                },
-            ],
-        },
-        {
-            chatId: 'chat3',
-            person: {
-                username: '@aarohi789',
-                name: 'Aarohi',
-            },
-            messages: [
-                {
-                    messageId: 'msg5',
-                    timestamp: '2024-08-17T12:00:00Z',
-                    sender: 'Aarohi',
-                    content: "Don't forget to submit the report.",
-                    read: false,
-                },
-            ],
-        },
-        {
-            chatId: 'chat4',
-            person: {
-                username: '@divya321',
-                name: 'Divya',
-            },
-            messages: [
-                {
-                    messageId: 'msg7',
-                    timestamp: '2024-08-17T13:00:00Z',
-                    sender: 'Divya',
-                    content: 'Hi',
-                    read: true,
-                },
-            ],
-        },
-    ])
-
-    const activeChat = chats[activeTab];
-
-    useEffect(() => {
-        const formatMessages = activeChat.messages.map((message) => ({
-            ...message,
-            formattedTimestamp: new Date(message.timestamp).toLocaleString(),
-        }));
-        setFormattedMessages(formatMessages);
-    }, [activeTab]);
-
     useEffect(() => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [formattedMessages]);
 
-    const handleSendMessage = () => {
-        if (messageInput.trim()) {
-            setMessageInput("");
+    const openChatTab = (chat: ChatPerson) => {
+        const isPersonTabOpen = multipleActiveTab.findIndex(tabOpen => tabOpen.person.username === chat.person.username);
+        if (isPersonTabOpen === -1) {
+            if (multipleActiveTab.length < 5) {
+                setMultipleActiveTab([...multipleActiveTab, chat]);
+                setFormattedMessages(chat.messages);
+                setActiveTab(multipleActiveTab.length);
+            } else {
+                alert('You can only open up to 5 chat tabs.');
+            }
+        } else {
+            setActiveTab(isPersonTabOpen);
+            setFormattedMessages(multipleActiveTab[isPersonTabOpen].messages);
         }
     };
 
-    const handleTabClose = (index: number) => {
-        setChats((prevChats) => prevChats.filter((_, i) => i !== index));
-        setActiveTab((prevActiveTab) => (prevActiveTab > 0 ? prevActiveTab - 1 : 0));
+    const closeChatTab = (index: number) => {
+        const updatedTabs = multipleActiveTab.filter((_, i) => i !== index);
+        setMultipleActiveTab(updatedTabs);
+
+        if (index === activeTab) {
+            if (updatedTabs.length > 0) {
+                setActiveTab(index === 0 ? 0 : index - 1);
+            } else {
+                setActiveTab(0);
+            }
+        } else if (updatedTabs.length === 0) {
+            setActiveTab(0);
+        }
+        const tabChange = index>0 ? (multipleActiveTab[index - 1].messages) : [];
+        setFormattedMessages(tabChange);
     };
 
     return (
         <div className="flex flex-col h-screen">
             <Sidebar />
             <div className="flex flex-row-reverse">
-                <ChatBook user= {user}/>
-                <div className="flex-1 flex flex-col ml-16">
-                <div className="flex flex-col h-screen bg-gray-100 shadow-md">
-                    <div className="flex border-b border-gray-300 text-sm">
-                        {chats.map((chat, index) => (
-                            <ChatTab
-                                key={chat.chatId}
-                                label={chat.person.name}
-                                isActive={activeTab === index}
-                                onClick={() => setActiveTab(index)}
-                                onClose={() => handleTabClose(index)}
-                                className="flex-1 rounded"
-                            />
-                        ))}
+                <div className="h-screen bg-white w-1/3 flex flex-col p-4 ml-1">
+                    <div className="flex items-center font-bold text-gray-600 text-md mb-4">
+                        <span>Messages</span>
                     </div>
-                    <div className="flex-1 p-4 border-t border-gray-300 overflow-y-auto">
-                        {formattedMessages.map((message) => (
-                            <div
-                                key={message.messageId}
-                                className={`mb-2 flex ${message.sender === 'Ankit Raj' ? 'justify-end' : 'justify-start'}`}
-                            >
-                                <div className={`flex flex-col ${message.sender === 'Ankit Raj' ? 'items-end' : 'items-start'}`}>
-                                    <div className={`bg-${message.sender === 'Ankit Raj' ? 'blue-500' : 'gray-700'} text-sm text-white p-2 rounded-lg`}>
-                                        {message.content}
+                    <input
+                        type="text"
+                        placeholder="Search..."
+                        className="w-full p-2 mb-4 rounded bg-gray-700 text-white"
+                    />
+                    <div className="flex-1 overflow-y-auto">
+                        {user?.chatPerson.map((chat) => {
+                            const lastMessage = chat.messages[chat.messages.length - 1];
+                            return (
+                                <div key={chat.person.username} className="border-b border-gray-600 py-2 flex items-center">
+                                    <button className="focus:outline-none" onClick={() => { viewChatProfile(); setChatProfileUserName(chat.person.username); }}>
+                                        <img
+                                            src={chat.person.username}
+                                            alt={`${chat.person.name}'s avatar`}
+                                            className="w-10 h-10 rounded-full mr-3"
+                                        />
+                                    </button>
+                                    <div className="flex-1 cursor-pointer" onClick={() => { openChatTab(chat); console.log(chat); }}>
+                                        <div className="flex text-gray-800 text-sm font-semibold">
+                                            {chat.person.name}
+                                        </div>
+                                        <div className={`py-1 ${lastMessage.read ? 'text-gray-500' : 'font-bold'}`}>
+                                            <div className="flex items-center">
+                                                {/* <span className="font-semibold">{lastMessage.sender}:</span>z */}
+                                                <span className="ml-2 text-xs">{lastMessage.content}</span>
+                                            </div>
+                                            {/* <div className="text-gray-500 text-xs">
+                                                        {new Date(lastMessage.timestamp).toLocaleTimeString()}
+                                                    </div> */}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                        <div ref={messagesEndRef} />
-                    </div>
-                    <div className="border-t border-gray-300 p-4 flex items-center">
-                        <input
-                            type="text"
-                            value={messageInput}
-                            onChange={(e) => setMessageInput(e.target.value)}
-                            placeholder="Type a message..."
-                            className="flex-1 p-2 border rounded-l-lg focus:outline-none"
-                        />
-                        <button
-                            onClick={() => handleSendMessage()}
-                            className="bg-blue-500 text-white p-2 rounded-r-lg"
-                        >
-                            Send
-                        </button>
-                        <button className="ml-2 p-2 text-gray-500 hover:text-lg">
-                            📷
-                        </button>
-                        <button className="ml-2 p-2 text-gray-500 hover:text-lg">
-                            📁
-                        </button>
-                        <button className="ml-2 p-2 text-gray-500 hover:text-lg">
-                            🎤
-                        </button>
+                            );
+                        })}
                     </div>
                 </div>
+
+                {isChatProfileOpen && (
+                    <ChatSidebar
+                        userName={chatProfileUserName}
+                        isOpen={isChatProfileOpen}
+                        onClose={viewChatProfile}
+                    />
+                )}
+
+                <div className="flex-1 flex flex-col ml-16">
+                    <div className="flex flex-col h-screen bg-gray-100 shadow-md">
+                        <div className="flex border-b border-gray-300 text-sm">
+                            {multipleActiveTab.map((chat, index) => (
+                                <ChatTab
+                                    key={chat.person.username}
+                                    label={chat.person.name}
+                                    isActive={activeTab === index}
+                                    onClick={() => {
+                                        setActiveTab(index);
+                                        setFormattedMessages(chat.messages);
+                                    }}
+                                    onClose={() => closeChatTab(index)}
+                                    className="flex-1 rounded"
+                                />
+                            ))}
+                        </div>
+                        <div className="flex-1 p-4 border-t border-gray-300 overflow-y-auto">
+                            {formattedMessages && formattedMessages.length > 0 ? (
+                                formattedMessages.map((message) => (
+                                    <div
+                                        key={message.sender + message.content}
+                                        className={`mb-2 flex ${message.sender === userName ? 'justify-end' : 'justify-start'}`}
+                                    >
+                                        <div className={`flex flex-col ${message.sender === userName ? 'items-end' : 'items-start'}`}>
+                                            <div className={`bg-${message.sender === userName ? 'blue-500' : 'gray-700'} text-sm text-white p-2 rounded-lg`}>
+                                                {message.content}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-gray-500"></div>
+                            )}
+                            <div ref={messagesEndRef} />
+                        </div>
+                        <div className="border-t border-gray-300 p-4 flex items-center">
+                            <input
+                                type="text"
+                                value={messageInput}
+                                onChange={(e) => setMessageInput(e.target.value)}
+                                placeholder="Type a message..."
+                                className="flex-1 p-2 border rounded-l-lg focus:outline-none"
+                            />
+                            <button
+                                onClick={() => setMessageInput("")}
+                                className="bg-blue-500 text-white p-2 rounded-r-lg"
+                            >
+                                Send
+                            </button>
+                            <button className="ml-2 p-2 text-gray-500 hover:text-lg">
+                                📷
+                            </button>
+                            <button className="ml-2 p-2 text-gray-500 hover:text-lg">
+                                📁
+                            </button>
+                            <button className="ml-2 p-2 text-gray-500 hover:text-lg">
+                                🎤
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

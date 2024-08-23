@@ -42,12 +42,12 @@
           },
           "messages": [
             {
-              "sender": "rajverma",
+              "sender": "amankumar",
               "content": "Have you seen the latest movie?",
               "read": true
             },
             {
-              "sender": "divyasingh",
+              "sender": "ankitraj",
               "content": "Not yet, but I want to!",
               "read": true
             }
