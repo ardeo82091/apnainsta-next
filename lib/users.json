@@ -57,7 +57,7 @@
       "posts": [
         {
           "id": 1,
-          "src": "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max",
+          "src": "",
           "isVideo": false,
           "likes": [
             { "userName": "abhisheksharma" },
@@ -74,7 +74,7 @@
         },
         {
           "id": 2,
-          "src": "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max",
+          "src": "",
           "isVideo": false,
           "likes": [
             { "userName": "sunilgupta" },
@@ -91,7 +91,7 @@
         },
         {
           "id": 3,
-          "src": "https://images.unsplash.com/photo-1486072889922-9e08d45c69c1?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max",
+          "src": "",
           "isVideo": false,
           "likes": [
             { "userName": "nehasingh" },
@@ -108,7 +108,7 @@
         },
         {
           "id": 4,
-          "src": "https://images.unsplash.com/photo-1517816428104-34b6bbb0f7d7?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max",
+          "src": "",
           "isVideo": false,
           "likes": [
             { "userName": "deepakverma" },
@@ -125,7 +125,7 @@
         },
         {
           "id": 5,
-          "src": "https://images.unsplash.com/photo-1522204523234-be2db3a7d7e9?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max",
+          "src": "",
           "isVideo": false,
           "likes": [
             { "userName": "manojsharma" },
@@ -403,7 +403,7 @@
       "posts": [
         {
           "id": 2,
-          "src": "http://example.com/image2.jpg",
+          "src": "",
           "isVideo": false,
           "likes": [
             { "userName": "aman.kumar" }
@@ -486,11 +486,89 @@
       ],
       "posts": [
         {
+          "id": 1,
+          "src": "",
+          "isVideo": false,
+          "likes": [
+            { "userName": "abhisheksharma" },
+            { "userName": "rajverma" }
+          ],
+          "comments": [
+            {
+              "userName": "divyasingh",
+              "comment": [
+                { "userName": "amankumar", "replies": "Stunning view!" }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "src": "",
+          "isVideo": false,
+          "likes": [
+            { "userName": "sunilgupta" },
+            { "userName": "rohanmehta" }
+          ],
+          "comments": [
+            {
+              "userName": "priyaverma",
+              "comment": [
+                { "userName": "rohitkumar", "replies": "Great shot!" }
+              ]
+            }
+          ]
+        },
+        {
           "id": 3,
-          "src": "http://example.com/image3.jpg",
-          "isVideo": true,
-          "likes": [],
-          "comments": []
+          "src": "",
+          "isVideo": false,
+          "likes": [
+            { "userName": "nehasingh" },
+            { "userName": "mohitchauhan" }
+          ],
+          "comments": [
+            {
+              "userName": "anitaroy",
+              "comment": [
+                { "userName": "sachinsharma", "replies": "Love the colors!" }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "src": "",
+          "isVideo": false,
+          "likes": [
+            { "userName": "deepakverma" },
+            { "userName": "akashjain" }
+          ],
+          "comments": [
+            {
+              "userName": "sunitamishra",
+              "comment": [
+                { "userName": "vinodkumar", "replies": "Amazing landscape!" }
+              ]
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "src": "",
+          "isVideo": false,
+          "likes": [
+            { "userName": "manojsharma" },
+            { "userName": "ritikaverma" }
+          ],
+          "comments": [
+            {
+              "userName": "kamalsingh",
+              "comment": [
+                { "userName": "rajeshkhanna", "replies": "Incredible detail!" }
+              ]
+            }
+          ]
         }
       ],
       "notifications": []
