@@ -1,7 +1,7 @@
-'use-client'
+'use client';
 
-import Header from "../header";
 import Sidebar from "../sidebar";
+import FriendRequest from "./FriendReq";
 
 
 const FriendsAndRequest = () => {
@@ -10,8 +10,8 @@ const FriendsAndRequest = () => {
     return (
         <div className="flex flex-col">
             <Sidebar />
-                <div>
-                    
+                <div className="flex justify-end">
+                    <FriendRequest />
                 </div>
             </div>
     );
