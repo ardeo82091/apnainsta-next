@@ -6,7 +6,6 @@ import { SidebarIcon } from '@/lib/hoc/SidebarIconProps';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import LiveAndVibe from '@/public/images/positive-vibes1.png';
-import ChatSidebar from './chat/ChatProfileBar';
 import ViewedBySlideBar from './viewedBySideBar';
 import SearchSlideBar from './serchSideBar';
 

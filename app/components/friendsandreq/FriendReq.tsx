@@ -66,7 +66,7 @@ const FriendRequest = () => {
                 <div className="mt-4 bg-gradient-to-r from-gray-500 to-teal-500 overflow-y-auto">
                     {filteredUsers.map(user => (
                         <div key={user.id} className="flex justify-between items-center p-2 border-b text-white text-sm">
-                            <img src={user.img} alt={`${user.name}'s avatar`} className="w-10 h-10 rounded-full mr-3" />
+                            <img src={user.img} alt={`${user.name}'s avatar`} className="w-8 h-8 rounded-full mr-3" />
                             <span>{user.name}</span>
                             {selectedTab === 'received' ? (
                                 <div>
