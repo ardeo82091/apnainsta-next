@@ -3,11 +3,14 @@
 
 import { StatItem } from '@/lib/hoc/ProfileStatsBar';
 import { User } from '@/lib/users';
+import { RootState } from '@/redux/store';
 import { FC, useState } from 'react';
 
 import { FaUser, FaUserTag, FaCalendarAlt, FaBell, FaThumbsUp, FaComment, FaUserPlus, FaHeart } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
-const Header: FC<{ user: User | null }> = ({ user }) => {
+const Header = () => {
+  const user = useSelector((state: RootState) => state.user);
   const [clickedNoty, setClickedNoty] = useState(null);
 
   const seeNotificationTime = (id : any) => {

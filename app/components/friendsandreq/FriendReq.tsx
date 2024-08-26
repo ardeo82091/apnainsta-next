@@ -1,7 +1,9 @@
 'use client';
 
+import { RootState } from "@/redux/store";
 import { useState } from "react";
 import { FaCheck, FaInbox, FaPaperPlane, FaTimes } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 const users = [
     { id: 1, name: 'Abhishek Sharma', requestType: 'received', img: '/images/profile.jpg' },
@@ -28,6 +30,8 @@ const users = [
 
 
 const FriendRequest = () => {
+
+    const user = useSelector((state: RootState) => state.user);
 
     const [selectedTab, setSelectedTab] = useState<'received' | 'sent'>('received');
 

@@ -1,10 +1,16 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from '@/redux/userSlice';
+import { RootState } from '@/redux/store';
 
 const LoginPage = () => {
+
+  const user = useSelector((state: RootState) => state.user);
+
   const [emailorUserName, setEmailorUserName] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -21,19 +27,14 @@ const LoginPage = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
-    try {
-      const response = await axios.post('/api/login', { emailorUserName, password });
-      const res = response.data;
-      const userName = res.user.userName;
-      if (res.success) {
-        router.push(`/components/dashboard/${userName}`);
-      } else {
-        setError(response.data.message || 'Login failed');
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-      setError('An unexpected error occurred');
+    const response = await axios.post('/api/login', { emailorUserName, password });
+    const res = response.data;
+    const userName = res.user.userName;
+    if (res.success) {
+      localStorage.setItem('user', JSON.stringify(res.user.userName));
+      router.push(`/components/dashboard/${userName}`);
+    } else {
+      setError(response.data.message || 'Login failed');
     }
   };
 
