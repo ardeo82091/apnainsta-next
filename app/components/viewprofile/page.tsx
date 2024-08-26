@@ -5,8 +5,11 @@ import profilePic from '@/public/images/profile.jpg';
 import bannerPic from '@/public/images/bkg.jpg';
 import Sidebar from '../sidebar';
 import Header from '../header';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const ViewFriendsProfiles = () => {
+  const user = useSelector((state: RootState) => state.user);
   return (
     <div className="flex flex-col">
       <Sidebar />

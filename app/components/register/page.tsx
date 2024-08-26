@@ -3,8 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
 
 const RegisterPage = () => {
+
+  const user = useSelector((state: RootState) => state.user);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [repassword, setrePassword] = useState('');

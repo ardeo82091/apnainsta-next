@@ -1,5 +1,7 @@
+import { RootState } from '@/redux/store';
 import { useState } from 'react';
 import { FaUserMinus, FaUserPlus, FaBan, FaUserFriends, FaUserCheck } from 'react-icons/fa';
+import { useSelector } from 'react-redux';
 
 const users = [
     { id: 1, name: "Ankit Singh", img: "", isActive: true, isFollowing: true },
@@ -25,6 +27,7 @@ const users = [
 ];
 
 export default function FriendsTabs() {
+    const user = useSelector((state: RootState) => state.user);
     const [activeTab, setActiveTab] = useState<'followers' | 'following'>('followers');
 
     const filteredUsers = activeTab === 'followers'

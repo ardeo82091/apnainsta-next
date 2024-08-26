@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { FaHome, FaUser, FaUserFriends, FaVideo, FaRocketchat, FaSignOutAlt, FaEye, FaCog, FaSearch, FaTimes } from 'react-icons/fa';
 import { SidebarIcon } from '@/lib/hoc/SidebarIconProps';
 import { useRouter } from 'next/navigation';
@@ -8,15 +8,47 @@ import Image from 'next/image';
 import LiveAndVibe from '@/public/images/positive-vibes1.png';
 import ViewedBySlideBar from './viewedBySideBar';
 import SearchSlideBar from './serchSideBar';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux/store';
+import { setUser } from '@/redux/userSlice';
+import axios from 'axios';
 
 const Sidebar: FC = () => {
     const router = useRouter();
+    const dispatch = useDispatch();
     const [isSearchSidebarOpen, setIsSearchSidebarOpen] = useState(false);
     const [isViewedByOpen, setIsViewedByOpen] = useState(false);
+    const [error, setError] = useState('');
+    const userName = localStorage.getItem('user')?.replace(/^"|"$/g, '');
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            const response = await axios.get(`/api/users/${userName}`);
+            if (response.data) {
+                dispatch(setUser(response.data))
+                setUser(response.data);
+            } else {
+                setError("User not found");
+            }
+        };
+
+        if (userName) {
+            fetchUserData();
+        }
+    }, [userName]);
+
+    const user = useSelector((state: RootState) => state.user);
 
     const handlePages = (page: string) => {
-        router.push(`/components/${page}`);
+        page !== 'login' ?
+        router.push(`/components/${page}/${user.userName}`) :
+        handleLogout();
     };
+
+    const handleLogout = () => {
+        router.push(`/components/login`);
+        localStorage.removeItem('user');
+    }
 
     const rightSidebar = (sideBar : string) => {
         if(sideBar === 'search') {
