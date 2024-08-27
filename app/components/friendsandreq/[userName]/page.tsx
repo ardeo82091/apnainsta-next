@@ -1,8 +1,8 @@
 'use client';
 
-import Sidebar from "../sidebar";
-import AllFriends from "./AllFriends";
-import FriendRequest from "./FriendReq";
+import Sidebar from "../../sidebar";
+import AllFriends from "../AllFriends";
+import FriendRequest from "../FriendReq";
 
 const FriendsAndRequest = () => {
 

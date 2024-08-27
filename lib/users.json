@@ -1,607 +1,338 @@
 [
-    {
-      "email": "aman.kumar@example.com",
-      "userName": "amankumar",
-      "password": "password123",
-      "dob": "1990-05-14T00:00:00.000Z",
-      "fullName": "Aman Kumar",
-      "phoneNumber": "+1234567890",
-      "isActive": true,
-      "role": "user",
-      "followers": [
-        { "userName": "ankitraj" },
-        { "userName": "divyasingh" }
-      ],
-      "following": [
-        { "userName": "abhisheksharma" },
-        { "userName": "rajverma" }
-      ],
-      "chatPerson": [
-        {
-          "person": {
-            "username": "divyasingh",
-            "name": "Divya Singh"
-          },
-          "messages": [
-            {
-              "sender": "amankumar",
-              "content": "Hey, how are you?",
-              "read": true
-            },
-            {
-              "sender": "divyasingh",
-              "content": "I’m good, thanks! How about you?",
-              "read": true
-            }
-          ]
-        },
-        {
-          "person": {
-            "username": "ankitraj",
-            "name": "Ankit Singh"
-          },
-          "messages": [
-            {
-              "sender": "amankumar",
-              "content": "Have you seen the latest movie?",
-              "read": true
-            },
-            {
-              "sender": "ankitraj",
-              "content": "Not yet, but I want to!",
-              "read": true
-            }
-          ]
-        }
-      ],
-      "posts": [
+  {
+    "email": "aman.kumar@example.com",
+    "userName": "amankumar",
+    "password": "password123",
+    "dob": "1990-05-14T00:00:00.000Z",
+    "fullName": "Aman Kumar",
+    "phoneNumber": "+1234567890",
+    "isActive": true,
+    "role": "user",
+    "friendAndRequests": {
+      "requests": [
         {
           "id": 1,
-          "src": "",
-          "isVideo": false,
-          "likes": [
-            { "userName": "abhisheksharma" },
-            { "userName": "rajverma" }
-          ],
-          "comments": [
-            {
-              "userName": "divyasingh",
-              "comment": [
-                { "userName": "amankumar", "replies": "Stunning view!" }
-              ]
-            }
-          ]
+          "person": {
+            "username": "sashwat-yadav",
+            "name": "Sashwat Yadav",
+            "img": ""
+          },
+          "isAdded": false,
+          "isSent": true
         },
         {
           "id": 2,
-          "src": "",
-          "isVideo": false,
-          "likes": [
-            { "userName": "sunilgupta" },
-            { "userName": "rohanmehta" }
-          ],
-          "comments": [
-            {
-              "userName": "priyaverma",
-              "comment": [
-                { "userName": "rohitkumar", "replies": "Great shot!" }
-              ]
-            }
-          ]
+          "person": {
+            "username": "maya-rao",
+            "name": "Maya Rao",
+            "img": ""
+          },
+          "isAdded": false,
+          "isSent": false
         },
         {
           "id": 3,
-          "src": "",
-          "isVideo": false,
-          "likes": [
-            { "userName": "nehasingh" },
-            { "userName": "mohitchauhan" }
-          ],
-          "comments": [
-            {
-              "userName": "anitaroy",
-              "comment": [
-                { "userName": "sachinsharma", "replies": "Love the colors!" }
-              ]
-            }
-          ]
+          "person": {
+            "username": "jana-jana",
+            "name": "Jana Jana",
+            "img": ""
+          },
+          "isAdded": false,
+          "isSent": false
         },
         {
           "id": 4,
-          "src": "",
-          "isVideo": false,
-          "likes": [
-            { "userName": "deepakverma" },
-            { "userName": "akashjain" }
-          ],
-          "comments": [
-            {
-              "userName": "sunitamishra",
-              "comment": [
-                { "userName": "vinodkumar", "replies": "Amazing landscape!" }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 5,
-          "src": "",
-          "isVideo": false,
-          "likes": [
-            { "userName": "manojsharma" },
-            { "userName": "ritikaverma" }
-          ],
-          "comments": [
-            {
-              "userName": "kamalsingh",
-              "comment": [
-                { "userName": "rajeshkhanna", "replies": "Incredible detail!" }
-              ]
-            }
-          ]
+          "person": {
+            "username": "harsh-jha",
+            "name": "Harsh Jha",
+            "img": ""
+          },
+          "isAdded": false,
+          "isSent": true
         }
       ],
-      "notifications": [
+      "followers": [
         {
           "id": 1,
-          "type": "like",
-          "message": "User1 liked your post.",
-          "timestamp": "2024-08-21T10:30:00Z",
-          "read": false
+          "person": {
+            "username": "ankit-singh",
+            "name": "Ankit Singh",
+            "img": ""
+          },
+          "isOnline": true,
+          "isFollowing": true,
+          "isFollowed": true
         },
         {
           "id": 2,
-          "type": "comment",
-          "message": "User2 commented on your post.",
-          "timestamp": "2024-08-21T11:00:00Z",
-          "read": false
+          "person": {
+            "username": "divya-singh",
+            "name": "Divya Singh",
+            "img": ""
+          },
+          "isOnline": false,
+          "isFollowing": false,
+          "isFollowed": true
         },
         {
           "id": 3,
-          "type": "follow",
-          "message": "User3 started following you.",
-          "timestamp": "2024-08-21T11:30:00Z",
-          "read": false
+          "person": {
+            "username": "akash-kumar",
+            "name": "Akash Kumar",
+            "img": ""
+          },
+          "isOnline": false,
+          "isFollowing": false,
+          "isFollowed": true
         },
         {
           "id": 4,
-          "type": "like",
-          "message": "User4 liked your comment.",
-          "timestamp": "2024-08-21T12:00:00Z",
-          "read": false
-        },
-        {
-          "id": 5,
-          "type": "comment",
-          "message": "User5 commented: 'Great post!'",
-          "timestamp": "2024-08-21T12:30:00Z",
-          "read": true
-        },
-        {
-          "id": 6,
-          "type": "follow",
-          "message": "User6 started following you.",
-          "timestamp": "2024-08-21T13:00:00Z",
-          "read": true
-        },
-        {
-          "id": 7,
-          "type": "like",
-          "message": "User7 liked your photo.",
-          "timestamp": "2024-08-21T13:30:00Z",
-          "read": false
-        }
-      ]      
-    },
-    {
-      "email": "ankit.raj@example.com",
-      "userName": "ankitraj",
-      "password": "password123",
-      "dob": "1985-10-22T00:00:00.000Z",
-      "fullName": "Ankit Raj",
-      "phoneNumber": "+1987654321",
-      "isActive": true,
-      "role": "user",
-      "followers": [
-        { "userName": "aman.kumar" }
-      ],
-      "following": [
-        { "userName": "divyasingh" },
-        { "userName": "abhisheksharma" }
-      ],
-      "chatPerson": [
-        {
           "person": {
-            "username": "abhisheksharma",
-            "name": "Abhishek Sharma"
+            "username": "abhishek-kumar",
+            "name": "Abhishek Kumar",
+            "img": ""
           },
-          "messages": [
-            {
-              "sender": "ankitraj",
-              "content": "Are you coming to the event?",
-              "read": true
-            },
-            {
-              "sender": "abhisheksharma",
-              "content": "Yes, I’ll be there!",
-              "read": true
-            }
-          ]
+          "isOnline": true,
+          "isFollowing": true,
+          "isFollowed": false
         }
-      ],
-      "posts": [
-        { "id": 1, "src": "/images/profile.jpg" },
-        { "id": 2, "src": "/images/profile.jpg" },
-        { "id": 3, "src": "/images/profile.jpg", "likes": [
-            { "userName": "abhisheksharma" },
-            { "userName": "rajverma" }
-          ],
-          "comments": [
-            {
-              "userName": "divyasingh",
-              "comment": [
-                { "userName": "amankumar", "replies": "Nice photo!" }
-              ]
-            }
-          ] },
-        { "id": 4, "src": "/images/profile.jpg" },
-        { "id": 5, "src": "/images/profile.jpg", "likes": [
-            { "userName": "abhisheksharma" },
-            { "userName": "rajverma" }
-          ],
-          "comments": [
-            {
-              "userName": "divyasingh",
-              "comment": [
-                { "userName": "amankumar", "replies": "Nice photo!" }
-              ]
-            }
-          ] },
-        { "id": 6, "src": "/images/profile.jpg" },
-        { "id": 7, "src": "/images/profile.jpg", "likes": [
-            { "userName": "abhisheksharma" },
-            { "userName": "rajverma" }
-          ],
-          "comments": [
-            {
-              "userName": "divyasingh",
-              "comment": [
-                { "userName": "amankumar", "replies": "Nice photo!" }
-              ]
-            }
-          ] },
-        { "id": 8, "src": "/images/profile.jpg" },
-        { "id": 9, "src": "/images/profile.jpg", "likes": [
-            { "userName": "abhisheksharma" },
-            { "userName": "rajverma" }
-          ],
-          "comments": [
-            {
-              "userName": "divyasingh",
-              "comment": [
-                { "userName": "amankumar", "replies": "Nice photo!" }
-              ]
-            }
-          ] },
-        { "id": 10, "src": "/images/profile.jpg" },
-        { "id": 11, "src": "/images/profile.jpg", "likes": [
-            { "userName": "abhisheksharma" },
-            { "userName": "rajverma" }
-          ],
-          "comments": [
-            {
-              "userName": "divyasingh",
-              "comment": [
-                { "userName": "amankumar", "replies": "Nice photo!" }
-              ]
-            }
-          ] },
-        { "id": 12, "src": "/images/profile.jpg", "isVideo": true }
-      ],
-      "notifications": [
+      ]
+    },
+    "chatPerson": [
+      {
+        "person": {
+          "username": "divyasingh",
+          "name": "Divya Singh",
+          "img": ""
+        },
+        "messages": [
+          {
+            "sender": "amankumar",
+            "content": "Hey, how are you?",
+            "read": true
+          },
+          {
+            "sender": "divyasingh",
+            "content": "I’m good, thanks! How about you?",
+            "read": false
+          }
+        ]
+      },
+      {
+        "person": {
+          "username": "rahul-verma",
+          "name": "Rahul Verma",
+          "img": ""
+        },
+        "messages": [
+          {
+            "sender": "rahul-verma",
+            "content": "Are we still on for tomorrow?",
+            "read": true
+          }
+        ]
+      }
+    ],
+    "posts": [
+      {
+        "id": 1,
+        "src": "",
+        "isVideo": false
+      },
+      {
+        "id": 2,
+        "src": "",
+        "isVideo": true
+      }
+    ],
+    "notifications": [
+      {
+        "id": 1,
+        "type": "like",
+        "message": "Sashwat Yadav liked your post.",
+        "timestamp": "2024-08-21T10:30:00Z",
+        "read": false
+      },
+      {
+        "id": 2,
+        "type": "comment",
+        "message": "Akash Kumar commented on your photo.",
+        "timestamp": "2024-08-22T11:15:00Z",
+        "read": false
+      }
+    ]
+  },
+  {
+    "email": "ankit.raj@example.com",
+    "userName": "ankitraj",
+    "password": "password123",
+    "dob": "1985-10-22T00:00:00.000Z",
+    "fullName": "Ankit Raj",
+    "phoneNumber": "+1987654321",
+    "isActive": true,
+    "role": "user",
+    "friendAndRequests": {
+      "requests": [
         {
           "id": 1,
-          "type": "like",
-          "message": "User1 liked your post.",
-          "timestamp": "2024-08-21T10:30:00Z",
-          "read": false
-        },
-        {
-          "id": 2,
-          "type": "comment",
-          "message": "User2 commented on your post.",
-          "timestamp": "2024-08-21T11:00:00Z",
-          "read": false
-        },
-        {
-          "id": 3,
-          "type": "follow",
-          "message": "User3 started following you.",
-          "timestamp": "2024-08-21T11:30:00Z",
-          "read": false
-        },
-        {
-          "id": 4,
-          "type": "like",
-          "message": "User4 liked your comment.",
-          "timestamp": "2024-08-21T12:00:00Z",
-          "read": false
-        },
-        {
-          "id": 5,
-          "type": "comment",
-          "message": "User5 commented: 'Great post!'",
-          "timestamp": "2024-08-21T12:30:00Z",
-          "read": true
-        },
-        {
-          "id": 6,
-          "type": "follow",
-          "message": "User6 started following you.",
-          "timestamp": "2024-08-21T13:00:00Z",
-          "read": true
-        },
-        {
-          "id": 7,
-          "type": "like",
-          "message": "User7 liked your photo.",
-          "timestamp": "2024-08-21T13:30:00Z",
-          "read": false
-        },
-        {
-          "id": 8,
-          "type": "comment",
-          "message": "User8 commented: 'Nice picture!'",
-          "timestamp": "2024-08-21T14:00:00Z",
-          "read": false
-        },
-        {
-          "id": 9,
-          "type": "follow",
-          "message": "User9 started following you.",
-          "timestamp": "2024-08-21T14:30:00Z",
-          "read": false
+          "person": {
+            "username": "aman.kumar",
+            "name": "Aman Kumar",
+            "img": ""
+          },
+          "isAdded": false,
+          "isSent": true
         }
-      ]      
-    },
-    {
-      "email": "abhishek.sharma@example.com",
-      "userName": "abhisheksharma",
-      "password": "password123",
-      "dob": "1993-07-19T00:00:00.000Z",
-      "fullName": "Abhishek Sharma",
-      "phoneNumber": "+1123456789",
-      "isActive": false,
-      "role": "user",
+      ],
       "followers": [
-        { "userName": "rajverma" }
-      ],
-      "following": [
-        { "userName": "amankumar" },
-        { "userName": "ankitraj" }
-      ],
-      "chatPerson": [
-        {
-          "person": {
-            "username": "rajverma",
-            "name": "Raj Verma"
-          },
-          "messages": [
-            {
-              "sender": "abhisheksharma",
-              "content": "Do you have the notes from the meeting?",
-              "read": false
-            },
-            {
-              "sender": "rajverma",
-              "content": "I’ll send them over.",
-              "read": true
-            }
-          ]
-        }
-      ],
-      "posts": [
-        {
-          "id": 2,
-          "src": "",
-          "isVideo": false,
-          "likes": [
-            { "userName": "aman.kumar" }
-          ],
-          "comments": []
-        }
-      ],
-      "notifications": []
-    },
-    {
-      "email": "raj.verma@example.com",
-      "userName": "rajverma",
-      "password": "password123",
-      "dob": "1988-12-05T00:00:00.000Z",
-      "fullName": "Raj Verma",
-      "phoneNumber": "+1239876543",
-      "isActive": true,
-      "role": "user",
-      "followers": [
-        { "userName": "divyasingh" }
-      ],
-      "following": [
-        { "userName": "amankumar" }
-      ],
-      "chatPerson": [
-        {
-          "person": {
-            "username": "divyasingh",
-            "name": "Divya Singh"
-          },
-          "messages": [
-            {
-              "sender": "rajverma",
-              "content": "Have you seen the latest movie?",
-              "read": true
-            },
-            {
-              "sender": "divyasingh",
-              "content": "Not yet, but I want to!",
-              "read": true
-            }
-          ]
-        }
-      ],
-      "posts": [],
-      "notifications": []
-    },
-    {
-      "email": "divya.singh@example.com",
-      "userName": "divyasingh",
-      "password": "password123",
-      "dob": "1995-03-11T00:00:00.000Z",
-      "fullName": "Divya Singh",
-      "phoneNumber": "+1098765432",
-      "isActive": true,
-      "role": "user",
-      "followers": [],
-      "following": [
-        { "userName": "rajverma" }
-      ],
-      "chatPerson": [
-        {
-          "person": {
-            "username": "amankumar",
-            "name": "Aman Kumar"
-          },
-          "messages": [
-            {
-              "sender": "divyasingh",
-              "content": "Let’s catch up soon!",
-              "read": false
-            },
-            {
-              "sender": "amankumar",
-              "content": "Definitely! When are you free?",
-              "read": true
-            }
-          ]
-        }
-      ],
-      "posts": [
         {
           "id": 1,
-          "src": "",
-          "isVideo": false,
-          "likes": [
-            { "userName": "abhisheksharma" },
-            { "userName": "rajverma" }
-          ],
-          "comments": [
-            {
-              "userName": "divyasingh",
-              "comment": [
-                { "userName": "amankumar", "replies": "Stunning view!" }
-              ]
-            }
-          ]
+          "person": {
+            "username": "ankit-singh",
+            "name": "Ankit Singh",
+            "img": ""
+          },
+          "isOnline": true,
+          "isFollowing": true,
+          "isFollowed": true
         },
         {
           "id": 2,
-          "src": "",
-          "isVideo": false,
-          "likes": [
-            { "userName": "sunilgupta" },
-            { "userName": "rohanmehta" }
-          ],
-          "comments": [
-            {
-              "userName": "priyaverma",
-              "comment": [
-                { "userName": "rohitkumar", "replies": "Great shot!" }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 3,
-          "src": "",
-          "isVideo": false,
-          "likes": [
-            { "userName": "nehasingh" },
-            { "userName": "mohitchauhan" }
-          ],
-          "comments": [
-            {
-              "userName": "anitaroy",
-              "comment": [
-                { "userName": "sachinsharma", "replies": "Love the colors!" }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 4,
-          "src": "",
-          "isVideo": false,
-          "likes": [
-            { "userName": "deepakverma" },
-            { "userName": "akashjain" }
-          ],
-          "comments": [
-            {
-              "userName": "sunitamishra",
-              "comment": [
-                { "userName": "vinodkumar", "replies": "Amazing landscape!" }
-              ]
-            }
-          ]
-        },
-        {
-          "id": 5,
-          "src": "",
-          "isVideo": false,
-          "likes": [
-            { "userName": "manojsharma" },
-            { "userName": "ritikaverma" }
-          ],
-          "comments": [
-            {
-              "userName": "kamalsingh",
-              "comment": [
-                { "userName": "rajeshkhanna", "replies": "Incredible detail!" }
-              ]
-            }
-          ]
+          "person": {
+            "username": "rajesh-mishra",
+            "name": "Rajesh Mishra",
+            "img": ""
+          },
+          "isOnline": false,
+          "isFollowing": true,
+          "isFollowed": true
         }
-      ],
-      "notifications": []
+      ]
     },
-    {
-      "email": "vikas.yadav@example.com",
-      "userName": "vikasyadav",
-      "password": "password456",
-      "dob": "1992-04-15T00:00:00.000Z",
-      "fullName": "Vikas Yadav",
-      "phoneNumber": "+919876543210",
-      "isActive": true,
-      "role": "user",
-      "followers": [],
-      "following": [],
-      "chatPerson": [],
-      "posts": [],
-      "notifications": []
+    "chatPerson": [
+      {
+        "person": {
+          "username": "abhisheksharma",
+          "name": "Abhishek Sharma",
+          "img": ""
+        },
+        "messages": [
+          {
+            "sender": "ankitraj",
+            "content": "Are you coming to the event?",
+            "read": true
+          },
+          {
+            "sender": "abhisheksharma",
+            "content": "Yes, I’ll be there!",
+            "read": true
+          }
+        ]
+      },
+      {
+        "person": {
+          "username": "snehal-kulkarni",
+          "name": "Snehal Kulkarni",
+          "img": ""
+        },
+        "messages": []
+      }
+    ],
+    "posts": [
+      {
+        "id": 1,
+        "src": "",
+        "isVideo": false
+      },
+      {
+        "id": 2,
+        "src": "",
+        "isVideo": false
+      }
+    ],
+    "notifications": [
+      {
+        "id": 1,
+        "type": "like",
+        "message": "Aman Kumar liked your post.",
+        "timestamp": "2024-08-23T14:00:00Z",
+        "read": false
+      },
+      {
+        "id": 2,
+        "type": "follow",
+        "message": "Rajesh Mishra started following you.",
+        "timestamp": "2024-08-25T09:00:00Z",
+        "read": true
+      }
+    ]
+  },
+  {
+    "email": "sashwat.yadav@example.com",
+    "userName": "sashwat-yadav",
+    "password": "password123",
+    "dob": "1992-12-01T00:00:00.000Z",
+    "fullName": "Sashwat Yadav",
+    "phoneNumber": "+11234567890",
+    "isActive": true,
+    "role": "user",
+    "friendAndRequests": {
+      "requests": [],
+      "followers": [
+        {
+          "id": 1,
+          "person": {
+            "username": "aman.kumar",
+            "name": "Aman Kumar",
+            "img": ""
+          },
+          "isOnline": true,
+          "isFollowing": true,
+          "isFollowed": true
+        }
+      ]
     },
-    {
-      "email": "ritu.mehta@example.com",
-      "userName": "ritumehta",
-      "password": "password789",
-      "dob": "1994-09-30T00:00:00.000Z",
-      "fullName": "Ritu Mehta",
-      "phoneNumber": "+918765432109",
-      "isActive": true,
-      "role": "user",
-      "followers": [],
-      "following": [],
-      "chatPerson": [],
-      "posts": [],
-      "notifications": []
-    }
+    "chatPerson": [
+      {
+        "person": {
+          "username": "ankitraj",
+          "name": "Ankit Raj",
+          "img": ""
+        },
+        "messages": [
+          {
+            "sender": "sashwat-yadav",
+            "content": "Did you see the new updates?",
+            "read": true
+          },
+          {
+            "sender": "ankitraj",
+            "content": "Yes, looks interesting!",
+            "read": true
+          }
+        ]
+      }
+    ],
+    "posts": [
+      {
+        "id": 1,
+        "src": "",
+        "isVideo": false
+      },
+      {
+        "id": 2,
+        "src": "",
+        "isVideo": true
+      }
+    ],
+    "notifications": [
+      {
+        "id": 1,
+        "type": "comment",
+        "message": "Ankit Raj commented on your post.",
+        "timestamp": "2024-08-24T13:45:00Z",
+        "read": false
+      }
+    ]
+  }
 ]
-  

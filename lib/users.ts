@@ -9,18 +9,14 @@ export interface User {
   phoneNumber: string;
   isActive: boolean;
   role: string;
-  followers: Followers[];
-  following: Following[];
+  friendAndRequests : FriendsAndRequests;
   chatPerson: ChatPerson[];
   posts: Posts[];
   notifications: Notification[];
 }
 
 export interface ChatPerson {
-  person: {
-    username: string;
-    name: string;
-  };
+  person: Person;
   messages: Messages[];
 }
 
@@ -54,12 +50,30 @@ export interface LikedBy {
   userName: string;
 }
 
-export interface Followers {
-  userName: string;
+export interface FriendsAndRequests {
+  requests: Requests[];
+  followers: Followers[];
 }
 
-export interface Following {
-  userName: string;
+export interface Followers {
+  id: number; 
+  person: Person;
+  isOnline: boolean;
+  isFollowing: boolean;
+  isFollowed: boolean;
+}
+
+export interface Requests {
+  id: number; 
+  person: Person;
+  isAdded: boolean;
+  isSent: boolean;
+}
+
+export interface Person {
+  username: string;
+  name: string;
+  img: string;
 }
 
 export interface Messages {
@@ -68,16 +82,39 @@ export interface Messages {
   read: boolean;
 }
 
-let users: User[] = [];
-
-users.push(...UsersData.map(user => ({
+let users: User[] = UsersData.map(user => ({
   ...user,
   dob: new Date(user.dob),
   notifications: user.notifications.map(notification => ({
     ...notification,
     timestamp: new Date(notification.timestamp),
   })),
-})));
+  friendAndRequests: {
+    requests: user.friendAndRequests.requests || [],
+    followers: user.friendAndRequests.followers || [],
+  },
+  chatPerson: user.chatPerson.map(chat => ({
+    person: {
+      username: chat.person.username,
+      name: chat.person.name,
+      img: chat.person.img || "",
+    },
+    messages: chat.messages.map(message => ({
+      sender: message.sender,
+      content: message.content,
+      read: message.read,
+    })),
+  })),
+  posts: user.posts.map(post => ({
+    id: post.id,
+    src: post.src || "",
+    isVideo: post.isVideo,
+  })),
+}));
+
+users.push(...users);
+
+
 
 export const addUser = (user: User) => {
   users.push(user);
@@ -155,12 +192,12 @@ export const addMessages = (myUserName: string, userName: string, message: strin
     let chatPerson = user.chatPerson.find((user) => user.person.username === userName);
     let mychat = meuser.chatPerson.find((user) => user.person.username === myUserName);
     if (!chatPerson) {
-      chatPerson = ({ person: {username: userName, name: user.fullName}, messages: [] });
+      chatPerson = ({ person: {username: userName, name: user.fullName, img: ''}, messages: [] });
       user.chatPerson.push(chatPerson);
     }
     chatPerson.messages.push({sender: userName, content: message, read: false});
     if (!mychat) {
-      mychat = ({ person: {username: myUserName, name: meuser.fullName}, messages: [] });
+      mychat = ({ person: {username: myUserName, name: meuser.fullName, img: ''}, messages: [] });
       meuser.chatPerson.push(mychat);
     }
     mychat.messages.push({sender: myUserName, content: message, read: false});

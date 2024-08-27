@@ -1,4 +1,4 @@
-import { StatItem } from '@/lib/hoc/ProfileStatsBar';
+import { StatItem } from '@/lib/props/ProfileStatsBar';
 import { User } from '@/lib/users';
 import axios from 'axios';
 import Image from 'next/image';

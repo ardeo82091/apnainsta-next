@@ -1,7 +1,7 @@
 
 'use client';
 
-import { StatItem } from '@/lib/hoc/ProfileStatsBar';
+import { StatItem } from '@/lib/props/ProfileStatsBar';
 import { User } from '@/lib/users';
 import { RootState } from '@/redux/store';
 import { FC, useState } from 'react';
@@ -25,8 +25,8 @@ const Header = () => {
     <div className="flex flex-col h-screen w-1/4 bg-white shadow-md ">
       <div className="flex bg-gray-900 h-14 mt-5 mx-4 rounded-full justify-around items-center">
         <StatItem label="Posts" value={user?.posts.length || 0} />
-        <StatItem label="Followers" value={user?.followers.length || 0} />
-        <StatItem label="Following" value={user?.following.length || 0} />
+        <StatItem label="Followers" value={user.friendAndRequests?.followers.filter(follower => follower.isFollowed).length || 0} />
+        <StatItem label="Following" value={user.friendAndRequests?.followers.filter(follower => follower.isFollowing).length || 0} />
     </div>
       <div className="flex items-center">
         <img

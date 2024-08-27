@@ -2,7 +2,7 @@
 
 import { FC, useEffect, useState } from 'react';
 import { FaHome, FaUser, FaUserFriends, FaVideo, FaRocketchat, FaSignOutAlt, FaEye, FaCog, FaSearch, FaTimes } from 'react-icons/fa';
-import { SidebarIcon } from '@/lib/hoc/SidebarIconProps';
+import { SidebarIcon } from '@/lib/props/SidebarIconProps';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import LiveAndVibe from '@/public/images/positive-vibes1.png';
@@ -19,23 +19,25 @@ const Sidebar: FC = () => {
     const [isSearchSidebarOpen, setIsSearchSidebarOpen] = useState(false);
     const [isViewedByOpen, setIsViewedByOpen] = useState(false);
     const [error, setError] = useState('');
-    const userName = localStorage.getItem('user')?.replace(/^"|"$/g, '');
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const response = await axios.get(`/api/users/${userName}`);
-            if (response.data) {
-                dispatch(setUser(response.data))
-                setUser(response.data);
-            } else {
-                setError("User not found");
+            if (typeof window !== 'undefined') {
+                const userName= localStorage.getItem('user')?.replace(/^"|"$/g, '');
+                console.log(userName);
+                if (userName) {
+                    const response = await axios.get(`/api/users/${userName}`);
+                    if (response.data) {
+                        dispatch(setUser(response.data))
+                        setUser(response.data);
+                    } else {
+                        setError("User not found");
+                    }
+                }
             }
-        };
-
-        if (userName) {
-            fetchUserData();
         }
-    }, [userName]);
+        fetchUserData();
+    }, []);
 
     const user = useSelector((state: RootState) => state.user);
 
