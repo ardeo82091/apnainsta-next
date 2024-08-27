@@ -1,11 +1,13 @@
 import { StatItem } from '@/lib/props/ProfileStatsBar';
 import { User } from '@/lib/users';
+import { RootState } from '@/redux/store';
 import axios from 'axios';
 import Image from 'next/image';
 import { FC, useEffect, useState } from 'react';
 import { FaCalendarAlt, FaHeart, FaUser, FaUserMinus, FaUserTag, FaVideo } from 'react-icons/fa';
 import { FaEye, FaMessage } from 'react-icons/fa6';
 import { MdClose } from 'react-icons/md';
+import { useSelector } from 'react-redux';
 
 interface ChatSidebarProps {
   userName: string | undefined;
@@ -15,23 +17,24 @@ interface ChatSidebarProps {
 
 const ChatProfileBar: FC<ChatSidebarProps> = ({userName, isOpen, onClose }) => {
 
-  const [user, setUser] = useState<User | null>(null);
+  // const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const response = await axios.get(`/api/users/${userName}`);
-      if (response.data) {
-          setUser(response.data);
-      } else {
-          setError("User not found");
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     const response = await axios.get(`/api/users/${userName}`);
+  //     if (response.data) {
+  //         setUser(response.data);
+  //     } else {
+  //         setError("User not found");
+  //     }
+  //   };
 
-    if (userName) {
-        fetchUserData();
-    }
-  }, [userName]);
+  //   if (userName) {
+  //       fetchUserData();
+  //   }
+  // }, [userName]);
+  const user = useSelector((state: RootState) => state.user);
 
 
   return (
@@ -69,8 +72,8 @@ const ChatProfileBar: FC<ChatSidebarProps> = ({userName, isOpen, onClose }) => {
       </div>
       <div className="flex bg-gray-800 h-14 mt-3 mx-4 justify-around items-center">
         <StatItem label="Posts" value={user?.posts.length || 0} />
-        <StatItem label="Followers" value={user?.followers.length || 0} />
-        <StatItem label="Following" value={user?.following.length || 0} />
+        <StatItem label="Followers" value={user.friendAndRequests?.followers.filter(follower => follower.isFollowed).length || 0} />
+        <StatItem label="Following" value={user.friendAndRequests?.followers.filter(follower => follower.isFollowing).length || 0} />
       </div>
       <div className="border-t-2 border-gray-300 mt-4 ml-4 mr-4 rounded-full"></div>
         <div className="flex justify-between">
