@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import Animation from '../animation';
 
 const RegisterPage = () => {
 
@@ -23,7 +24,16 @@ const RegisterPage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [countryCode, setCountryCode] = useState('');
+  const [showAnimation, setShowAnimation] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowAnimation(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +48,10 @@ const RegisterPage = () => {
       if (response.data.success) {
         setSuccess('Registration successful');
         setError('');
-        router.push('/components/login');
+        setShowAnimation(true);
+        setTimeout(() => {
+          router.push('/components/login');
+        }, 3000);
       } else {
         setError(response.data.message || 'Registration failed');
         setSuccess('');
@@ -305,6 +318,7 @@ const RegisterPage = () => {
             </div>
           )}
       </div>
+      {showAnimation && <Animation />}
     </div>
   );
 };
