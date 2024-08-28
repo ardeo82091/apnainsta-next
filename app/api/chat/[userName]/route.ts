@@ -1,11 +1,11 @@
 import { addMessages } from "@/lib/users";
-import { NextApiRequest } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 
-export async function POST(req: Request){
-    const {userName,message, myUserName} = await req.json();
-    // const {myUserName} =req.query;
+export async function POST(req: NextRequest, { params }: { params: { userName: string } }) {
+    const myUserName = params.userName;
+    const {message, userName} = await req.json();
+    console.log(myUserName,message,userName);
 
     if (!userName || !message || !myUserName) {
         return NextResponse.json({ success: false, message: 'Missing required fields' },{status: 400});

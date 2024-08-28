@@ -45,6 +45,7 @@ const ChatWithPerson: React.FC = () => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
         }
+        
     }, [formattedMessages]);
 
     const openChatTab = (chat: ChatPerson) => {
@@ -79,6 +80,11 @@ const ChatWithPerson: React.FC = () => {
         const tabChange = index>0 ? (multipleActiveTab[index - 1].messages) : [];
         setFormattedMessages(tabChange);
     };
+
+    const sendMessage = async (myUserName: string, message: string) => {
+        const response = await axios.post(`/api/chat/${userName}`,{"userName":myUserName, message})
+        console.log(response);
+    }
 
     return (
         <div className="flex flex-col h-screen">
@@ -178,8 +184,27 @@ const ChatWithPerson: React.FC = () => {
                                 className="flex-1 p-2 border rounded-l-lg focus:outline-none"
                             />
                             <button
-                                onClick={() => setMessageInput("")}
-                                className="bg-blue-500 text-white p-2 rounded-r-lg"
+                                onClick={() => {
+                                    if (messageInput.trim()) {
+                                      const updatedTabs = [...multipleActiveTab];
+                                      sendMessage(updatedTabs[activeTab].person.username,messageInput);
+                                      const message = {
+                                        sender: Array.isArray(userName) ? userName[0] : userName,
+                                        content: messageInput,
+                                        read: false
+                                    };
+                                      
+                                      updatedTabs[activeTab].messages.push(message);
+                                      console.log(updatedTabs[activeTab]);
+                            
+                                      setMultipleActiveTab(updatedTabs);
+                                      setFormattedMessages(updatedTabs[activeTab].messages);
+                            
+                                      setMessageInput("");
+                                    }
+                                    <div ref={messagesEndRef} />
+                                  }}
+                                  className="bg-blue-500 text-white p-2 rounded-r-lg"
                             >
                                 Send
                             </button>

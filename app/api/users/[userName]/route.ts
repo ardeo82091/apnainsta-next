@@ -1,4 +1,3 @@
-// app/api/users/[userName]/route.ts
 
 import { findUser } from '@/lib/users';
 import { NextRequest, NextResponse } from 'next/server';

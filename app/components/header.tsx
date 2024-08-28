@@ -1,10 +1,11 @@
 
 'use client';
 
-import NotificationModal from '@/lib/props/Notifcationmodal';
+import NotificationModal from '@/app/components/Notifcationmodal';
 import { StatItem } from '@/lib/props/ProfileStatsBar';
 import { User } from '@/lib/users';
 import { RootState } from '@/redux/store';
+import { useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
 
 import { FaUser, FaUserTag, FaCalendarAlt, FaBell, FaThumbsUp, FaComment, FaUserPlus, FaHeart } from 'react-icons/fa';
@@ -13,7 +14,7 @@ import { useSelector } from 'react-redux';
 const Header = () => {
   const user = useSelector((state: RootState) => state.user);
   const [clickedNoty, setClickedNoty] = useState(null);
-  const [isNotificationModal, setIsNotificationModal] = useState(false);
+  const router = useRouter();
 
   const seeNotificationTime = (id : any) => {
     if (clickedNoty === id) {
@@ -23,8 +24,8 @@ const Header = () => {
     }
   };
 
-  const openNOtificationModel = () => {
-    setIsNotificationModal(!isNotificationModal);
+  const openNotificationModel = () => {
+    router.push(`/components/notifications`);
   }
 
   return (
@@ -99,16 +100,9 @@ const Header = () => {
             ))}
           </div>
 
-          <button className="text-sm pt-3 font-bold underline hover:text-blue-600" onClick={openNOtificationModel}>View all</button>
+          <button className="text-sm pt-3 font-bold underline hover:text-blue-600" onClick={openNotificationModel}>View all</button>
         </div>
       </div>
-
-      {isNotificationModal && (
-        <NotificationModal
-        isOpen = {isNotificationModal}
-        onClose={openNOtificationModel}
-        />
-      )}
     </>
   );
 };

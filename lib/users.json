@@ -1,5 +1,161 @@
 [
   {
+    "email": "divya.singh@example.com",
+    "userName": "divyasingh",
+    "password": "password123",
+    "dob": "2000-12-06T00:00:00.000Z",
+    "fullName": "Divya Singh",
+    "phoneNumber": "+1234567890",
+    "isActive": true,
+    "role": "user",
+    "friendAndRequests": {
+      "requests": [
+        {
+          "id": 1,
+          "person": {
+            "username": "sashwat-yadav",
+            "name": "Sashwat Yadav",
+            "img": ""
+          },
+          "isAdded": false,
+          "isSent": true
+        },
+        {
+          "id": 2,
+          "person": {
+            "username": "maya-rao",
+            "name": "Maya Rao",
+            "img": ""
+          },
+          "isAdded": false,
+          "isSent": false
+        },
+        {
+          "id": 3,
+          "person": {
+            "username": "jana-jana",
+            "name": "Jana Jana",
+            "img": ""
+          },
+          "isAdded": false,
+          "isSent": false
+        }
+      ],
+      "followers": [
+        {
+          "id": 1,
+          "person": {
+            "username": "divya-singh",
+            "name": "Divya Singh",
+            "img": ""
+          },
+          "isOnline": false,
+          "isFollowing": false,
+          "isFollowed": true
+        },
+        {
+          "id": 2,
+          "person": {
+            "username": "akash-kumar",
+            "name": "Akash Kumar",
+            "img": ""
+          },
+          "isOnline": false,
+          "isFollowing": false,
+          "isFollowed": true
+        },
+        {
+          "id": 3,
+          "person": {
+            "username": "abhishek-kumar",
+            "name": "Abhishek Kumar",
+            "img": ""
+          },
+          "isOnline": true,
+          "isFollowing": true,
+          "isFollowed": false
+        }
+      ]
+    },
+    "chatPerson": [
+      {
+        "person": {
+          "username": "amankumar",
+          "name": "Aman Kumar",
+          "img": ""
+        },
+        "messages": [
+          {
+            "sender": "amankumar",
+            "content": "Hey, how are you?",
+            "read": true
+          },
+          {
+            "sender": "divyasingh",
+            "content": "I’m good, thanks! How about you?",
+            "read": false
+          }
+        ]
+      },
+      {
+        "person": {
+          "username": "rahul-verma",
+          "name": "Rahul Verma",
+          "img": ""
+        },
+        "messages": [
+          {
+            "sender": "rahul-verma",
+            "content": "Are we still on for tomorrow?",
+            "read": true
+          }
+        ]
+      }
+    ],
+    "posts": [
+      {
+        "id": 1,
+        "src": "",
+        "isVideo": false
+      },
+      {
+        "id": 2,
+        "src": "",
+        "isVideo": true
+      }
+    ],
+    "notifications": [
+      {
+        "id": 1,
+        "type": "like",
+        "message": "Sashwat Yadav liked your post.",
+        "timestamp": "2024-08-21T10:30:00Z",
+        "read": false
+      },
+      {
+        "id": 2,
+        "type": "comment",
+        "message": "Akash Kumar commented on your photo.",
+        "timestamp": "2024-08-22T11:15:00Z",
+        "read": false
+      },
+      {
+        "id": 3,
+        "type": "follow",
+        "message": "User3 started following you.",
+        "timestamp": "2024-08-21T11:30:00Z",
+        "read": false
+      },
+      {
+        "id": 4,
+        "type": "like",
+        "message": "User4 liked your comment.",
+        "timestamp": "2024-08-21T12:00:00Z",
+        "read": false
+      }
+    ]
+  },
+  {
     "email": "aman.kumar@example.com",
     "userName": "amankumar",
     "password": "password123",
@@ -158,6 +314,41 @@
         "type": "comment",
         "message": "Akash Kumar commented on your photo.",
         "timestamp": "2024-08-22T11:15:00Z",
+        "read": false
+      },
+      {
+        "id": 3,
+        "type": "follow",
+        "message": "User3 started following you.",
+        "timestamp": "2024-08-21T11:30:00Z",
+        "read": false
+      },
+      {
+        "id": 4,
+        "type": "like",
+        "message": "User4 liked your comment.",
+        "timestamp": "2024-08-21T12:00:00Z",
+        "read": false
+      },
+      {
+        "id": 5,
+        "type": "comment",
+        "message": "User5 commented: 'Great post!'",
+        "timestamp": "2024-08-21T12:30:00Z",
+        "read": true
+      },
+      {
+        "id": 6,
+        "type": "follow",
+        "message": "User6 started following you.",
+        "timestamp": "2024-08-21T13:00:00Z",
+        "read": true
+      },
+      {
+        "id": 7,
+        "type": "like",
+        "message": "User7 liked your photo.",
+        "timestamp": "2024-08-21T13:30:00Z",
         "read": false
       }
     ]

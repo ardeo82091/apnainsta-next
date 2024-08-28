@@ -12,29 +12,29 @@ import { useSelector } from 'react-redux';
 interface ChatSidebarProps {
   userName: string | undefined;
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const ChatProfileBar: FC<ChatSidebarProps> = ({userName, isOpen, onClose }) => {
 
-  // const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState('');
 
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     const response = await axios.get(`/api/users/${userName}`);
-  //     if (response.data) {
-  //         setUser(response.data);
-  //     } else {
-  //         setError("User not found");
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const response = await axios.get(`/api/users/${userName}`);
+      if (response.data) {
+          setUser(response.data);
+      } else {
+          setError("User not found");
+      }
+    };
 
-  //   if (userName) {
-  //       fetchUserData();
-  //   }
-  // }, [userName]);
-  const user = useSelector((state: RootState) => state.user);
+    if (userName) {
+        fetchUserData();
+    }
+  }, [userName]);
+  const loginuser = useSelector((state: RootState) => state.user);
 
 
   return (
@@ -72,21 +72,21 @@ const ChatProfileBar: FC<ChatSidebarProps> = ({userName, isOpen, onClose }) => {
       </div>
       <div className="flex bg-gray-800 h-14 mt-3 mx-4 justify-around items-center">
         <StatItem label="Posts" value={user?.posts.length || 0} />
-        <StatItem label="Followers" value={user.friendAndRequests?.followers.filter(follower => follower.isFollowed).length || 0} />
-        <StatItem label="Following" value={user.friendAndRequests?.followers.filter(follower => follower.isFollowing).length || 0} />
+        <StatItem label="Followers" value={user?.friendAndRequests?.followers.filter(follower => follower.isFollowed).length || 0} />
+        <StatItem label="Following" value={user?.friendAndRequests?.followers.filter(follower => follower.isFollowing).length || 0} />
       </div>
       <div className="border-t-2 border-gray-300 mt-4 ml-4 mr-4 rounded-full"></div>
-        <div className="flex justify-between">
+        { (userName != loginuser.userName) && <div className="flex justify-between">
           <button className="flex text-[14px] font-bold text-gray-900 ml-6 hover:text-blue-600">View Full Profile
           <FaEye className="flex mt-1 ml-2"/>
           </button>
           <button className="text-[14px] font-bold text-gray-900">| </button>
           <button className="flex text-[14px] font-bold text-gray-900 mr-12 hover:text-red-600">
           <FaUserMinus className="flex mt-1 mr-4"/>Unfollow</button>
-        </div>
-      <div className="border-t-2 border-gray-300 mb-4 ml-4 mr-4 rounded-full"></div>
+        </div>}
+      { (userName != loginuser.userName) && <div className="border-t-2 border-gray-300 ml-4 mr-4 rounded-full"></div>}
 
-      <div className="flex flex-col h-auto min-h-[20rem] ml-4 mr-4 bg-gray-100 rounded-b-lg p-4">
+      <div className="flex flex-col h-auto min-h-[20rem] ml-4 mr-4 mt-4 bg-gray-100 rounded-b-lg p-4">
         <div className="grid grid-cols-3 gap-2 overflow-y-auto">
           {user?.posts.map((post) => (
             <div key={post.id} className="relative">

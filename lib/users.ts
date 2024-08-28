@@ -189,21 +189,21 @@ export const addMessages = (myUserName: string, userName: string, message: strin
   const [isUserExist, user] = findUser(userName);
   const [ismyUserExist, meuser] = findUser(myUserName);
   if (isUserExist && ismyUserExist && (user) && meuser) {
-    let chatPerson = user.chatPerson.find((user) => user.person.username === userName);
-    let mychat = meuser.chatPerson.find((user) => user.person.username === myUserName);
+    let chatPerson = user.chatPerson.find((user) => user.person.username === myUserName);
+    let mychat = meuser.chatPerson.find((user) => user.person.username === userName);
     if (!chatPerson) {
-      chatPerson = ({ person: {username: userName, name: user.fullName, img: ''}, messages: [] });
+      chatPerson = ({ person: {username: myUserName, name: meuser.fullName, img: ''}, messages: [] });
       user.chatPerson.push(chatPerson);
     }
-    chatPerson.messages.push({sender: userName, content: message, read: false});
+    chatPerson.messages.push({sender: myUserName, content: message, read: false});
     if (!mychat) {
-      mychat = ({ person: {username: myUserName, name: meuser.fullName, img: ''}, messages: [] });
+      mychat = ({ person: {username: userName, name: user.fullName, img: ''}, messages: [] });
       meuser.chatPerson.push(mychat);
     }
     mychat.messages.push({sender: myUserName, content: message, read: false});
     return [true, "Successfully Done "]
   }
   else {
-    return [false, "Not Done "]
+    return [false, "User not found"]
   }
 }
