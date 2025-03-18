@@ -282,6 +282,7 @@ const StoriesAndWork = () => {
         </div>
     );
 };
+};
 
 
 export default StoriesAndWork;
