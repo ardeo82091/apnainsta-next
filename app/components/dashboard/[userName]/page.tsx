@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
+import StoriesAndWork from '../storiesWork';
 
 const DashboardPage = () => {
     // const { userName } = useParams();
@@ -36,9 +37,8 @@ const DashboardPage = () => {
                 <Sidebar />
                 <div className="flex flex-row-reverse">
                     <Header />
-                    <div className="h-screen p-4">
-                            <h1>`Welcome to the Dashboard {user.fullName}`</h1>
-                            <p>You are logged in!</p>
+                    <div className="flex-1 ml-16 bg-white">
+                            <StoriesAndWork />
                     </div>
                 </div>
             </div>
