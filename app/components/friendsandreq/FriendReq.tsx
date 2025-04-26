@@ -62,7 +62,7 @@ const FriendRequest = () => {
                                     </button>
                                 </div>
                             ) : (
-                                <span className="text-gray-800">Sent</span>
+                                <button className="bg-red-500 p-1 rounded">Cancel</button>
                             )}
                         </div>
                     )))}

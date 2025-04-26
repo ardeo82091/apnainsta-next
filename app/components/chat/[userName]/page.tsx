@@ -115,10 +115,10 @@ const ChatWithPerson: React.FC = () => {
                                         <div className="flex text-gray-800 text-sm font-semibold">
                                             {chat.person.name}
                                         </div>
-                                        <div className={`py-1 ${lastMessage.read ? 'text-gray-500' : 'font-bold'}`}>
+                                        <div className={`py-1 ${lastMessage?.read ? 'text-gray-500' : 'font-bold'}`}>
                                             <div className="flex items-center">
                                                 {/* <span className="font-semibold">{lastMessage.sender}:</span>z */}
-                                                <span className="ml-2 text-xs">{lastMessage.content}</span>
+                                                <span className="ml-2 text-xs">{lastMessage?.content}</span>
                                             </div>
                                             {/* <div className="text-gray-500 text-xs">
                                                         {new Date(lastMessage.timestamp).toLocaleTimeString()}

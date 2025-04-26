@@ -2,8 +2,114 @@
 
 import Image from "next/image";
 import { useRef, MouseEvent } from "react";
+import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
+import { useState } from "react";
+import { BiComment } from "react-icons/bi";
+import CommentModal from "../modal/commentModal"
 
 const StoriesAndWork = () => {
+  const initialPosts = [
+    {
+      id: 1,
+      title: 'Post 1',
+      imageUrl: '/images/profile.jpg',
+      description: 'This is the description for post 1',
+      likedCount:0,
+      liked:false,
+    },
+    {
+      id: 2,
+      title: 'Post 2',
+      imageUrl: '/images/profile.jpg',
+      description: 'This is the description for post 2',
+      likedCount:2,
+      liked:true,
+    },
+    {
+      id: 3,
+      title: 'Post 1',
+      imageUrl: '/images/profile.jpg',
+      description: 'This is the description for post 1',
+      likedCount:5,
+      liked:false,
+    },
+    {
+      id: 4,
+      title: 'Post 2',
+      imageUrl: '/images/profile.jpg',
+      description: 'This is the description for post 2',
+      likedCount:2,
+      liked:false,
+    },
+    {
+      id: 5,
+      title: 'Post 1',
+      imageUrl: '/images/profile.jpg',
+      description: 'This is the description for post 1',
+      likedCount:19,
+      liked:false,
+    },
+    {
+      id: 6,
+      title: 'Post 2',
+      imageUrl: '/images/profile.jpg',
+      description: 'This is the description for post 2',
+      likedCount:2,
+      liked:true,
+    },
+    {
+      id: 7,
+      title: 'Post 1',
+      imageUrl: '/images/profile.jpg',
+      description: 'This is the description for post 1',
+      likedCount:3,
+      liked:false,
+    },
+    {
+      id: 8,
+      title: 'Post 2',
+      imageUrl: '/images/profile.jpg',
+      description: 'This is the description for post 2',
+      likedCount:4,
+      liked:true,
+    },
+    {
+      id: 9,
+      title: 'Post 1',
+      imageUrl: '/images/profile.jpg',
+      description: 'This is the description for post 1',
+      likedCount:0,
+      liked:false,
+    },
+    {
+      id: 10,
+      title: 'Post 2',
+      imageUrl: '/images/profile.jpg',
+      description: 'This is the description for post 2',
+      likedCount:1,
+      liked:false,
+    },
+    {
+      id: 11,
+      title: 'Post 1',
+      imageUrl: '/images/profile.jpg',
+      description: 'This is the description for post 1',
+      likedCount:9,
+      liked:false,
+    },
+    {
+      id: 12,
+      title: 'Post 2',
+      imageUrl: '/images/profile.jpg',
+      description: 'This is the description for post 2',
+      likedCount:1,
+      liked:true,
+    },
+  ];
+
+  const [posts, setPosts] = useState(initialPosts);
+  const [openAddComments, setAddComments] = useState(false);
 
     interface Story {
         id: number;
@@ -50,82 +156,6 @@ const StoriesAndWork = () => {
             like: true
         }
       ];
-      
-
-      // const posts = [
-      //   {
-      //     id: 1,
-      //     title: 'Post 1',
-      //     imageUrl: '/images/profile.jpg',
-      //     description: 'This is the description for post 1',
-      //   },
-      //   {
-      //     id: 2,
-      //     title: 'Post 2',
-      //     imageUrl: '/images/profile.jpg',
-      //     description: 'This is the description for post 2',
-      //   },
-      //   {
-      //     id: 1,
-      //     title: 'Post 1',
-      //     imageUrl: '/images/profile.jpg',
-      //     description: 'This is the description for post 1',
-      //   },
-      //   {
-      //     id: 2,
-      //     title: 'Post 2',
-      //     imageUrl: '/images/profile.jpg',
-      //     description: 'This is the description for post 2',
-      //   },
-      //   {
-      //     id: 1,
-      //     title: 'Post 1',
-      //     imageUrl: '/images/profile.jpg',
-      //     description: 'This is the description for post 1',
-      //   },
-      //   {
-      //     id: 2,
-      //     title: 'Post 2',
-      //     imageUrl: '/images/profile.jpg',
-      //     description: 'This is the description for post 2',
-      //   },
-      //   {
-      //     id: 1,
-      //     title: 'Post 1',
-      //     imageUrl: '/images/profile.jpg',
-      //     description: 'This is the description for post 1',
-      //   },
-      //   {
-      //     id: 2,
-      //     title: 'Post 2',
-      //     imageUrl: '/images/profile.jpg',
-      //     description: 'This is the description for post 2',
-      //   },
-      //   {
-      //     id: 1,
-      //     title: 'Post 1',
-      //     imageUrl: '/images/profile.jpg',
-      //     description: 'This is the description for post 1',
-      //   },
-      //   {
-      //     id: 2,
-      //     title: 'Post 2',
-      //     imageUrl: '/images/profile.jpg',
-      //     description: 'This is the description for post 2',
-      //   },
-      //   {
-      //     id: 1,
-      //     title: 'Post 1',
-      //     imageUrl: '/images/profile.jpg',
-      //     description: 'This is the description for post 1',
-      //   },
-      //   {
-      //     id: 2,
-      //     title: 'Post 2',
-      //     imageUrl: '/images/profile.jpg',
-      //     description: 'This is the description for post 2',
-      //   },
-      // ];
       
       interface ScrollableGridProps {
         posts : [
@@ -203,36 +233,48 @@ const StoriesAndWork = () => {
           },
         ];
       }
+
+      const likeCount = (postId : number, isLiked: boolean) => {
+        const newposts = posts.map((post)=> 
+          post.id == postId 
+          ? isLiked
+          ? {...post, likedCount: post.likedCount+1, liked: isLiked}
+          : {...post, likedCount: post.likedCount-1, liked: isLiked}
+          : post
+        )
+        setPosts(newposts);
+      }
       
-      const ScrollableGrid: React.FC<ScrollableGridProps> = ({ posts }) => {
-        const scrollRef = useRef<HTMLDivElement | null>(null);
+      // const ScrollableGrid: React.FC<ScrollableGridProps> = ({ posts }) => {
+      //   const scrollRef = useRef<HTMLDivElement | null>(null);
       
-        const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
-          if (!scrollRef.current) return;
+      //   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+      //     if (!scrollRef.current) return;
           
-          const slider = scrollRef.current;
-          slider.style.cursor = "grabbing";
-          slider.dataset.mouseDownAt = e.clientY.toString();
-          slider.dataset.scrollTop = slider.scrollTop.toString();
-        };
+      //     const slider = scrollRef.current;
+      //     slider.style.cursor = "grabbing";
+      //     slider.dataset.mouseDownAt = e.clientY.toString();
+      //     slider.dataset.scrollTop = slider.scrollTop.toString();
+      //   };
       
-        const handleMouseUp = () => {
-          if (!scrollRef.current) return;
+      //   const handleMouseUp = () => {
+      //     if (!scrollRef.current) return;
       
-          const slider = scrollRef.current;
-          slider.style.cursor = "grab";
-          slider.dataset.mouseDownAt = "0";
-        };
+      //     const slider = scrollRef.current;
+      //     slider.style.cursor = "grab";
+      //     slider.dataset.mouseDownAt = "0";
+      //   };
       
-        const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-          if (!scrollRef.current) return;
+      //   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+      //     if (!scrollRef.current) return;
       
-          const slider = scrollRef.current;
-          if (slider.dataset.mouseDownAt === "0") return;
+      //     const slider = scrollRef.current;
+      //     if (slider.dataset.mouseDownAt === "0") return;
       
-          const mouseDelta = e.clientY - parseFloat(slider.dataset.mouseDownAt || "0");
-          slider.scrollTop = parseFloat(slider.dataset.scrollTop || "0") - mouseDelta;
-        };
+      //     const mouseDelta = e.clientY - parseFloat(slider.dataset.mouseDownAt || "0");
+      //     slider.scrollTop = parseFloat(slider.dataset.scrollTop || "0") - mouseDelta;
+      //   };
+      // };
 
     return (
         <div className="ml-4 mt-2 mr-4">
@@ -272,16 +314,47 @@ const StoriesAndWork = () => {
                     className="w-full h-48 object-cover"
                   />
                   <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-800">{post.title}</h3>
+                    <h3 className="flex gap-6 text-lg font-semibold text-gray-800">
+                      {/* <> */}
+                        <button
+                          onClick={() => likeCount(post.id, !post.liked)}
+                          className="flex items-center gap-1"
+                        >
+                          {post.liked ? (
+                            <>
+                              <HeartSolid className="h-6 w-6 text-red-500" />
+                              <span>{post.likedCount}</span>
+                            </>
+                          ) : (
+                            <>
+                              <HeartOutline className="h-6 w-6 text-gray-500" />
+                              <span>{post.likedCount}</span>
+                            </>
+                          )}
+                        </button>
+                        <button
+                          onClick={() => setAddComments(true)}
+                          className="flex items-center gap-1"
+                        >
+                          <BiComment className="h-6 w-6 text-gray-500" />
+                          <span>{post.likedCount}</span>
+                        </button>
+                    </h3>
                     <p className="text-gray-600 text-sm mt-2">{post.description}</p>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+            </div>
+            <div>
+            <CommentModal
+            isOpen={openAddComments}
+            onClose={() => setAddComments(false)}
+            content='Hi bjh vjh bj vhj khujh'
+          />
+            </div>
         </div>
     );
-};
 };
 
 

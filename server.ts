@@ -53,15 +53,15 @@ io.on('connection', (socket) => {
 
     io.to(socket.id).emit('receiveMessage', message);
     console.log(users);
-    // if (users[message.recipient]) {
-    //   console.log(users[message.recipient]);
-    //   io.to(users[message.recipient]).emit('receiveMessage', message);
-    // } else {
-    //   if (!messageQueue[message.recipient]) {
-    //     messageQueue[message.recipient] = [];
-    //   }
-    //   messageQueue[message.recipient].push(message);
-    // }
+    if (users[message.recipient]) {
+      console.log(users[message.recipient]);
+      io.to(users[message.recipient]).emit('receiveMessage', message);
+    } else {
+      if (!messageQueue[message.recipient]) {
+        messageQueue[message.recipient] = [];
+      }
+      messageQueue[message.recipient].push(message);
+    }
   });
 
   socket.on('disconnect', () => {
