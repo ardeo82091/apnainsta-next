@@ -174,37 +174,54 @@ const CommentModal : React.FC<ModalProps> = ({ isOpen, onClose, content }) => {
   
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="flex space-between bg-white p-6 rounded-lg shadow-lg w-100 m-5 gap-8">
-          <div className='w-100'>
-          <Image
-                    src={'/images/profile.jpg'}
-                    alt='Hi'
-                    width={800}
-                    height={600}
-                    className="w-full object-cover"
-                  />
+        <div className="flex bg-white p-6 rounded-lg shadow-lg w-full max-w-5xl m-5 gap-8 h-full">
+          
+          <div className="w-1/2">
+            <Image
+              src="/images/profile.jpg"
+              alt="Profile"
+              width={800}
+              height={600}
+              className="w-full h-full object-cover rounded"
+            />
           </div>
-          <div className='flex overflow-y-auto'>
-            <div className='flex'>
-              <div>
-              {comments.map((commen)=> (
-                <ol><span className='text-green-600'>{commen.username}</span> : {commen.comment}
-                {commen.replies.map((reply)=>(
-                  <li className='ml-12'>
-                    <span className='text-blue-500'>{reply.username} </span>: {reply.comment}</li>
+
+          <div className="w-1/2 flex flex-col">
+            <div className="overflow-y-auto max-h-[80vh]">
+
+              <div className="mb-4 space-y-4">
+                {comments.map((commen, index) => (
+                  <div key={index}>
+                    <p>
+                      <span className="text-green-600 font-semibold">{commen.username}</span>: {commen.comment}
+                    </p>
+                    <ul className="ml-6 space-y-1">
+                      {commen.replies.map((reply, replyIndex) => (
+                        <li key={replyIndex} className="ml-6 text-sm">
+                          <span className="text-blue-500">{reply.username}</span>: {reply.comment}
+                        </li>
+                      ))}
+                    </ul>
+
+            
+                  </div>
                 ))}
-                </ol>
-                
-              ))}
               </div>
-              <FaTimes className="cursor-pointer hover:text-red-500 text-lg" onClick={onClose} />
             </div>
-            <div>
-              <input type="text" />
+
+            <div className="mt-auto pt-4">
+              <input
+                type="text"
+                className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Write a comment..."
+              />
             </div>
           </div>
+
+          <FaTimes className="cursor-pointer hover:text-red-500 text-lg" onClick={onClose} />
         </div>
       </div>
+
     );
   }
 

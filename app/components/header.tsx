@@ -28,22 +28,27 @@ const Header = () => {
     router.push(`/components/notifications`);
   }
 
+  const array = [
+    'Abhishek Kumar', 'Divya Patle', 'Aarohi kkkjs'
+  ]
+
   return (
     <>
       <div className="flex flex-col h-screen w-1/4 bg-white shadow-md ">
-        <div className="flex bg-gray-900 h-14 mt-5 mx-4 rounded-full justify-around items-center">
+        {/* <div className="flex bg-gray-900 h-14 mt-5 mx-4 rounded-full justify-around items-center">
           <StatItem label="Posts" value={user?.posts.length || 0} />
           <StatItem label="Followers" value={user.friendAndRequests?.followers.filter(follower => follower.isFollowed).length || 0} />
           <StatItem label="Following" value={user.friendAndRequests?.followers.filter(follower => follower.isFollowing).length || 0} />
-      </div>
-        <div className="flex items-center">
+        </div> */}
+        <div className="flex items-center justify-center">
           <img
             src="/images/profile.jpg"
             alt="User Profile"
             className="h-24 w-18 mt-4 ml-4 rounded-full"
           />
           <div className="flex flex-col mt-4 ml-4">
-            <div className="flex items-center mb-2">
+            <span className="text-gray-900 text-lg font-bold">{user?.fullName}</span>
+            {/* <div className="flex items-center mb-2">
               <FaUser className="text-gray-900 text-md mr-2" />
               <span className="text-gray-900 text-lg font-bold">{user?.fullName}</span>
             </div>
@@ -60,7 +65,7 @@ const Header = () => {
                   day: 'numeric',
                 }) : "N/A" }
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         
@@ -101,6 +106,33 @@ const Header = () => {
           </div>
 
           <button className="text-sm pt-3 font-bold underline hover:text-blue-600" onClick={openNotificationModel}>View all</button>
+        </div>
+
+        <div className="border-t-2 border-gray-300 mx-4 my-4 rounded-full"></div>
+
+        <div className="flex flex-col h-auto min-h-[12rem] ml-4 mr-4 rounded-b-lg p-4">
+          <div className="flex items-center justify-between  mb-2">
+            <span className="text-gray-900 text-md font-bold">Recommended</span>
+          </div>
+          {array.map((usern) => (
+            <div className="flex m-2 justify-between">
+              <div className="flex items-center">
+                  <img
+                      src={''}
+                      alt={`${''}'s avatar`}
+                      className={`w-8 h-8 rounded-full mr-3`}
+                  />
+                  <span>{usern}</span>
+              </div>
+              <div className="flex space-x-2">
+                      <>
+                          <button className="text-white bg-blue-500 hover:bg-green-600 p-2 rounded-full">
+                              <FaUserPlus />
+                          </button>
+                      </>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </>

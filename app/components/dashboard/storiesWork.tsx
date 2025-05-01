@@ -299,52 +299,49 @@ const StoriesAndWork = () => {
                 ))}
             </div>
             <div className="border border-dashed border-black mt-1"/>
-            <div className="h-[calc(100vh-68px)] overflow-y-auto">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4 w-[100%] h-auto">
+            <div className="grid grid-cols-1 justify-items-center gap-8 py-6 h-[calc(100vh-68px)] overflow-y-auto">
               {posts.map((post) => (
                 <div
                   key={post.id}
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                  className="w-[400px] bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
                 >
                   <Image
                     src={post.imageUrl}
                     alt={post.title}
                     width={400}
-                    height={300}
-                    className="w-full h-48 object-cover"
+                    height={400}
+                    className="w-full h-[480px] object-cover rounded-t-lg"
                   />
                   <div className="p-4">
-                    <h3 className="flex gap-6 text-lg font-semibold text-gray-800">
-                      {/* <> */}
-                        <button
-                          onClick={() => likeCount(post.id, !post.liked)}
-                          className="flex items-center gap-1"
-                        >
-                          {post.liked ? (
-                            <>
-                              <HeartSolid className="h-6 w-6 text-red-500" />
-                              <span>{post.likedCount}</span>
-                            </>
-                          ) : (
-                            <>
-                              <HeartOutline className="h-6 w-6 text-gray-500" />
-                              <span>{post.likedCount}</span>
-                            </>
-                          )}
-                        </button>
-                        <button
-                          onClick={() => setAddComments(true)}
-                          className="flex items-center gap-1"
-                        >
-                          <BiComment className="h-6 w-6 text-gray-500" />
-                          <span>{post.likedCount}</span>
-                        </button>
+                    <h3 className="flex gap-6 text-lg font-semibold text-gray-800 mb-2">
+                      <button
+                        onClick={() => likeCount(post.id, !post.liked)}
+                        className="flex items-center gap-2"
+                      >
+                        {post.liked ? (
+                          <>
+                            <HeartSolid className="h-6 w-6 text-red-500" />
+                            <span>{post.likedCount}</span>
+                          </>
+                        ) : (
+                          <>
+                            <HeartOutline className="h-6 w-6 text-gray-500" />
+                            <span>{post.likedCount}</span>
+                          </>
+                        )}
+                      </button>
+                      <button
+                        onClick={() => setAddComments(true)}
+                        className="flex items-center gap-2"
+                      >
+                        <BiComment className="h-6 w-6 text-gray-500" />
+                        <span>{post.likedCount || 0}</span>
+                      </button>
                     </h3>
-                    <p className="text-gray-600 text-sm mt-2">{post.description}</p>
+                    <p className="text-gray-600 text-sm">{post.description}</p>
                   </div>
                 </div>
               ))}
-            </div>
             </div>
             <div>
             <CommentModal
