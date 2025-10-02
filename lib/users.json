@@ -29,16 +29,6 @@
           },
           "isAdded": false,
           "isSent": false
-        },
-        {
-          "id": 3,
-          "person": {
-            "username": "jana-jana",
-            "name": "Jana Jana",
-            "img": ""
-          },
-          "isAdded": false,
-          "isSent": false
         }
       ],
       "followers": [
@@ -87,11 +77,13 @@
         "messages": [
           {
             "sender": "amankumar",
+            "recipient": "divyasingh",
             "content": "Hey, how are you?",
             "read": true
           },
           {
             "sender": "divyasingh",
+            "recipient": "amankumar",
             "content": "I’m good, thanks! How about you?",
             "read": false
           }
@@ -106,6 +98,7 @@
         "messages": [
           {
             "sender": "rahul-verma",
+            "recipient": "divyasingh",
             "content": "Are we still on for tomorrow?",
             "read": true
           }
@@ -264,11 +257,13 @@
         "messages": [
           {
             "sender": "amankumar",
+            "recipient": "divyasingh",
             "content": "Hey, how are you?",
             "read": true
           },
           {
             "sender": "divyasingh",
+            "recipient": "amankumar",
             "content": "I’m good, thanks! How about you?",
             "read": false
           }
@@ -283,6 +278,7 @@
         "messages": [
           {
             "sender": "rahul-verma",
+            "recipient": "amankumar",
             "content": "Are we still on for tomorrow?",
             "read": true
           }
@@ -410,11 +406,13 @@
         "messages": [
           {
             "sender": "ankitraj",
+            "recipient": "abhisheksharma",
             "content": "Are you coming to the event?",
             "read": true
           },
           {
             "sender": "abhisheksharma",
+            "recipient": "ankitraj",
             "content": "Yes, I’ll be there!",
             "read": true
           }
@@ -493,11 +491,13 @@
         "messages": [
           {
             "sender": "sashwat-yadav",
+            "recipient": "ankitraj",
             "content": "Did you see the new updates?",
             "read": true
           },
           {
             "sender": "ankitraj",
+            "recipient": "sashwat-yadav",
             "content": "Yes, looks interesting!",
             "read": true
           }

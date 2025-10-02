@@ -78,6 +78,7 @@ export interface Person {
 
 export interface Messages {
   sender: string;
+  recipient: string;
   content: string;
   read: boolean;
 }
@@ -101,6 +102,7 @@ let users: User[] = UsersData.map(user => ({
     },
     messages: chat.messages.map(message => ({
       sender: message.sender,
+      recipient: message.recipient,
       content: message.content,
       read: message.read,
     })),
@@ -192,15 +194,43 @@ export const addMessages = (myUserName: string, userName: string, message: strin
     let chatPerson = user.chatPerson.find((user) => user.person.username === myUserName);
     let mychat = meuser.chatPerson.find((user) => user.person.username === userName);
     if (!chatPerson) {
-      chatPerson = ({ person: {username: myUserName, name: meuser.fullName, img: ''}, messages: [] });
+      chatPerson = {
+        person: {
+          username: myUserName,
+          name: meuser.fullName,
+          img: ''
+        },
+        messages: []
+      };
       user.chatPerson.push(chatPerson);
     }
-    chatPerson.messages.push({sender: myUserName, content: message, read: false});
+
+    chatPerson.messages.push({
+      sender: myUserName,
+      recipient: userName,
+      content: message,
+      read: false
+    });
+
     if (!mychat) {
-      mychat = ({ person: {username: userName, name: user.fullName, img: ''}, messages: [] });
+      mychat = {
+        person: {
+          username: userName,
+          name: user.fullName,
+          img: ''
+        },
+        messages: []
+      };
       meuser.chatPerson.push(mychat);
     }
-    mychat.messages.push({sender: myUserName, content: message, read: false});
+
+    mychat.messages.push({
+      sender: myUserName,
+      recipient: userName,
+      content: message,
+      read: false
+    });
+
     return [true, "Successfully Done "]
   }
   else {
