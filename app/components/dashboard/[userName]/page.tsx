@@ -37,7 +37,7 @@ const DashboardPage = () => {
                 <Sidebar />
                 <div className="flex flex-row-reverse">
                     <Header />
-                    <div className="flex-1 ml-16 bg-white">
+                    <div className="flex-1 ml-40 bg-white">
                             <StoriesAndWork />
                     </div>
                 </div>

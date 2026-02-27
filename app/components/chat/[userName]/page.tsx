@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import { ChatPerson, Messages, User } from "@/lib/users";
 import { io, Socket } from "socket.io-client";
+import { getSocket } from "../socket";
 
 let socket: Socket;
 
@@ -62,7 +63,7 @@ const ChatWithPerson: React.FC = () => {
   useEffect(() => {
     if (!myUserName) return;
 
-    socket = io("http://localhost:4000");
+    socket = getSocket();
 
     socket.emit("registerUser", myUserName);
 
@@ -88,7 +89,6 @@ const ChatWithPerson: React.FC = () => {
     // Clean up on unmount
     return () => {
       socket.off("receiveMessage", handleReceiveMessage);
-      socket.disconnect();
     };
   }, [myUserName]);
 
@@ -226,7 +226,7 @@ const ChatWithPerson: React.FC = () => {
         )}
 
         {/* Main chat area */}
-        <div className="flex-1 flex flex-col ml-16">
+        <div className="flex-1 flex flex-col ml-40">
           <div className="flex flex-col h-screen bg-gray-100 shadow-md">
             {/* Tabs */}
             <div className="flex border-b border-gray-300 text-sm">

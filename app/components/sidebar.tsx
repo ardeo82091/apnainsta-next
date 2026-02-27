@@ -64,22 +64,22 @@ const Sidebar: FC = () => {
 
     return (
         <>
-            <div className="h-screen bg-gray-900 w-16 flex flex-col items-center justify-between fixed">
+            <div className="h-screen bg-gray-900 w-40 flex flex-col items-center justify-between fixed">
                 <div className="mt-1">
                     <Image src={LiveAndVibe} alt="My Icon" className="w-16 h-16 mb-4" />
                 </div>
-                <div className="space-y-6 mb-12">
-                    <SidebarIcon icon={FaHome} onClick={() => handlePages('dashboard')} />
-                    <SidebarIcon icon={FaUser} onClick={() => handlePages('myprofile')} />
-                    <SidebarIcon icon={FaUserFriends} onClick={() => handlePages('friendsandreq')} />
-                    <SidebarIcon icon={FaSearch} onClick={() => rightSidebar('search')} />
-                    <SidebarIcon icon={FaRocketchat} onClick={() => handlePages('chat')} />
-                    <SidebarIcon icon={FaVideo} onClick={() => handlePages('viewfeed')} />
-                    <SidebarIcon icon={FaEye} onClick={() => rightSidebar('viewedBy')} />
-                    <SidebarIcon icon={FaCog} onClick={() => handlePages('settings')} />
-                </div>
+                    <div className="space-y-6 mb-12">
+                        <SidebarIcon icon={FaHome} label="Home" onClick={() => handlePages('dashboard')} />
+                        <SidebarIcon icon={FaUser} label="Profile" onClick={() => handlePages('myprofile')} />
+                        <SidebarIcon icon={FaUserFriends} label="Friends" onClick={() => handlePages('friendsandreq')} />
+                        <SidebarIcon icon={FaSearch} label="Search" onClick={() => rightSidebar('search')} />
+                        <SidebarIcon icon={FaRocketchat} label="Chat" onClick={() => handlePages('chat')} />
+                        <SidebarIcon icon={FaVideo} label="View Feed" onClick={() => handlePages('viewfeed')} />
+                        <SidebarIcon icon={FaEye} label="Viewed By" onClick={() => rightSidebar('viewedBy')} />
+                        <SidebarIcon icon={FaCog} label="Settings" onClick={() => handlePages('settings')} />
+                    </div>
                 <div className="mb-4">
-                    <SidebarIcon icon={FaSignOutAlt} onClick={() => handlePages('login')} />
+                    <SidebarIcon icon={FaSignOutAlt} label="Logout" onClick={() => handlePages('login')} />
                 </div>
             </div>
 

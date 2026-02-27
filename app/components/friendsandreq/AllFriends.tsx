@@ -16,7 +16,7 @@ export default function FriendsTabs() {
       );
 
     return (
-        <div className="h-screen flex flex-1 flex-col ml-16 bg-white">
+        <div className="h-screen flex flex-1 flex-col ml-40 bg-white">
             <div className="flex font-bold text-gray-800 text-xl ml-4 mt-2">
                 <span>Friends</span>
             </div>
