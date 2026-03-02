@@ -7,6 +7,7 @@ import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { BiComment } from "react-icons/bi";
 import CommentModal from "../modal/commentModal"
+import AddStoriesModal from "../modal/AddStorieModal";
 
 const StoriesAndWork = () => {
   const initialPosts = [
@@ -122,6 +123,7 @@ const StoriesAndWork = () => {
 
   const [posts, setPosts] = useState(initialPosts);
   const [openAddComments, setAddComments] = useState(false);
+  const [openAddStories, setAddStories] = useState(false);
 
     interface Story {
         id: number;
@@ -292,9 +294,11 @@ const StoriesAndWork = () => {
         <div className="ml-4 mt-2 mr-4">
             <div className="flex space-x-4">
                 <div className="flex w-16 h-16 border-4 border-gray-600 rounded-full mt-2">
-                    <div className="bg-white border-2 border-dashed border-blue-500 text-blue-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-bold">
+                    <button className="bg-white border-2 border-dashed border-blue-500 text-blue-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-bold"
+                    onClick={() => setAddStories(true)}
+                    >
                         +
-                    </div>
+                    </button>
                 </div>
                 {stories.map((story) => (
                     <div key={story.id} className="flex flex-col items-center">
@@ -362,6 +366,13 @@ const StoriesAndWork = () => {
             content='Hi bjh vjh bj vhj khujh'
           />
             </div>
+                    <div>
+          <AddStoriesModal
+            isOpen={openAddStories}
+            onClose={() => setAddStories(false)}
+            content='Add a new story'
+          />
+        </div>
         </div>
     );
 };
