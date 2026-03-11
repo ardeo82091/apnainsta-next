@@ -10,8 +10,10 @@ const initialState: User = {
     phoneNumber: '',
     isActive: true,
     role: '',
-    followers: [],
-    following: [],
+    friendAndRequests: {
+        requests: [],
+        followers: []
+    },
     chatPerson: [],
     posts: [],
     notifications: [],
@@ -23,8 +25,11 @@ const userSlice = createSlice({
     reducers: {
         setUser: (state, action: PayloadAction<User>) => action.payload,
         clearUser: () => initialState,
+        updatePassword: (state, action: PayloadAction<string>) => {
+            state.password = action.payload
+        },
     },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, updatePassword } = userSlice.actions;
 export default userSlice.reducer;

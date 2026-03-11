@@ -1,4 +1,8 @@
-import UsersData from './users.json';
+import UsersData from "./users.json";
+
+/* =========================
+   Interfaces
+========================= */
 
 export interface User {
   email: string;
@@ -9,7 +13,8 @@ export interface User {
   phoneNumber: string;
   isActive: boolean;
   role: string;
-  friendAndRequests : FriendsAndRequests;
+  bio?: string;
+  friendAndRequests: FriendsAndRequests;
   chatPerson: ChatPerson[];
   posts: Posts[];
   notifications: Notification[];
@@ -38,7 +43,8 @@ export interface Notification {
 
 export interface Comments {
   userName: string;
-  comment: Replies[];
+  comment: string;
+  replies?: Replies[];
 }
 
 export interface Replies {
@@ -53,18 +59,25 @@ export interface LikedBy {
 export interface FriendsAndRequests {
   requests: Requests[];
   followers: Followers[];
+  followings: Followings[];
 }
 
 export interface Followers {
-  id: number; 
+  id: number;
   person: Person;
   isOnline: boolean;
   isFollowing: boolean;
   isFollowed: boolean;
 }
 
+export interface Followings {
+  id: number;
+  person: Person;
+  isOnline: boolean;
+}
+
 export interface Requests {
-  id: number; 
+  id: number;
   person: Person;
   isAdded: boolean;
   isSent: boolean;
@@ -81,159 +94,214 @@ export interface Messages {
   recipient: string;
   content: string;
   read: boolean;
+  timestamp?: Date;
 }
 
-let users: User[] = UsersData.map(user => ({
+/* =========================
+   Convert JSON → Typed Data
+========================= */
+
+let users: User[] = UsersData.map((user) => ({
   ...user,
+
+  bio: user.bio || "",
+
   dob: new Date(user.dob),
-  notifications: user.notifications.map(notification => ({
+
+  notifications: user.notifications.map((notification) => ({
     ...notification,
     timestamp: new Date(notification.timestamp),
   })),
+
   friendAndRequests: {
-    requests: user.friendAndRequests.requests || [],
-    followers: user.friendAndRequests.followers || [],
+    requests: user.friendAndRequests?.requests || [],
+    followers: user.friendAndRequests?.followers || [],
+    followings: user.friendAndRequests?.followings || [],
   },
-  chatPerson: user.chatPerson.map(chat => ({
+
+  chatPerson: user.chatPerson.map((chat) => ({
     person: {
       username: chat.person.username,
       name: chat.person.name,
       img: chat.person.img || "",
     },
-    messages: chat.messages.map(message => ({
+
+    messages: chat.messages.map((message) => ({
       sender: message.sender,
       recipient: message.recipient,
       content: message.content,
       read: message.read,
+      timestamp: message.timestamp ? new Date(message.timestamp) : new Date(),
     })),
   })),
-  posts: user.posts.map(post => ({
+
+  posts: user.posts.map((post) => ({
     id: post.id,
-    src: post.src || "",
-    isVideo: post.isVideo,
-  })),
+    src: post.src ?? "",
+    isVideo: post.isVideo ?? false,
+    likes: Array.isArray(post.likes) ? post.likes : [],
+    comments: Array.isArray(post.comments) ? post.comments : [],
+  }))
 }));
 
-users.push(...users);
-
-
+/* =========================
+   User CRUD
+========================= */
 
 export const addUser = (user: User) => {
   users.push(user);
   return [true, user];
 };
 
-export const findUser = (emailorUserName: string): [boolean, User | null] => {
-  const user = users.find(user => (user.email === emailorUserName || user.userName === emailorUserName));
-  return user?.isActive ? [true, user] : [false, null];
+export const findUser = (
+  emailorUserName: string
+): [boolean, User | null] => {
+  const user = users.find(
+    (user) =>
+      user.email === emailorUserName ||
+      user.userName === emailorUserName
+  );
+
+  if (!user || !user.isActive) return [false, null];
+
+  return [true, user];
 };
 
-export const passwordCorrect = (emailorUserName: string, password: string) => {
-  const user = users.find(user => (user.email === emailorUserName || user.userName === emailorUserName));
-  return (user?.password === password && user?.isActive) ? [true, user] : [false, null];
+export const passwordCorrect = (
+  emailorUserName: string,
+  password: string
+): [boolean, User | null] => {
+  const user = users.find(
+    (user) =>
+      user.email === emailorUserName ||
+      user.userName === emailorUserName
+  );
+
+  if (!user || !user.isActive || user.password !== password)
+    return [false, null];
+
+  return [true, user];
 };
 
-export const getUsers = () => {
-  if (users.length > 0) {
-    return [true, users];
-  }
-  return [false, users];
+export const getUsers = (): [boolean, User[]] => {
+  return users.length ? [true, users] : [false, []];
 };
+
+/* =========================
+   User Actions
+========================= */
 
 export const deleteUser = (userName: string) => {
-  const indexOfUser = users.findIndex(user => (user.userName === userName));
+  const indexOfUser = users.findIndex(
+    (user) => user.userName === userName
+  );
+
   if (indexOfUser !== -1) {
     users.splice(indexOfUser, 1);
     return [true, "User Deleted Successfully"];
   }
+
   return [false, "User not found"];
 };
 
 export const deactivateUser = (userName: string) => {
-  const user = users.find(user => user.userName === userName);
-  if (user && user.isActive === true) {
+  const user = users.find((user) => user.userName === userName);
+
+  if (user && user.isActive) {
     user.isActive = false;
     return [true, "User Deactivated Successfully"];
   }
+
   return [false, "User not Found"];
 };
 
 export const activateUser = (userName: string) => {
-  const user = users.find(user => user.userName === userName);
-  if (user && user.isActive === false) {
+  const user = users.find((user) => user.userName === userName);
+
+  if (user && !user.isActive) {
     user.isActive = true;
     return [true, "User Activated Successfully"];
   }
+
   return [false, "User not Found"];
 };
 
 export const updateUser = (userName: string, action: string) => {
   switch (action) {
-    case 'activateUser':
-      var [isActionPerformed, message] = activateUser(userName);
-      return [isActionPerformed, message];
+    case "activateUser":
+      return activateUser(userName);
 
-    case 'deactivateUser':
-      var [isActionPerformed, message] = deactivateUser(userName);
-      return [isActionPerformed, message];
+    case "deactivateUser":
+      return deactivateUser(userName);
 
-    case 'deleteUser':
-      var [isActionPerformed, message] = deleteUser(userName);
-      return [isActionPerformed, message];
+    case "deleteUser":
+      return deleteUser(userName);
 
     default:
       return [false, "Invalid Action"];
   }
+};
 
-}
+/* =========================
+   Chat System
+========================= */
 
-export const addMessages = (myUserName: string, userName: string, message: string) => {
+export const addMessages = (
+  myUserName: string,
+  userName: string,
+  message: string
+) => {
   const [isUserExist, user] = findUser(userName);
-  const [ismyUserExist, meuser] = findUser(myUserName);
-  if (isUserExist && ismyUserExist && (user) && meuser) {
-    let chatPerson = user.chatPerson.find((user) => user.person.username === myUserName);
-    let mychat = meuser.chatPerson.find((user) => user.person.username === userName);
-    if (!chatPerson) {
-      chatPerson = {
-        person: {
-          username: myUserName,
-          name: meuser.fullName,
-          img: ''
-        },
-        messages: []
-      };
-      user.chatPerson.push(chatPerson);
-    }
+  const [isMyUserExist, meuser] = findUser(myUserName);
 
-    chatPerson.messages.push({
-      sender: myUserName,
-      recipient: userName,
-      content: message,
-      read: false
-    });
+  if (!isUserExist || !isMyUserExist || !user || !meuser)
+    return [false, "User not found"];
 
-    if (!mychat) {
-      mychat = {
-        person: {
-          username: userName,
-          name: user.fullName,
-          img: ''
-        },
-        messages: []
-      };
-      meuser.chatPerson.push(mychat);
-    }
+  let chatPerson = user.chatPerson.find(
+    (p) => p.person.username === myUserName
+  );
 
-    mychat.messages.push({
-      sender: myUserName,
-      recipient: userName,
-      content: message,
-      read: false
-    });
+  let mychat = meuser.chatPerson.find(
+    (p) => p.person.username === userName
+  );
 
-    return [true, "Successfully Done "]
+  if (!chatPerson) {
+    chatPerson = {
+      person: {
+        username: myUserName,
+        name: meuser.fullName,
+        img: "",
+      },
+      messages: [],
+    };
+
+    user.chatPerson.push(chatPerson);
   }
-  else {
-    return [false, "User not found"]
+
+  const newMessage: Messages = {
+    sender: myUserName,
+    recipient: userName,
+    content: message,
+    read: false,
+    timestamp: new Date(),
+  };
+
+  chatPerson.messages.push(newMessage);
+
+  if (!mychat) {
+    mychat = {
+      person: {
+        username: userName,
+        name: user.fullName,
+        img: "",
+      },
+      messages: [],
+    };
+
+    meuser.chatPerson.push(mychat);
   }
-}
+
+  mychat.messages.push(newMessage);
+
+  return [true, "Message Sent"];
+};
