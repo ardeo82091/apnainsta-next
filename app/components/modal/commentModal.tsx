@@ -11,157 +11,157 @@ type ModalProps = {
 
 const comments = [
   {
-    "username": "travel_jane",
+    "userName": "travel_jane",
     "comment": "This view is everything 😍 Where is this?",
     "replies": [
       {
-        "username": "globetrotter_lee",
+        "userName": "globetrotter_lee",
         "comment": "@travel_jane it's in Bali! 🏝️"
       }
     ]
   },
   {
-    "username": "artbylucas",
+    "userName": "artbylucas",
     "comment": "Colors on point 🎨🔥",
     "replies": [
       {
-        "username": "creator.mia",
+        "userName": "creator.mia",
         "comment": "@artbylucas agree!! This is gallery-worthy"
       },
       {
-        "username": "visual_mojo",
+        "userName": "visual_mojo",
         "comment": "Facts 💯"
       }
     ]
   },
   {
-    "username": "fit.frenzy",
+    "userName": "fit.frenzy",
     "comment": "How long did this take? Looks intense 💪",
     "replies": []
   },
   {
-    "username": "sunny.daze",
+    "userName": "sunny.daze",
     "comment": "Okay this made my whole day ☀️",
     "replies": [
       {
-        "username": "post.creator",
+        "userName": "post.creator",
         "comment": "@sunny.daze glad to hear that!! 😊"
       }
     ]
   },
   {
-    "username": "travel_jane",
+    "userName": "travel_jane",
     "comment": "This view is everything 😍 Where is this?",
     "replies": [
       {
-        "username": "globetrotter_lee",
+        "userName": "globetrotter_lee",
         "comment": "@travel_jane it's in Bali! 🏝️"
       }
     ]
   },
   {
-    "username": "artbylucas",
+    "userName": "artbylucas",
     "comment": "Colors on point 🎨🔥",
     "replies": [
       {
-        "username": "creator.mia",
+        "userName": "creator.mia",
         "comment": "@artbylucas agree!! This is gallery-worthy"
       },
       {
-        "username": "visual_mojo",
+        "userName": "visual_mojo",
         "comment": "Facts 💯"
       }
     ]
   },
   {
-    "username": "fit.frenzy",
+    "userName": "fit.frenzy",
     "comment": "How long did this take? Looks intense 💪",
     "replies": []
   },
   {
-    "username": "sunny.daze",
+    "userName": "sunny.daze",
     "comment": "Okay this made my whole day ☀️",
     "replies": [
       {
-        "username": "post.creator",
+        "userName": "post.creator",
         "comment": "@sunny.daze glad to hear that!! 😊"
       }
     ]
   },
   {
-    "username": "travel_jane",
+    "userName": "travel_jane",
     "comment": "This view is everything 😍 Where is this?",
     "replies": [
       {
-        "username": "globetrotter_lee",
+        "userName": "globetrotter_lee",
         "comment": "@travel_jane it's in Bali! 🏝️"
       }
     ]
   },
   {
-    "username": "artbylucas",
+    "userName": "artbylucas",
     "comment": "Colors on point 🎨🔥",
     "replies": [
       {
-        "username": "creator.mia",
+        "userName": "creator.mia",
         "comment": "@artbylucas agree!! This is gallery-worthy"
       },
       {
-        "username": "visual_mojo",
+        "userName": "visual_mojo",
         "comment": "Facts 💯"
       }
     ]
   },
   {
-    "username": "fit.frenzy",
+    "userName": "fit.frenzy",
     "comment": "How long did this take? Looks intense 💪",
     "replies": []
   },
   {
-    "username": "sunny.daze",
+    "userName": "sunny.daze",
     "comment": "Okay this made my whole day ☀️",
     "replies": [
       {
-        "username": "post.creator",
+        "userName": "post.creator",
         "comment": "@sunny.daze glad to hear that!! 😊"
       }
     ]
   },
   {
-    "username": "travel_jane",
+    "userName": "travel_jane",
     "comment": "This view is everything 😍 Where is this?",
     "replies": [
       {
-        "username": "globetrotter_lee",
+        "userName": "globetrotter_lee",
         "comment": "@travel_jane it's in Bali! 🏝️"
       }
     ]
   },
   {
-    "username": "artbylucas",
+    "userName": "artbylucas",
     "comment": "Colors on point 🎨🔥",
     "replies": [
       {
-        "username": "creator.mia",
+        "userName": "creator.mia",
         "comment": "@artbylucas agree!! This is gallery-worthy"
       },
       {
-        "username": "visual_mojo",
+        "userName": "visual_mojo",
         "comment": "Facts 💯"
       }
     ]
   },
   {
-    "username": "fit.frenzy",
+    "userName": "fit.frenzy",
     "comment": "How long did this take? Looks intense 💪",
     "replies": []
   },
   {
-    "username": "sunny.daze",
+    "userName": "sunny.daze",
     "comment": "Okay this made my whole day ☀️",
     "replies": [
       {
-        "username": "post.creator",
+        "userName": "post.creator",
         "comment": "@sunny.daze glad to hear that!! 😊"
       }
     ]
@@ -193,12 +193,12 @@ const CommentModal : React.FC<ModalProps> = ({ isOpen, onClose, content }) => {
                 {comments.map((commen, index) => (
                   <div key={index}>
                     <p>
-                      <span className="text-green-600 font-semibold">{commen.username}</span>: {commen.comment}
+                      <span className="text-green-600 font-semibold">{commen.userName}</span>: {commen.comment}
                     </p>
                     <ul className="ml-6 space-y-1">
                       {commen.replies.map((reply, replyIndex) => (
                         <li key={replyIndex} className="ml-6 text-sm">
-                          <span className="text-blue-500">{reply.username}</span>: {reply.comment}
+                          <span className="text-blue-500">{reply.userName}</span>: {reply.comment}
                         </li>
                       ))}
                     </ul>

@@ -10,14 +10,17 @@ export interface User {
   password: string;
   dob: Date;
   fullName: string;
+  profilePic: string;
   phoneNumber: string;
   isActive: boolean;
   role: string;
   bio?: string;
+
   friendAndRequests: FriendsAndRequests;
   chatPerson: ChatPerson[];
   posts: Posts[];
   notifications: Notification[];
+  viewedBy: Viewer[];
 }
 
 export interface ChatPerson {
@@ -28,15 +31,19 @@ export interface ChatPerson {
 export interface Posts {
   id: number;
   src: string;
-  isVideo?: boolean;
-  likes?: LikedBy[];
-  comments?: Comments[];
+  isVideo: boolean;
+  likes: LikedBy[];
+  comments: Comments[];
+  createdAt: Date;
 }
+
 
 export interface Notification {
   id: number;
-  type: string;
-  message: string;
+  type: "like" | "comment" | "follow";
+  user: Person;
+  postId?: number;
+  comment?: string;
   timestamp: Date;
   read: boolean;
 }
@@ -84,7 +91,7 @@ export interface Requests {
 }
 
 export interface Person {
-  username: string;
+  userName: string;
   name: string;
   img: string;
 }
@@ -95,6 +102,13 @@ export interface Messages {
   content: string;
   read: boolean;
   timestamp?: Date;
+}
+
+export interface Viewer {
+  username: string;
+  name: string;
+  img: string;
+  viewedAt: Date;
 }
 
 /* =========================
@@ -108,8 +122,9 @@ let users: User[] = UsersData.map((user) => ({
 
   dob: new Date(user.dob),
 
-  notifications: user.notifications.map((notification) => ({
+  notifications: (user.notifications || []).map((notification) => ({
     ...notification,
+    type: notification.type as "like" | "comment" | "follow",
     timestamp: new Date(notification.timestamp),
   })),
 
@@ -119,29 +134,42 @@ let users: User[] = UsersData.map((user) => ({
     followings: user.friendAndRequests?.followings || [],
   },
 
-  chatPerson: user.chatPerson.map((chat) => ({
+  chatPerson: (user.chatPerson || []).map((chat) => ({
     person: {
-      username: chat.person.username,
+      userName: chat.person.userName,
       name: chat.person.name,
       img: chat.person.img || "",
     },
 
-    messages: chat.messages.map((message) => ({
+    messages: (chat.messages || []).map((message) => ({
       sender: message.sender,
       recipient: message.recipient,
       content: message.content,
-      read: message.read,
-      timestamp: message.timestamp ? new Date(message.timestamp) : new Date(),
+      read: message.read ?? false,
+      timestamp: message.timestamp
+        ? new Date(message.timestamp)
+        : new Date(),
     })),
   })),
-
-  posts: user.posts.map((post) => ({
+  posts: (user.posts || []).map((post) => ({
     id: post.id,
     src: post.src ?? "",
     isVideo: post.isVideo ?? false,
+
     likes: Array.isArray(post.likes) ? post.likes : [],
     comments: Array.isArray(post.comments) ? post.comments : [],
-  }))
+
+    createdAt: post.createdAt ? new Date(post.createdAt) : new Date(),
+  })),
+
+  viewedBy : (user.viewedBy || []).map((viewer) => ({
+  username: viewer.userName ?? "",
+  name: viewer.name ?? "",
+  img: viewer.img ?? "",
+  viewedAt: viewer.viewedAt ? new Date(viewer.viewedAt) : new Date(),
+}))
+
+
 }));
 
 /* =========================
@@ -258,17 +286,17 @@ export const addMessages = (
     return [false, "User not found"];
 
   let chatPerson = user.chatPerson.find(
-    (p) => p.person.username === myUserName
+    (p) => p.person.userName === myUserName
   );
 
   let mychat = meuser.chatPerson.find(
-    (p) => p.person.username === userName
+    (p) => p.person.userName === userName
   );
 
   if (!chatPerson) {
     chatPerson = {
       person: {
-        username: myUserName,
+        userName: myUserName,
         name: meuser.fullName,
         img: "",
       },
@@ -291,7 +319,7 @@ export const addMessages = (
   if (!mychat) {
     mychat = {
       person: {
-        username: userName,
+        userName: userName,
         name: user.fullName,
         img: "",
       },

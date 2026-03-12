@@ -73,7 +73,7 @@ const ChatWithPerson: React.FC = () => {
       setMultipleActiveTab((prevTabs) => {
         const updatedTabs = [...prevTabs];
         const index = updatedTabs.findIndex(
-          (tab) => tab.person.username === message.sender
+          (tab) => tab.person.userName === message.sender
         );
         if (index !== -1) {
           updatedTabs[index].messages.push(message);
@@ -95,7 +95,7 @@ const ChatWithPerson: React.FC = () => {
 
   const openChatTab = (chat: ChatPerson) => {
     const isPersonTabOpen = multipleActiveTab.findIndex(
-      (tabOpen) => tabOpen.person.username === chat.person.username
+      (tabOpen) => tabOpen.person.userName === chat.person.userName
     );
     if (isPersonTabOpen === -1) {
       if (multipleActiveTab.length < 5) {
@@ -145,7 +145,7 @@ const ChatWithPerson: React.FC = () => {
     // setMultipleActiveTab((prevTabs) => {
     //   const updatedTabs = [...prevTabs];
     //   const index = updatedTabs.findIndex(
-    //     (tab) => tab.person.username === recipient
+    //     (tab) => tab.person.userName === recipient
     //   );
     //   if (index !== -1) {
     //     updatedTabs[index].messages.push(message);
@@ -176,14 +176,14 @@ const ChatWithPerson: React.FC = () => {
               const lastMessage = chat.messages[chat.messages.length - 1];
               return (
                 <div
-                  key={chat.person.username}
+                  key={chat.person.userName}
                   className="border-b border-gray-600 py-2 flex items-center"
                 >
                   <button
                     className="focus:outline-none"
                     onClick={() => {
                       viewChatProfile();
-                      setChatProfileUserName(chat.person.username);
+                      setChatProfileUserName(chat.person.userName);
                     }}
                   >
                     <img
@@ -232,7 +232,7 @@ const ChatWithPerson: React.FC = () => {
             <div className="flex border-b border-gray-300 text-sm">
               {multipleActiveTab.map((chat, index) => (
                 <ChatTab
-                  key={chat.person.username}
+                  key={chat.person.userName}
                   label={chat.person.name}
                   isActive={activeTab === index}
                   onClick={() => {
@@ -295,7 +295,7 @@ const ChatWithPerson: React.FC = () => {
                 onClick={() => {
                   if (messageInput.trim()) {
                     const recipient = multipleActiveTab[activeTab]?.person
-                      .username;
+                      .userName;
                     if (recipient) sendMessage(recipient, messageInput);
                   }
                 }}

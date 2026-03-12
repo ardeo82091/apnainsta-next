@@ -19,11 +19,11 @@ app.prepare().then(() => {
   });
 
   interface UserMap {
-    [username: string]: string; // username -> socketId
+    [userName: string]: string; // userName -> socketId
   }
 
   interface MessageQueue {
-    [username: string]: Messages[]; // username -> array of messages waiting
+    [userName: string]: Messages[]; // userName -> array of messages waiting
   }
 
   const users: UserMap = {};
@@ -32,26 +32,26 @@ app.prepare().then(() => {
   io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);
 
-    socket.on('registerUser', (username: string) => {
-      console.log("Registering user:", username);
+    socket.on('registerUser', (userName: string) => {
+      console.log("Registering user:", userName);
 
-      // Remove any old mapping for this username
+      // Remove any old mapping for this userName
       for (const user in users) {
-        if (user === username) {
+        if (user === userName) {
           delete users[user];
           break;
         }
       }
 
       // Map new socket
-      users[username] = socket.id;
+      users[userName] = socket.id;
 
       // Deliver queued messages
-      if (messageQueue[username]) {
-        messageQueue[username].forEach((message) => {
+      if (messageQueue[userName]) {
+        messageQueue[userName].forEach((message) => {
           socket.emit('receiveMessage', message);
         });
-        delete messageQueue[username]; // clear queue after sending
+        delete messageQueue[userName]; // clear queue after sending
       }
 
       console.log("Current users:", users);
@@ -77,10 +77,10 @@ app.prepare().then(() => {
 
     socket.on('disconnect', () => {
       console.log('User disconnected:', socket.id);
-        for (const [username, id] of Object.entries(users)) {
+        for (const [userName, id] of Object.entries(users)) {
         if (id === socket.id) {
-          delete users[username];
-          console.log(`Removed ${username} from users`);
+          delete users[userName];
+          console.log(`Removed ${userName} from users`);
           break;
         }
       }

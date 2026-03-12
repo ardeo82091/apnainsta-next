@@ -1,223 +1,372 @@
 [
-  {
-    "email": "divya.singh@example.com",
-    "userName": "divyasingh",
-    "password": "password123",
-    "dob": "2000-12-06T00:00:00.000Z",
-    "fullName": "Divya Singh",
-    "phoneNumber": "+1234567890",
-    "isActive": true,
-    "role": "user",
-    "bio": "My nmae is Divya I lovemy self i hat all of you.",
-    "friendAndRequests": {
-      "requests": [
-        {
-          "id": 1,
-          "person": {
-            "username": "sashwatyadav",
-            "name": "Sashwat Yadav",
-            "img": "/images/users/sashwat.jpg"
-          },
-          "isAdded": false,
-          "isSent": true
+    {
+        "email": "divya.singh@example.com",
+        "userName": "divyasingh",
+        "password": "password123",
+        "fullName": "Divya Singh",
+        "profilePic": "/images/users/divya.jpg",
+        "phoneNumber": "+1234567890",
+        "dob": "2000-12-06T00:00:00Z",
+        "bio": "Photographer and traveler.",
+        "isActive": true,
+        "role": "user",
+        "friendAndRequests": {
+            "followers": [
+                {
+                    "id": 1,
+                    "person": {
+                        "userName": "ankitraj",
+                        "name": "Ankit Raj",
+                        "img": "/images/users/ankit.jpg"
+                    },
+                    "isOnline": true,
+                    "isFollowing": true,
+                    "isFollowed": true
+                },
+                {
+                    "id": 2,
+                    "person": {
+                        "userName": "rahulsharma",
+                        "name": "Rahul Sharma",
+                        "img": "/images/users/rahul.jpg"
+                    },
+                    "isOnline": false,
+                    "isFollowing": true,
+                    "isFollowed": true
+                }
+            ],
+            "followings": [
+                {
+                    "id": 3,
+                    "person": {
+                        "userName": "amayapatel",
+                        "name": "Amaya Patel",
+                        "img": "/images/users/amaya.jpg"
+                    },
+                    "isOnline": true
+                }
+            ],
+            "requests": []
         },
-        {
-          "id": 2,
-          "person": {
-            "username": "mayarao",
-            "name": "Maya Rao",
-            "img": "/images/users/maya.jpg"
-          },
-          "isAdded": false,
-          "isSent": false
-        }
-      ],
-
-      "followers": [
-        {
-          "id": 1,
-          "person": {
-            "username": "akashkumar",
-            "name": "Akash Kumar",
-            "img": "/images/users/akash.jpg"
-          },
-          "isOnline": false,
-          "isFollowing": false,
-          "isFollowed": true
-        },
-        {
-          "id": 2,
-          "person": {
-            "username": "abhishekkumar",
-            "name": "Abhishek Kumar",
-            "img": "/images/users/abhishek.jpg"
-          },
-          "isOnline": true,
-          "isFollowing": true,
-          "isFollowed": false
-        }
-      ],
-
-      "followings": [
-        {
-          "id": 3,
-          "person": {
-            "username": "amankumar",
-            "name": "Aman Kumar",
-            "img": "/images/users/aman.jpg"
-          },
-          "isOnline": true
-        }
-      ]
-    },
-
-    "chatPerson": [
-      {
-        "person": {
-          "username": "amankumar",
-          "name": "Aman Kumar",
-          "img": "/images/users/aman.jpg"
-        },
-        "messages": [
-          {
-            "sender": "amankumar",
-            "recipient": "divyasingh",
-            "content": "Hey, how are you?",
-            "read": true,
-            "timestamp": "2024-08-21T10:30:00Z"
-          },
-          {
-            "sender": "divyasingh",
-            "recipient": "amankumar",
-            "content": "I'm good, thanks! How about you?",
-            "read": false,
-            "timestamp": "2024-08-21T10:31:00Z"
-          }
+        "chatPerson": [
+            {
+                "person": {
+                    "userName": "ankitraj",
+                    "name": "Ankit Raj",
+                    "img": "/images/users/ankit.jpg"
+                },
+                "messages": [
+                    {
+                        "sender": "ankitraj",
+                        "recipient": "divyasingh",
+                        "content": "Hey Divya! Loved your photo.",
+                        "read": true,
+                        "timestamp": "2024-08-21T10:30:00Z"
+                    },
+                    {
+                        "sender": "divyasingh",
+                        "recipient": "ankitraj",
+                        "content": "Thank you!",
+                        "read": true,
+                        "timestamp": "2024-08-21T10:31:00Z"
+                    }
+                ]
+            }
+        ],
+        "posts": [
+            {
+                "id": 1,
+                "src": "/images/posts/divya1.jpg",
+                "isVideo": false,
+                "likes": [
+                    {
+                        "userName": "ankitraj"
+                    },
+                    {
+                        "userName": "rahulsharma"
+                    },
+                    {
+                        "userName": "amayapatel"
+                    }
+                ],
+                "comments": [
+                    {
+                        "userName": "rahulsharma",
+                        "comment": "Amazing shot!",
+                        "replies": [
+                            {
+                                "userName": "divyasingh",
+                                "replies": "Thanks Rahul!"
+                            }
+                        ]
+                    },
+                    {
+                        "userName": "ankitraj",
+                        "comment": "Nice picture!"
+                    }
+                ],
+                "createdAt": "2024-08-20T09:00:00Z"
+            },
+            {
+                "id": 2,
+                "src": "/images/posts/divya2.jpg",
+                "isVideo": false,
+                "likes": [
+                    {
+                        "userName": "ankitraj"
+                    },
+                    {
+                        "userName": "amayapatel"
+                    }
+                ],
+                "comments": [
+                    {
+                        "userName": "amayapatel",
+                        "comment": "Beautiful view!"
+                    }
+                ],
+                "createdAt": "2024-08-22T12:00:00Z"
+            }
+        ],
+        "notifications": [
+            {
+                "id": 1,
+                "type": "like",
+                "user": {
+                    "userName": "ankitraj",
+                    "name": "Ankit Raj",
+                    "img": "/images/users/ankit.jpg"
+                },
+                "postId": 1,
+                "timestamp": "2025-08-21T10:30:00Z",
+                "read": false
+            },
+            {
+                "id": 2,
+                "type": "comment",
+                "user": {
+                    "userName": "rahulsharma",
+                    "name": "Rahul Sharma",
+                    "img": "/images/users/rahul.jpg"
+                },
+                "postId": 1,
+                "comment": "Amazing shot!",
+                "timestamp": "2026-02-22T11:15:00Z",
+                "read": false
+            }
+        ],
+        "viewedBy": [
+            {
+                "userName": "ankitraj",
+                "name": "Ankit Raj",
+                "img": "/images/users/ankit.jpg",
+                "viewedAt": "2024-08-22T14:00:00Z"
+            },
+            {
+                "userName": "rahulsharma",
+                "name": "Rahul Sharma",
+                "img": "/images/users/rahul.jpg",
+                "viewedAt": "2024-08-22T15:00:00Z"
+            }
         ]
-      }
-    ],
-
-    "posts": [
-      {
-        "id": 1,
-        "src": "/images/posts/post1.jpg",
-        "isVideo": false,
-        "likes": 120,
-        "comments": 15,
-        "createdAt": "2024-08-20T09:00:00Z"
-      },
-      {
-        "id": 2,
-        "src": "/images/posts/post2.mp4",
-        "isVideo": true,
-        "likes": 450,
-        "comments": 63,
-        "createdAt": "2024-08-22T14:00:00Z"
-      }
-    ],
-
-    "notifications": [
-      {
-        "id": 1,
-        "type": "like",
-        "message": "Sashwat Yadav liked your post.",
-        "timestamp": "2024-08-21T10:30:00Z",
-        "read": false
-      },
-      {
-        "id": 2,
-        "type": "comment",
-        "message": "Akash Kumar commented on your photo.",
-        "timestamp": "2024-08-22T11:15:00Z",
-        "read": false
-      },
-      {
-        "id": 3,
-        "type": "follow",
-        "message": "Aman Kumar started following you.",
-        "timestamp": "2024-08-21T11:30:00Z",
-        "read": false
-      }
-    ]
-  },
-
-  {
-    "email": "aman.kumar@example.com",
-    "userName": "amankumar",
-    "password": "password123",
-    "dob": "1990-05-14T00:00:00.000Z",
-    "fullName": "Aman Kumar",
-    "phoneNumber": "+1234567890",
-    "isActive": true,
-    "role": "user",
-    "bio": "My nmae is Ankit I lovemy self i hate all of you.",
-    "friendAndRequests": {
-      "requests": [],
-      "followers": [
-        {
-          "id": 1,
-          "person": {
-            "username": "divyasingh",
-            "name": "Divya Singh",
-            "img": "/images/users/divya.jpg"
-          },
-          "isOnline": false,
-          "isFollowing": true,
-          "isFollowed": true
-        }
-      ],
-
-      "followings": [
-        {
-          "id": 2,
-          "person": {
-            "username": "ankitraj",
-            "name": "Ankit Raj",
-            "img": "/images/users/ankit.jpg"
-          },
-          "isOnline": true
-        }
-      ]
     },
-
-    "chatPerson": [
-      {
-        "person": {
-          "username": "divyasingh",
-          "name": "Divya Singh",
-          "img": "/images/users/divya.jpg"
+    {
+        "email": "ankit.raj@example.com",
+        "userName": "ankitraj",
+        "password": "password123",
+        "fullName": "Ankit Raj",
+        "profilePic": "/images/users/ankit.jpg",
+        "phoneNumber": "+1111111111",
+        "dob": "1999-02-10T00:00:00Z",
+        "bio": "Full stack developer.",
+        "isActive": true,
+        "role": "user",
+        "friendAndRequests": {
+            "followers": [
+                {
+                    "id": 4,
+                    "person": {
+                        "userName": "amayapatel",
+                        "name": "Amaya Patel",
+                        "img": "/images/users/amaya.jpg"
+                    },
+                    "isOnline": true,
+                    "isFollowing": true,
+                    "isFollowed": true
+                }
+            ],
+            "followings": [
+                {
+                    "id": 5,
+                    "person": {
+                        "userName": "divyasingh",
+                        "name": "Divya Singh",
+                        "img": "/images/users/divya.jpg"
+                    },
+                    "isOnline": true
+                }
+            ],
+            "requests": []
         },
-        "messages": [
-          {
-            "sender": "amankumar",
-            "recipient": "divyasingh",
-            "content": "Hey, how are you?",
-            "read": true,
-            "timestamp": "2024-08-21T10:30:00Z"
-          }
+        "chatPerson": [],
+        "posts": [
+            {
+                "id": 3,
+                "src": "/images/posts/ankit1.jpg",
+                "isVideo": false,
+                "likes": [
+                    {
+                        "userName": "divyasingh"
+                    },
+                    {
+                        "userName": "amayapatel"
+                    }
+                ],
+                "comments": [
+                    {
+                        "userName": "divyasingh",
+                        "comment": "Nice click!"
+                    }
+                ],
+                "createdAt": "2024-08-20T10:00:00Z"
+            }
+        ],
+        "notifications": [],
+        "viewedBy": [
+            {
+                "userName": "divyasingh",
+                "name": "Divya Singh",
+                "img": "/images/users/divya.jpg",
+                "viewedAt": "2024-08-22T14:00:00Z"
+            },
+            {
+                "userName": "amayapatel",
+                "name": "Amaya Patel",
+                "img": "/images/users/amaya.jpg",
+                "viewedAt": "2024-08-22T15:00:00Z"
+            }
         ]
-      }
-    ],
-
-    "posts": [
-      {
-        "id": 1,
-        "src": "/images/posts/post3.jpg",
-        "isVideo": false,
-        "likes": 220,
-        "comments": 35,
-        "createdAt": "2024-08-21T09:00:00Z"
-      }
-    ],
-
-    "notifications": [
-      {
-        "id": 1,
-        "type": "like",
-        "message": "Divya Singh liked your post.",
-        "timestamp": "2024-08-21T12:00:00Z",
-        "read": false
-      }
-    ]
-  }
+    },
+    {
+        "email": "rahul.sharma@example.com",
+        "userName": "rahulsharma",
+        "password": "password123",
+        "fullName": "Rahul Sharma",
+        "profilePic": "/images/users/rahul.jpg",
+        "phoneNumber": "+2222222222",
+        "dob": "1998-04-18T00:00:00Z",
+        "bio": "Travel blogger.",
+        "isActive": true,
+        "role": "user",
+        "friendAndRequests": {
+            "followers": [],
+            "followings": [
+                {
+                    "id": 6,
+                    "person": {
+                        "userName": "divyasingh",
+                        "name": "Divya Singh",
+                        "img": "/images/users/divya.jpg"
+                    },
+                    "isOnline": false
+                }
+            ],
+            "requests": []
+        },
+        "chatPerson": [],
+        "posts": [],
+        "notifications": [],
+        "viewedBy": [
+            {
+                "userName": "divyasingh",
+                "name": "Divya Singh",
+                "img": "/images/users/divya.jpg",
+                "viewedAt": "2024-08-22T14:00:00Z"
+            },
+            {
+                "userName": "ankitraj",
+                "name": "Ankit Raj",
+                "img": "/images/users/ankit.jpg",
+                "viewedAt": "2024-08-22T15:00:00Z"
+            }
+        ]
+    },
+    {
+        "email": "amaya.patel@example.com",
+        "userName": "amayapatel",
+        "password": "password123",
+        "fullName": "Amaya Patel",
+        "profilePic": "/images/users/amaya.jpg",
+        "phoneNumber": "+3333333333",
+        "dob": "2001-03-15T00:00:00Z",
+        "bio": "Designer and artist.",
+        "isActive": true,
+        "role": "user",
+        "friendAndRequests": {
+            "followers": [],
+            "followings": [
+                {
+                    "id": 7,
+                    "person": {
+                        "userName": "ankitraj",
+                        "name": "Ankit Raj",
+                        "img": "/images/users/ankit.jpg"
+                    },
+                    "isOnline": true
+                }
+            ],
+            "requests": []
+        },
+        "chatPerson": [],
+        "posts": [],
+        "notifications": [],
+        "viewedBy": [
+            {
+                "userName": "ankitraj",
+                "name": "Ankit Raj",
+                "img": "/images/users/ankit.jpg",
+                "viewedAt": "2024-08-22T14:00:00Z"
+            },
+            {
+                "userName": "divyasingh",
+                "name": "Divya Singh",
+                "img": "/images/users/divya.jpg",
+                "viewedAt": "2024-08-22T15:00:00Z"
+            }
+        ]
+    },
+    {
+        "email": "akash.kumar@example.com",
+        "userName": "akashkumar",
+        "password": "password123",
+        "fullName": "Akash Kumar",
+        "profilePic": "/images/users/akash.jpg",
+        "phoneNumber": "+4444444444",
+        "dob": "1997-09-01T00:00:00Z",
+        "bio": "Fitness lover.",
+        "isActive": true,
+        "role": "user",
+        "friendAndRequests": {
+            "followers": [],
+            "followings": [],
+            "requests": []
+        },
+        "chatPerson": [],
+        "posts": [],
+        "notifications": [],
+        "viewedBy": [
+            {
+                "userName": "divyasingh",
+                "name": "Divya Singh",
+                "img": "/images/users/divya.jpg",
+                "viewedAt": "2024-08-22T15:00:00Z"
+            },
+            {
+                "userName": "ankitraj",
+                "name": "Ankit Raj",
+                "img": "/images/users/ankit.jpg",
+                "viewedAt": "2024-08-23T14:00:00Z"
+            }
+        ]
+    }
 ]

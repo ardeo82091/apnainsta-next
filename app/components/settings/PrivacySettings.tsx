@@ -4,19 +4,19 @@ import { useMemo, useState } from "react"
 
 type Friend = {
   id: number
-  username: string
+  userName: string
   name: string
   isOnline: boolean
 }
 
 const mockFriends: Friend[] = [
-  { id: 1, username: "rahul_dev", name: "Rahul Sharma", isOnline: true },
-  { id: 2, username: "sneha_ui", name: "Sneha Patel", isOnline: false },
-  { id: 3, username: "aman_js", name: "Aman Verma", isOnline: true },
-  { id: 4, username: "priya_css", name: "Priya Singh", isOnline: false },
-  { id: 5, username: "vikas_node", name: "Vikas Yadav", isOnline: true },
-  { id: 6, username: "neha_next", name: "Neha Gupta", isOnline: true },
-  { id: 7, username: "rohit_ts", name: "Rohit Kumar", isOnline: false },
+  { id: 1, userName: "rahul_dev", name: "Rahul Sharma", isOnline: true },
+  { id: 2, userName: "sneha_ui", name: "Sneha Patel", isOnline: false },
+  { id: 3, userName: "aman_js", name: "Aman Verma", isOnline: true },
+  { id: 4, userName: "priya_css", name: "Priya Singh", isOnline: false },
+  { id: 5, userName: "vikas_node", name: "Vikas Yadav", isOnline: true },
+  { id: 6, userName: "neha_next", name: "Neha Gupta", isOnline: true },
+  { id: 7, userName: "rohit_ts", name: "Rohit Kumar", isOnline: false },
 ]
 
 export function PrivacySettings() {
@@ -58,7 +58,7 @@ export function PrivacySettings() {
   }, [blockedUsers, page])
 
   const toggleRestrict = (
-    username: string,
+    userName: string,
     type: "story" | "post" | "online"
   ) => {
     const setter =
@@ -69,9 +69,9 @@ export function PrivacySettings() {
         : setOnlineHiddenUsers
 
     setter(prev =>
-      prev.includes(username)
-        ? prev.filter(u => u !== username)
-        : [...prev, username]
+      prev.includes(userName)
+        ? prev.filter(u => u !== userName)
+        : [...prev, userName]
     )
   }
 
@@ -326,7 +326,7 @@ function FriendPicker({ friends, restricted, onToggle, onClose }: any) {
 
   const filtered = friends.filter((f:any) =>
     f.name.toLowerCase().includes(search.toLowerCase()) ||
-    f.username.toLowerCase().includes(search.toLowerCase())
+    f.userName.toLowerCase().includes(search.toLowerCase())
   )
 
   return (
@@ -340,12 +340,12 @@ function FriendPicker({ friends, restricted, onToggle, onClose }: any) {
 
       <div className="max-h-[420px] overflow-y-auto space-y-2">
         {filtered.map((user:any) => {
-          const active = restricted.includes(user.username)
+          const active = restricted.includes(user.userName)
 
           return (
             <button
               key={user.id}
-              onClick={() => onToggle(user.username)}
+              onClick={() => onToggle(user.userName)}
               className={`w-full flex items-center justify-between border rounded-xl px-4 py-3 ${
                 active ? "border-red-500 bg-red-50" : "hover:bg-gray-50"
               }`}
@@ -356,7 +356,7 @@ function FriendPicker({ friends, restricted, onToggle, onClose }: any) {
                 </div>
                 <div className="text-left">
                   <p className="text-sm font-medium">{user.name}</p>
-                  <p className="text-xs text-gray-500">@{user.username}</p>
+                  <p className="text-xs text-gray-500">@{user.userName}</p>
                 </div>
               </div>
 

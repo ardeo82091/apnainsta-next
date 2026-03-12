@@ -1,142 +1,194 @@
+"use client"
 
-'use client';
+import { useSelector, useDispatch } from "react-redux"
+import { RootState } from "@/redux/store"
+import { useState, useEffect } from "react"
+import { FaBell, FaHeart, FaComment, FaUserPlus } from "react-icons/fa"
+import { formatDistanceToNow } from "date-fns"
 
-import NotificationModal from '@/app/components/Notifcationmodal';
-import { StatItem } from '@/lib/props/ProfileStatsBar';
-import { User } from '@/lib/users';
-import { RootState } from '@/redux/store';
-import { useRouter } from 'next/navigation';
-import { FC, useState } from 'react';
+import { markNotificationRead, markAllNotificationsRead } from "@/redux/userSlice"
 
-import { FaUser, FaUserTag, FaCalendarAlt, FaBell, FaThumbsUp, FaComment, FaUserPlus, FaHeart } from 'react-icons/fa';
-import { useSelector } from 'react-redux';
+const Sidebar = () => {
+  const dispatch = useDispatch()
+  const user = useSelector((state: RootState) => state.user)
 
-const Header = () => {
-  const user = useSelector((state: RootState) => state.user);
-  const [clickedNoty, setClickedNoty] = useState(null);
-  const router = useRouter();
+  const notifications = user?.notifications || []
 
-  const seeNotificationTime = (id : any) => {
-    if (clickedNoty === id) {
-      setClickedNoty(null);
-    } else {
-      setClickedNoty(id);
-    }
-  };
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [showExactTime, setShowExactTime] = useState<number | null>(null)
 
-  const openNotificationModel = () => {
-    router.push(`/components/notifications`);
+  // Force update every 30s to refresh "x minutes ago"
+  const [, forceUpdate] = useState(0)
+  useEffect(() => {
+    const interval = setInterval(() => forceUpdate(v => v + 1), 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const unreadCount = notifications.filter(n => !n.read).length
+
+  // Group notifications by type + postId
+  const groupNotifications = (notifications: any[]) => {
+    const grouped: Record<string, any[]> = {}
+    notifications.forEach(n => {
+      const key = `${n.type}-${n.postId || n.id}`
+      if (!grouped[key]) grouped[key] = []
+      grouped[key].push(n)
+    })
+    return Object.values(grouped)
   }
 
-  const array = [
-    'Abhishek Kumar', 'Divya Patle', 'Aarohi kkkjs'
-  ]
+  const grouped = groupNotifications(notifications)
+
+  const handleMarkRead = (notifId: number) => {
+    dispatch(markNotificationRead(notifId))
+  }
+
+  const handleMarkAllRead = () => {
+    dispatch(markAllNotificationsRead())
+  }
 
   return (
-    <>
-      <div className="flex flex-col h-screen w-1/4 bg-white shadow-md ">
-        {/* <div className="flex bg-gray-900 h-14 mt-5 mx-4 rounded-full justify-around items-center">
-          <StatItem label="Posts" value={user?.posts.length || 0} />
-          <StatItem label="Followers" value={user.friendAndRequests?.followers.filter(follower => follower.isFollowed).length || 0} />
-          <StatItem label="Following" value={user.friendAndRequests?.followers.filter(follower => follower.isFollowing).length || 0} />
-        </div> */}
-        <div className="flex items-center justify-center">
+    <div className="h-screen w-[320px] pr-6 pl-4 py-4 ml-2 border-r bg-white flex flex-col">
+
+      {/* PROFILE */}
+      <div className="border-b pb-6">
+        <div className="flex items-center gap-4">
           <img
-            src="/images/profile.jpg"
-            alt="User Profile"
-            className="h-24 w-18 mt-4 ml-4 rounded-full"
+            src={user?.profilePic || "https://i.pravatar.cc/150"}
+            className="w-20 h-20 rounded-full object-cover"
           />
-          <div className="flex flex-col mt-4 ml-4">
-            <span className="text-gray-900 text-lg font-bold">{user?.fullName}</span>
-            {/* <div className="flex items-center mb-2">
-              <FaUser className="text-gray-900 text-md mr-2" />
-              <span className="text-gray-900 text-lg font-bold">{user?.fullName}</span>
-            </div>
-            <div className="flex items-center mb-2">
-              <FaUserTag className="text-gray-900 text-md mr-2" />
-              <div className="text-gray-900 text-md">@{user?.userName}</div>
-            </div>
-            <div className="flex items-center">
-              <FaCalendarAlt className="text-gray-900 text-md mr-2" />
-              <div className="text-gray-900 text-md font-extrabold">
-                {(user?.dob) ? new Date(user.dob).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                }) : "N/A" }
-              </div>
-            </div> */}
+          <div className="flex-1">
+            <p className="font-semibold text-lg">{user?.fullName}</p>
+            <p className="text-sm text-gray-500">@{user?.userName}</p>
+          </div>
+
+          {/* BELL */}
+          <div
+            onClick={() => setShowNotifications(!showNotifications)}
+            className="relative cursor-pointer"
+          >
+            <FaBell className="text-xl text-gray-700" />
+            {unreadCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] px-1.5 rounded-full">
+                {unreadCount}
+              </span>
+            )}
           </div>
         </div>
-        
-        <div className="border-t-2 border-gray-300 mx-4 my-4 rounded-full"></div>
 
-        <div className="flex flex-col h-auto min-h-[12rem] ml-4 mr-4 bg-gray-100 rounded-b-lg p-4">
-          <div className="flex items-center justify-between  mb-2">
-            <span className="text-gray-900 text-md font-bold">Notifications</span>
-            <FaBell className="text-gray-900 text-xl mr-2" />
+        {/* STATS */}
+        <div className="flex justify-between mt-5 text-center">
+          <div>
+            <p className="font-semibold">{user?.posts?.length || 0}</p>
+            <p className="text-xs text-gray-500">Posts</p>
           </div>
+          <div>
+            <p className="font-semibold">
+              {user.friendAndRequests?.followers.filter(f => f.isFollowed).length || 0}
+            </p>
+            <p className="text-xs text-gray-500">Followers</p>
+          </div>
+          <div>
+            <p className="font-semibold">
+              {user.friendAndRequests?.followers.filter(f => f.isFollowing).length || 0}
+            </p>
+            <p className="text-xs text-gray-500">Following</p>
+          </div>
+        </div>
+      </div>
 
-          <div className="overflow-y-auto h-64">
-            {user?.notifications.map((notification) => (
-              <div 
-                key={notification.id} 
-                className={`flex flex-col bg-gradient-to-r ${
-                  notification.type === "like" ? 'from-rose-100 to-rose-400' :
-                  notification.type === "comment" ? 'from-sky-100 to-sky-500' :
-                  notification.type === "follow" ? 'from-teal-50 to-teal-500' : ''
-                } text-gray-900 shadow-md rounded-lg p-2 mb-2 cursor-pointer`}
-                onClick={() => seeNotificationTime(notification.id)}
+      {/* NOTIFICATIONS */}
+      {showNotifications && (
+        <div className="border-b py-4">
+          <div className="flex justify-between mb-3">
+            <p className="font-semibold">Notifications</p>
+            {unreadCount > 0 && (
+              <button
+                onClick={handleMarkAllRead}
+                className="text-xs text-blue-500 hover:underline"
               >
-                <div className="flex items-center">
-                  <div className="flex items-center">
-                    {notification.type === "like" && <FaHeart className="text-red-600 mr-2" />}
-                    {notification.type === "comment" && <FaComment className="text-sky-700 mr-2" />}
-                    {notification.type === "follow" && <FaUserPlus className="text-teal-600 mr-2" />}
-                    <span className="ml-2 text-xs">{notification.message}</span>
+                Mark all read
+              </button>
+            )}
+          </div>
+
+          <div className="space-y-2 max-h-[260px] overflow-y-auto">
+            {grouped.length === 0 && (
+              <p className="text-gray-400 text-sm text-center mt-4">
+                No notifications
+              </p>
+            )}
+
+            {grouped.map((group: any, i: number) => {
+              const names = group.map((n: any) => n.user?.userName || "Someone")
+              let message = ""
+
+              const first = group.find((n: any) => n)
+
+              if (!first) return null
+
+              if (first.type === "like") {
+                if (names.length === 1) message = `${names[0]} liked your post`
+                else if (names.length === 2) message = `${names[0]} and ${names[1]} liked your post`
+                else message = `${names[0]}, ${names[1]} and ${names.length - 2} others liked your post`
+              }
+
+              if (first.type === "comment") message = `${names[0]} commented on your post`
+              if (first.type === "follow") message = `${names[0]} started following you`
+
+              return (
+                <div
+                  key={i}
+                  onClick={() => handleMarkRead(first.id)}
+                  onDoubleClick={() => setShowExactTime(first.id)}
+                  className={`p-3 rounded-lg border cursor-pointer transition
+                    ${first.type === "like" && "bg-rose-50 border-rose-200"}
+                    ${first.type === "comment" && "bg-sky-50 border-sky-200"}
+                    ${first.type === "follow" && "bg-teal-50 border-teal-200"}
+                    ${!first.read ? "font-semibold" : "opacity-70"}
+                  `}
+                >
+                  <div className="flex items-center gap-2">
+                    {!first.read && <span className="w-2 h-2 bg-blue-500 rounded-full" />}
+                    {first.type === "like" && <FaHeart className="text-red-500" />}
+                    {first.type === "comment" && <FaComment className="text-blue-500" />}
+                    {first.type === "follow" && <FaUserPlus className="text-green-500" />}
+                    <span className="text-sm">{message}</span>
                   </div>
+                  <p className="text-xs text-gray-400 mt-1 text-right">
+                    {showExactTime === first.id
+                      ? new Date(first.timestamp).toLocaleString()
+                      : formatDistanceToNow(new Date(first.timestamp), { addSuffix: true })}
+                  </p>
                 </div>
-                {clickedNoty === notification.id && (
-                  <div className="mt-1 text-xs text-gray-500 text-right">
-                    {new Date(notification.timestamp).toLocaleString()}
-                  </div>
-                )}
-              </div>
-            ))}
+              )
+            })}
           </div>
-
-          <button className="text-sm pt-3 font-bold underline hover:text-blue-600" onClick={openNotificationModel}>View all</button>
         </div>
+      )}
 
-        <div className="border-t-2 border-gray-300 mx-4 my-4 rounded-full"></div>
-
-        <div className="flex flex-col h-auto min-h-[12rem] ml-4 mr-4 rounded-b-lg p-4">
-          <div className="flex items-center justify-between  mb-2">
-            <span className="text-gray-900 text-md font-bold">Recommended</span>
-          </div>
-          {array.map((usern) => (
-            <div className="flex m-2 justify-between">
-              <div className="flex items-center">
-                  <img
-                      src={''}
-                      alt={`${''}'s avatar`}
-                      className={`w-8 h-8 rounded-full mr-3`}
-                  />
-                  <span>{usern}</span>
+      {/* SUGGESTED USERS */}
+      <div className="flex-1 p-5 overflow-y-auto">
+        <p className="font-semibold mb-3">Suggested for you</p>
+        <div className="space-y-3">
+          {["Rahul", "Divya", "Aman", "Priya"].map((u, i) => (
+            <div key={i} className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <img
+                  src={`https://i.pravatar.cc/150?img=${i + 10}`}
+                  className="w-10 h-10 rounded-full"
+                />
+                <p className="text-sm font-medium">{u}</p>
               </div>
-              <div className="flex space-x-2">
-                      <>
-                          <button className="text-white bg-blue-500 hover:bg-green-600 p-2 rounded-full">
-                              <FaUserPlus />
-                          </button>
-                      </>
-              </div>
+              <button className="text-xs px-3 py-1 bg-blue-500 text-white rounded-full hover:bg-blue-600">
+                Follow
+              </button>
             </div>
           ))}
         </div>
       </div>
-    </>
-  );
-};
+    </div>
+  )
+}
 
-export default Header;
+export default Sidebar

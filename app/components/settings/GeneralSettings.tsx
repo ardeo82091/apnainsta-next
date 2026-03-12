@@ -12,7 +12,7 @@ export function GeneralSettings() {
   const [editing, setEditing] = useState(false)
 
   const [fullName, setFullName] = useState(user.fullName)
-  const [username, setUsername] = useState(user.userName)
+  const [userName, setUsername] = useState(user.userName)
   const [bio, setBio] = useState("")
 
   const [profileImage, setProfileImage] = useState<string | null>(null)
@@ -96,7 +96,7 @@ export function GeneralSettings() {
                     />
 
                     <input
-                      value={username}
+                      value={userName}
                       onChange={(e) => setUsername(e.target.value)}
                       className="text-gray-500 border-b outline-none"
                     />
@@ -111,7 +111,7 @@ export function GeneralSettings() {
                 ) : (
                   <>
                     <h2 className="text-2xl font-semibold">{fullName}</h2>
-                    <p className="text-gray-500">@{username}</p>
+                    <p className="text-gray-500">@{userName}</p>
                     <p className="text-sm text-gray-600">{bio || "Add bio..."}</p>
                   </>
                 )}

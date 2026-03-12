@@ -44,12 +44,12 @@ const LoginPage = () => {
       <div className="bg-white rounded p-8 shadow-md w-full max-w-md">
         <h2 className="text-3xl italic mb-6 font-extrabold text-center bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">LIVE & VIBE</h2>
           <div className="mb-4">
-            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
+            <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="userName">
               Username
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 focus:outline-none"
-              id="username"
+              id="userName"
               type="text"
               placeholder="Username"
               value={emailorUserName}

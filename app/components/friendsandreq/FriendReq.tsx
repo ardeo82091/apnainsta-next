@@ -92,7 +92,7 @@ const FriendRequest = () => {
                   {user.person.name}
                 </p>
                 <p className="text-xs text-gray-500">
-                  @{user.person.username || "username"}
+                  @{user.person.userName || "userName"}
                 </p>
               </div>
             </div>
