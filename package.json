@@ -14,10 +14,12 @@
     "@reduxjs/toolkit": "^2.2.7",
     "@types/react-redux": "^7.1.33",
     "axios": "^1.7.2",
+    "bcryptjs": "^3.0.3",
     "date-fns": "^4.1.0",
     "express": "^5.1.0",
+    "mongoose": "^9.3.0",
     "next": "^14.2.5",
-    "next-auth": "^4.24.7",
+    "next-auth": "^4.24.13",
     "nodemon": "^3.1.9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -29,6 +31,7 @@
     "ws": "^8.18.0"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.1",
     "@types/node": "^20",
     "@types/react": "^18",

@@ -37,7 +37,6 @@ export interface Posts {
   createdAt: Date;
 }
 
-
 export interface Notification {
   id: number;
   type: "like" | "comment" | "follow";
@@ -74,13 +73,13 @@ export interface Followers {
   person: Person;
   isOnline: boolean;
   isFollowing: boolean;
-  isFollowed: boolean;
 }
 
 export interface Followings {
   id: number;
   person: Person;
   isOnline: boolean;
+  isFollowed: boolean;
 }
 
 export interface Requests {

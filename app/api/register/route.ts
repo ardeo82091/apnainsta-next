@@ -1,28 +1,77 @@
-import { NextResponse } from 'next/server';
-import { addUser, findUser } from '../../../lib/users';
+import { NextResponse } from "next/server"
+import bcrypt from "bcryptjs"
+import User from "@/models/User"
+import Credential from "@/models/Auth"
+import { connectDB } from "@/lib/mongodb"
 
 export async function POST(request: Request) {
+
   try {
-    const { email, password, userName, dob, fullName, phoneNumber } = await request.json();
-    
-    const [isEmailExist, user] = findUser(email);
-    const [isUserExist, userRef] = findUser(userName);
-    if (isEmailExist) {
-      return NextResponse.json({ success: false, message: 'Email already exists' }, { status: 400 });
+
+    const { email, password, userName, dob, fullName, phoneNumber } = await request.json()
+
+    await connectDB()
+
+    const existingEmail = await Credential.findOne({ email })
+
+    if(existingEmail){
+      return NextResponse.json({
+        success:false,
+        message:"Email already exists"
+      })
     }
-    if (isUserExist) {
-      return NextResponse.json({ success: false, message: 'Username already exists' }, { status: 400 });
+
+    const existingUsername = await Credential.findOne({ userName })
+    if (existingUsername) {
+      return NextResponse.json({
+        success:false,
+        message:"Username already exists"
+      })
     }
-    const isActive = true;
-    const role = 'user';
-    const friendAndRequests = {
-      requests: [],
-      followers: [],
-    };
-    const [isUserAdded, newUser] = addUser({ email, password, userName, dob, fullName, phoneNumber, isActive, role, friendAndRequests, chatPerson: [], posts: [], notifications: [] });
-    return NextResponse.json({ success: isUserAdded, user: newUser, message: 'Account Registered Successfully'}, {status: 200});
-  } catch (error) {
-    console.error('Registration error:', error);
-    return NextResponse.json({ success: false, message: 'An unexpected error occurred' }, { status: 500 });
+
+    const hashedPassword = await bcrypt.hash(password,10)
+
+    const newUser = await User.create({
+      email,
+      password: hashedPassword,
+      userName,
+      dob,
+      fullName,
+      phoneNumber,
+      profilePic:"",
+      isActive:true,
+      role:"user",
+      friendAndRequests:{
+        requests:[],
+        followers:[],
+        followings:[]
+      },
+      chatPerson:[],
+      posts:[],
+      notifications:[],
+      viewedBy:[]
+    })
+
+    await Credential.create({
+      userId:newUser._id,
+      userName,
+      email,
+      password:hashedPassword
+    })
+
+    return NextResponse.json({
+      success:true,
+      user:newUser,
+      message:"Account Registered Successfully"
+    })
+
+  } catch(error) {
+
+    console.error("Registration error:",error)
+
+    return NextResponse.json({
+      success:false,
+      message:"Server error"
+    })
   }
 }

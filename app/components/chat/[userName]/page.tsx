@@ -172,7 +172,7 @@ const ChatWithPerson: React.FC = () => {
             className="w-full p-2 mb-4 rounded bg-gray-700 text-white"
           />
           <div className="flex-1 overflow-y-auto">
-            {user?.chatPerson.map((chat) => {
+            {user?.chatPerson?.map((chat) => {
               const lastMessage = chat.messages[chat.messages.length - 1];
               return (
                 <div
