@@ -1,13 +1,19 @@
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { Messages } from './lib/users';
+import mongoose from "mongoose"
+import Chat from "./models/Chat"
+import Message from "./models/Message"
 import next from "next";
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-app.prepare().then(() => {
+app.prepare().then(async () => {
+
+  await mongoose.connect(process.env.MONGODB_URI as string)
+  console.log("MongoDB connected")
 
   const httpServer = createServer((req, res) => handle(req, res));
 
@@ -57,21 +63,42 @@ app.prepare().then(() => {
       console.log("Current users:", users);
     });
 
-    socket.on('sendMessage', (message: Messages) => {
-      console.log("Message received:", message);
+    socket.on('sendMessage', async (message: Messages) => {
 
-      // Echo back to sender
-      io.to(socket.id).emit('receiveMessage', message);
+      const { sender, recipient, content } = message;
 
-      // Send to recipient if online
-      if (users[message.recipient]) {
-        io.to(users[message.recipient]).emit('receiveMessage', message);
+      let chat = await Chat.findOne({
+        participants: { $all: [sender, recipient] }
+      });
+
+      if (!chat) {
+        chat = await Chat.create({
+          participants: [sender, recipient]
+        });
+      }
+
+      const savedMessage = await Message.create({
+        chatId: chat._id,
+        sender,
+        recipient,
+        content,
+        read: false
+      });
+
+      chat.lastMessage = content;
+      chat.updatedAt = new Date();
+
+      await chat.save();
+
+      io.to(socket.id).emit('receiveMessage', savedMessage);
+
+      if (users[recipient]) {
+        io.to(users[recipient]).emit('receiveMessage', savedMessage);
       } else {
-        // Store in queue if offline
-        if (!messageQueue[message.recipient]) {
-          messageQueue[message.recipient] = [];
+        if (!messageQueue[recipient]) {
+          messageQueue[recipient] = [];
         }
-        messageQueue[message.recipient].push(message);
+        messageQueue[recipient].push(savedMessage);
       }
     });
 
@@ -87,7 +114,6 @@ app.prepare().then(() => {
     });
   });
 
-  // ✅ Use httpServer instead of server
   httpServer.listen(4000, () => {
     console.log('Server is running on port 4000');
   });

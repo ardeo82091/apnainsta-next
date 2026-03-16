@@ -17,8 +17,9 @@ const ChatWithPerson: React.FC = () => {
   const [multipleActiveTab, setMultipleActiveTab] = useState<ChatPerson[]>([]);
   const [formattedMessages, setFormattedMessages] = useState<Messages[]>([]);
   const [messageInput, setMessageInput] = useState<string>("");
-  const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState("");
+  const [chatPersons, setChatPersons] = useState<ChatPerson[]>([]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchValue, setSearchValue] = useState("");
   const [isChatProfileOpen, setIsChatProfileOpen] = useState(false);
   const [chatProfileUserName, setChatProfileUserName] = useState("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
@@ -31,32 +32,18 @@ const ChatWithPerson: React.FC = () => {
     setIsChatProfileOpen(!isChatProfileOpen);
   };
 
-  // Fetch user data (old messages + contacts)
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(`/api/users/${myUserName}`);
-        if (response.data) {
-          setUser(response.data);
-        } else {
-          setError("User not found");
-        }
-      } catch (err) {
-        console.error("Error fetching user:", err);
-        setError("Error fetching user");
-      }
+    const fetchChats = async () => {
+      const response = await axios.get(`/api/chats/${myUserName}`);
+      setChatPersons(response.data);
     };
 
-    if (myUserName) {
-      fetchUserData();
-    }
+    if (myUserName) fetchChats();
   }, [myUserName]);
 
   // Scroll to bottom when messages update
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [formattedMessages]);
 
   // Socket.IO connection
@@ -70,15 +57,28 @@ const ChatWithPerson: React.FC = () => {
     const handleReceiveMessage = (message: Messages) => {
       console.log("📩 New message:", message);
 
+      setChatPersons((prev) =>
+        prev.map((chat) => {
+          if (chat.person.userName === message.recipient) {
+            return {
+              ...chat,
+              messages: [...chat.messages, message],
+            };
+          }
+          return chat;
+        })
+      );
+
       setMultipleActiveTab((prevTabs) => {
-        const updatedTabs = [...prevTabs];
-        const index = updatedTabs.findIndex(
-          (tab) => tab.person.userName === message.sender
-        );
-        if (index !== -1) {
-          updatedTabs[index].messages.push(message);
-        }
-        return updatedTabs;
+        return prevTabs.map((tab) => {
+          if (tab.person.userName === message.sender) {
+            return {
+              ...tab,
+              messages: [...tab.messages, message],
+            };
+          }
+          return tab;
+        });
       });
 
       setFormattedMessages((prev) => [...prev, message]);
@@ -92,6 +92,23 @@ const ChatWithPerson: React.FC = () => {
     };
   }, [myUserName]);
 
+  // SEARCH USERS
+  const searchUsers = async (value: string) => {
+    setSearchValue(value);
+    if (!value) {
+      setSearchResults([]);
+      return;
+    }
+
+    const res = await axios.get("/api/search", {
+      params: {
+        query: value,
+        exclude: myUserName
+      }
+    });
+
+    setSearchResults(res.data);
+  };
 
   const openChatTab = (chat: ChatPerson) => {
     const isPersonTabOpen = multipleActiveTab.findIndex(
@@ -109,6 +126,19 @@ const ChatWithPerson: React.FC = () => {
       setActiveTab(isPersonTabOpen);
       setFormattedMessages(multipleActiveTab[isPersonTabOpen].messages);
     }
+  };
+
+  // START NEW CHAT
+  const startNewChat = (userData: any) => {
+    const chat: ChatPerson = {
+      person: {
+        userName: userData.userName,
+        name: userData.name,
+        img: userData.img
+      },
+      messages: []
+    };
+    openChatTab(chat);
   };
 
   const closeChatTab = (index: number) => {
@@ -138,22 +168,7 @@ const ChatWithPerson: React.FC = () => {
       read: false,
     };
 
-    // Send to server
     socket.emit("sendMessage", message);
-
-    // Optimistic UI update
-    // setMultipleActiveTab((prevTabs) => {
-    //   const updatedTabs = [...prevTabs];
-    //   const index = updatedTabs.findIndex(
-    //     (tab) => tab.person.userName === recipient
-    //   );
-    //   if (index !== -1) {
-    //     updatedTabs[index].messages.push(message);
-    //   }
-    //   return updatedTabs;
-    // });
-
-    // setFormattedMessages((prev) => [...prev, message]);
     setMessageInput("");
   };
 
@@ -169,10 +184,49 @@ const ChatWithPerson: React.FC = () => {
           <input
             type="text"
             placeholder="Search..."
+            onChange={(e)=>searchUsers(e.target.value)}
             className="w-full p-2 mb-4 rounded bg-gray-700 text-white"
           />
+          {/* SEARCH RESULTS */}
+          {searchValue && (
+            <div className="mb-4">
+              {searchResults.map((u)=>{
+                const existingChat = chatPersons.find(
+                  (c)=>c.person.userName === u.userName
+                );
+
+                return (
+                  <div
+                    key={u.userName}
+                    className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      if (existingChat) openChatTab(existingChat);
+                      else startNewChat(u);
+
+                      setSearchValue("");
+                      setSearchResults([]);
+                    }}
+                  >
+                    <img
+                      src={u.img}
+                      className="w-10 h-10 rounded-full"
+                    />
+
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-sm">
+                        {u.userName}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {u.name}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
           <div className="flex-1 overflow-y-auto">
-            {user?.chatPerson?.map((chat) => {
+            {chatPersons.map((chat) => {
               const lastMessage = chat.messages[chat.messages.length - 1];
               return (
                 <div
