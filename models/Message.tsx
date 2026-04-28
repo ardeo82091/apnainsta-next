@@ -4,19 +4,35 @@ const MessageSchema = new mongoose.Schema({
   chatId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Chat",
-    required: true
+    required: true,
   },
-  sender: String,
-  recipient: String,
-  content: String,
-  read: {
-    type: Boolean,
-    default: false
+
+  sender: {
+    type: String,
+    required: true,
   },
-  timestamp: {
+
+  content: {
+    type: String,
+    required: true,
+  },
+
+  type: {
+    type: String,
+    enum: ["text", "image", "video"],
+    default: "text",
+  },
+
+  readBy: {
+    type: [String],
+    default: [],
+  },
+
+  createdAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 })
 
-export default mongoose.models.Message || mongoose.model("Message", MessageSchema)
+export default mongoose.models.Message ||
+  mongoose.model("Message", MessageSchema)

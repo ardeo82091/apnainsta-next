@@ -1,12 +1,22 @@
 import mongoose from "mongoose"
 
 const ChatSchema = new mongoose.Schema({
-  participants: [String],
-  lastMessage: String,
+  participants: {
+    type: [String],
+    required: true,
+  },
+
+  lastMessage: {
+    text: String,
+    sender: String,
+    timestamp: Date,
+  },
+
   updatedAt: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 })
 
-export default mongoose.models.Chat || mongoose.model("Chat", ChatSchema)
+export default mongoose.models.Chat ||
+  mongoose.model("Chat", ChatSchema)

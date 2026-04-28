@@ -1,5 +1,6 @@
 "use client";
 
+import axios from "axios";
 import { RootState } from "@/redux/store";
 import { useState } from "react";
 import {
@@ -13,17 +14,28 @@ import { useSelector } from "react-redux";
 
 export default function FriendsTabs() {
   const users = useSelector((state: RootState) => state.user);
+  const myUserName = users.userName || "";
 
-  const [activeTab, setActiveTab] = useState<"followers" | "following">(
-    "followers"
-  );
+  const requests = users.friendAndRequests?.requests || [];
+
+  const [activeTab, setActiveTab] = useState<"followers" | "following">("followers");
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
   const followers = users.friendAndRequests?.followers || [];
 
   const filteredFollowers =
     activeTab === "followers"
-      ? followers.filter((follower) => follower.isFollowed)
+      ? followers
       : followers.filter((follower) => follower.isFollowing);
+
+  const handleAction = async (action: string, targetUserName: string) => {
+    await axios.post("/api/frndreq", {
+      action,
+      myUserName,
+      targetUserName,
+    });
+  };
 
   return (
     <div className="flex flex-1 flex-col ml-40 h-screen bg-gray-50">
@@ -110,29 +122,62 @@ export default function FriendsTabs() {
             {/* ACTIONS */}
             <div className="flex items-center gap-2">
 
-              {activeTab === "followers" && (
-                <>
-                  <button className="flex items-center gap-1 text-xs px-3 py-1.5 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition">
-                    <FaMinus />
-                    Remove
-                  </button>
+              {activeTab === "followers" && (() => {
 
-                  {user.isFollowing ? (
-                    <button className="flex items-center gap-1 text-xs px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
-                      <FaUserMinus />
-                      Unfollow
+                const isRequestSent = requests.some(
+                  (r: any) =>
+                    r.person.userName === user.person.userName && r.isSent
+                );
+
+                return (
+                  <>
+                    {/* REMOVE */}
+                    <button
+                      onClick={() => handleAction("remove", user.person.userName)}
+                      className="flex items-center gap-1 text-xs px-3 py-1.5 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition"
+                    >
+                      <FaMinus />
+                      Remove
                     </button>
-                  ) : (
-                    <button className="flex items-center gap-1 text-xs px-3 py-1.5 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition">
-                      <FaUserPlus />
-                      Follow
-                    </button>
-                  )}
-                </>
-              )}
+
+                    {/* FOLLOW / REQUEST / UNFOLLOW */}
+                    {isRequestSent ? (
+                      <button
+                        onClick={() => {
+                          setSelectedUser(user.person.userName);
+                          setShowModal(true);
+                        }}
+                        className="bg-yellow-100 text-yellow-700 px-3 py-1.5 text-xs rounded-lg"
+                      >
+                        Requested
+                      </button>
+                    ) : user.isFollowing ? (
+                      <button
+                        onClick={() => handleAction("unfollow", user.person.userName)}
+                        className="flex items-center gap-1 text-xs px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                      >
+                        <FaUserMinus />
+                        Unfollow
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleAction("follow", user.person.userName)}
+                        className="flex items-center gap-1 text-xs px-3 py-1.5 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition"
+                      >
+                        <FaUserPlus />
+                        Follow
+                      </button>
+                    )}
+                  </>
+                );
+
+              })()}
 
               {activeTab === "following" && (
-                <button className="flex items-center gap-1 text-xs px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                <button
+                  onClick={() => handleAction("unfollow", user.person.userName)}
+                  className="flex items-center gap-1 text-xs px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition"
+                >
                   <FaUserMinus />
                   Unfollow
                 </button>

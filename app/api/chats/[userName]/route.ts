@@ -1,47 +1,59 @@
 import { NextResponse } from "next/server"
 import Chat from "@/models/Chat"
 import User from "@/models/User"
-import Message from "@/models/Message"
 import { connectDB } from "@/lib/mongodb"
 
 export async function GET(
   req: Request,
   { params }: { params: { userName: string } }
 ) {
+  try {
+    await connectDB()
 
-  await connectDB()
+    const { userName } = params
+    const currentUser = await User.findOne({ userName })
 
-  const { userName } = params
+    if (!currentUser) {
+      return NextResponse.json(
+        { message: "User not found" },
+        { status: 404 }
+      )
+    }
 
-  const chats = await Chat.find({
-    participants: userName
-  })
+    const userId = currentUser._id
+    const chats = await Chat.find({
+      participants: userId
+    })
+      .sort({ updatedAt: -1 })
+      .populate("participants", "userName fullName profilePic")
 
-  const results = await Promise.all(
-    chats.map(async (chat: any) => {
-
-      const otherUserName = chat.participants.find(
-        (p: string) => p !== userName
+    const results = chats.map((chat: any) => {
+      const otherUser = chat.participants.find(
+        (p: any) => p._id.toString() !== userId.toString()
       )
 
-      const otherUser = await User.findOne({
-        userName: otherUserName
-      })
-
-      const messages = await Message.find({
-        chatId: chat._id
-      }).sort({ timestamp: 1 })
-
       return {
+        chatId: chat._id,
+
         person: {
-          userName: otherUser.userName,
-          name: otherUser.fullName,
-          img: otherUser.profilePic
+          _id: otherUser?._id,
+          userName: otherUser?.userName,
+          name: otherUser?.fullName,
+          img: otherUser?.profilePic
         },
-        messages
+
+        lastMessage: chat.lastMessage || null,
+        updatedAt: chat.updatedAt
       }
     })
-  )
 
-  return NextResponse.json(results)
+    return NextResponse.json(results, { status: 200 })
+
+  } catch (error) {
+    console.error("Error fetching chats:", error)
+    return NextResponse.json(
+      { message: "Failed to fetch chats" },
+      { status: 500 }
+    )
+  }
 }

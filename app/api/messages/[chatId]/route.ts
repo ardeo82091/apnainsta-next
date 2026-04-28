@@ -6,12 +6,51 @@ export async function GET(
   req: Request,
   { params }: { params: { chatId: string } }
 ) {
+  try {
+    await connectDB()
 
-  await connectDB()
+    const { chatId } = params
 
-  const messages = await Message.find({
-    chatId: params.chatId
-  }).sort({ timestamp: 1 })
+    if (!chatId) {
+      return NextResponse.json(
+        { message: "chatId is required" },
+        { status: 400 }
+      )
+    }
 
-  return NextResponse.json(messages)
+    const { searchParams } = new URL(req.url)
+    const page = Number(searchParams.get("page")) || 1
+    const limit = Number(searchParams.get("limit")) || 20
+    const userId = searchParams.get("userId") 
+
+    const messages = await Message.find({ chatId })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+
+    if (userId) {
+      await Message.updateMany(
+        {
+          chatId,
+          sender: { $ne: userId },
+          readBy: { $ne: userId }
+        },
+        {
+          $addToSet: { readBy: userId }
+        }
+      )
+    }
+
+    const orderedMessages = messages.reverse()
+
+    return NextResponse.json(orderedMessages, { status: 200 })
+
+  } catch (error) {
+    console.error("Error fetching messages:", error)
+
+    return NextResponse.json(
+      { message: "Failed to fetch messages" },
+      { status: 500 }
+    )
+  }
 }

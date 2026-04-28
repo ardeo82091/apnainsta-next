@@ -85,7 +85,7 @@ export async function POST(req: Request) {
           img: myUser.profilePic
         },
         isOnline: false,
-        isFollowed: false
+        isFollowing: true
       })
 
       await Promise.all([
@@ -143,6 +143,30 @@ export async function POST(req: Request) {
         isFollowing: false,
         requestSent: false
       })
+
+    // REMOVE FRIEND
+      case "remove":
+
+    // remove them from your followers
+    myUser.friendAndRequests.followers =
+      myUser.friendAndRequests.followers.filter(
+        (f: any) => f.person.userName !== targetUser.userName
+      );
+
+    // remove you from their following
+    targetUser.friendAndRequests.followings =
+      targetUser.friendAndRequests.followings.filter(
+        (f: any) => f.person.userName !== myUser.userName
+      );
+
+    await Promise.all([
+      myUser.save(),
+      targetUser.save()
+    ]);
+
+    return NextResponse.json({
+      removed: true
+    });
 
     default:
       return NextResponse.json({ message: "Invalid action" }, { status: 400 })

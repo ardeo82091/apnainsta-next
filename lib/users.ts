@@ -84,16 +84,18 @@ export interface Person {
 }
 
 export interface Messages {
+  tempId?: string;
   _id?: string
-  chatId?: string
-  sender: string;
-  recipient: string;
-  content: string;
-  read: boolean;
-  timestamp?: Date;
+  chatId: string
+  sender: string
+  content: string
+  type?: "text" | "image" | "video"
+  readBy?: string[]
+  createdAt: Date
 }
 
 export interface ChatPerson {
+  chatId: string;
   person: Person;
   messages: Messages[];
 }
@@ -106,8 +108,33 @@ export interface Viewer {
 }
 
 export interface Chat {
-  _id?: string
-  participants: string[]
-  lastMessage?: string
+  _id: string
+  participants: {
+    _id: string
+    userName: string
+    fullName: string
+    profilePic?: string
+  }[]
+  lastMessage?: {
+    text: string
+    sender: string
+    timestamp: Date
+  }
   updatedAt: Date
+}
+
+export interface ChatPreview {
+  chatId: string
+  person: {
+    _id: string
+    userName: string
+    name: string
+    img?: string
+  }
+  lastMessage?: {
+    text: string
+    sender: string
+    timestamp: string
+  }
+  updatedAt: string
 }
