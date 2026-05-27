@@ -3,322 +3,291 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { RootState } from '@/redux/store';
-import Animation from '../animation';
+
+const primaryBtn =
+  "w-full py-2.5 rounded-lg text-white font-semibold bg-gradient-to-r from-teal-400 to-blue-500 shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200";
+
+const secondaryBtn =
+  "px-4 py-2 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100 transition";
+
+const optionBtn = (active: boolean) =>
+  `px-4 py-2 rounded-lg border text-sm font-medium transition ${
+    active
+      ? "bg-gradient-to-r from-teal-400 to-blue-500 text-white shadow"
+      : "bg-white text-gray-600 hover:bg-gray-100"
+  }`;
+
+type InputProps = {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type?: string;
+};
 
 const RegisterPage = () => {
 
-  const user = useSelector((state: RootState) => state.user);
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [repassword, setrePassword] = useState('');
-  const [userName, setUserName] = useState('');
-  const [dob, setDob] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [gender, setGender] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [isChecked, setIsChecked] = useState(false);
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [countryCode, setCountryCode] = useState('');
-  const [showAnimation, setShowAnimation] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowAnimation(false);
-    }, 3000);
+  const [step, setStep] = useState(0);
 
-    return () => clearTimeout(timer);
-  }, []);
+  const [form, setForm] = useState({
+    fullName: '',
+    userName: '',
+    dob: '',
+    gender: '',
+    email: '',
+    password: '',
+    repassword: '',
+    phoneNumber: '',
+    countryCode: '+91',
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const [agree, setAgree] = useState(false);
+  const [verifyMode, setVerifyMode] = useState<'email' | 'phone'>('email');
+
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // detect India
+  const isIndian = form.countryCode === '+91';
+
+  const handleChange = (e: any) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const next = () => setStep((p) => Math.min(p + 1, 2));
+  const prev = () => setStep((p) => Math.max(p - 1, 0));
+
+  const handleSubmit = async () => {
+    if (!agree) {
+      setError("You must accept terms & conditions");
+      return;
+    }
+
+    setLoading(true);
     try {
-      const field = !fullName ? "Full Name" : !gender ? "Gender" : !userName ? "User Name" : !dob ? "Date Of Birth" : "All";
-      if ((!fullName && !userName && !gender && !dob && !password && !repassword && !email && !phoneNumber)) {
-        setError(`Please enter ${field} to register`);
-        return;
-      }
-      const response = await axios.post('/api/register', { fullName, userName, gender, dob, password, repassword, email, phoneNumber });
+      const res = await axios.post('/api/register', {
+        ...form,
+        verifyMode
+      });
 
-      if (response.data.success) {
-        setSuccess('Registration successful');
-        setError('');
-        setShowAnimation(true);
-        setTimeout(() => {
-          router.push('/components/login');
-        }, 3000);
+      if (res.data.success) {
+        router.push('/components/login');
       } else {
-        setError(response.data.message || 'Registration failed');
-        setSuccess('');
+        setError(res.data.message);
       }
-    } catch (error) {
-      console.error('An error occurred:', error);
-      setError('An unexpected error occurred');
-      setSuccess('');
+    } catch {
+      setError("Something went wrong");
     }
+    setLoading(false);
   };
 
-  const handleNext = () => {
-    if (currentSlide < 2) {
-      setCurrentSlide(currentSlide + 1);
-    }
-  };
+return (
+  <div className="min-h-screen flex items-center justify-center bg-white relative overflow-hidden">
 
-  const handlePrev = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide(currentSlide - 1);
-    }
-  };
+    {/* LEFT ANIMATION */}
+    <div className="absolute left-10 top-1/2 -translate-y-1/2 hidden md:block">
+      <h1 className="text-[120px] font-extrabold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent animate-pulse">
+        LIVE
+      </h1>
+    </div>
+
+    {/* RIGHT ANIMATION */}
+    <div className="absolute right-10 top-1/2 -translate-y-1/2 hidden md:block">
+      <h1 className="text-[120px] font-extrabold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent animate-pulse">
+        VIBE
+      </h1>
+    </div>
+
+    {/* FORM CARD */}
+    <div className="z-10 w-full max-w-md bg-white p-8 rounded-2xl shadow-xl border">
+
+      {/* PROGRESS */}
+      <div className="flex justify-center mb-6 gap-2">
+        {[0,1,2].map(i => (
+          <div key={i}
+            className={`h-2 w-8 rounded-full transition ${
+              step >= i ? "bg-blue-500" : "bg-gray-300"
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* STEP 1 */}
+      {step === 0 && (
+        <>
+          <h2 className="text-xl font-bold mb-4">Basic Info</h2>
+
+          <Input label="Full Name" name="fullName" value={form.fullName} onChange={handleChange}/>
+
+          {/* DOB FIX */}
+          <div className="mb-4">
+            <label className="text-sm text-gray-600 mb-1 block">Date of Birth</label>
+            <input
+              type="date"
+              name="dob"
+              value={form.dob}
+              onChange={handleChange}
+              className="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400"
+            />
+          </div>
+
+          {/* GENDER */}
+          <div className="mb-4">
+            <p className="text-sm mb-2 text-gray-600">Gender</p>
+            <div className="flex gap-3">
+              {['Male','Female','Other'].map(g => (
+                <button
+                  key={g}
+                  onClick={() => setForm({...form, gender: g})}
+                  className={optionBtn(form.gender === g)}
+                >
+                  {g}
+                </button>
+              ))}
+            </div>
+          </div>
+          <button onClick={next} className={primaryBtn}>
+            Next →
+          </button>
+        </>
+      )}
+
+      {/* STEP 2 */}
+      {step === 1 && (
+        <>
+          <h2 className="text-xl font-bold mb-4">Account</h2>
+
+          <Input label="Username" name="userName" value={form.userName} onChange={handleChange}/>
+          <Input label="Password" type="password" name="password" value={form.password} onChange={handleChange}/>
+          <Input label="Confirm Password" type="password" name="repassword" value={form.repassword} onChange={handleChange}/>
+
+          <div className="flex justify-between mt-4">
+            <button onClick={prev} className={secondaryBtn}>
+              Back
+            </button>
+            <button onClick={next} className={primaryBtn}>
+              Next
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* STEP 3 */}
+      {step === 2 && (
+        <>
+          <h2 className="text-xl font-bold mb-4">Verification</h2>
+
+          <Input label="Email" name="email" value={form.email} onChange={handleChange}/>
+
+          {/* PHONE */}
+          <div className="flex gap-2 mb-4">
+            <select
+              name="countryCode"
+              value={form.countryCode}
+              onChange={handleChange}
+              className="border p-2 rounded"
+            >
+              <option value="+91">🇮🇳 +91</option>
+              <option value="+1">🇺🇸 +1</option>
+              <option value="+44">🇬🇧 +44</option>
+            </select>
+
+            <input
+              name="phoneNumber"
+              value={form.phoneNumber}
+              onChange={handleChange}
+              placeholder="Phone"
+              className="border p-2 rounded w-full"
+            />
+          </div>
+
+          {/* VERIFY MODE */}
+          <div className="mb-4">
+            <p className="text-sm mb-2 text-gray-600">Verify using</p>
+
+            {form.countryCode === '+91' ? (
+              <div className="flex gap-3">
+              <button
+                onClick={() => setVerifyMode('email')}
+                className={optionBtn(verifyMode === 'email')}
+              >
+                Email
+              </button>
+
+              <button
+                onClick={() => setVerifyMode('phone')}
+                className={optionBtn(verifyMode === 'phone')}
+              >
+                Phone
+              </button>
+            </div>
+            ) : (
+              <p className="text-gray-500 text-sm">Only Email verification available</p>
+            )}
+          </div>
+
+          {/* TERMS */}
+          <label className="flex items-start gap-3 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              checked={agree}
+              onChange={() => setAgree(!agree)}
+              className="mt-1 accent-blue-500"
+            />
+            <span className="text-gray-600">
+              I agree to Terms, Privacy Policy & receive notifications.
+            </span>
+          </label>
+
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+
+          <div className="flex justify-between">
+            <button onClick={prev} className={secondaryBtn}>
+              Back
+            </button>
+            <button onClick={handleSubmit} className={primaryBtn}>
+              {loading ? "Registering..." : "Create Account"}
+            </button>
+          </div>
+        </>
+      )}
+
+    </div>
+  </div>
+);
+};
+
+/* REUSABLE INPUT */
+
+const Input = ({ label, name, value, onChange, type = "text" }: InputProps) => {
+  const [focused, setFocused] = useState(false);
+
+  const isActive = focused || value; // 🔥 FIX
 
   return (
-    <div className="bg-gray-100 min-h-screen flex justify-center items-center">
-      <div className="relative w-full max-w-md">
-        <div className="absolute top-1/2 left-[-350px] transform -translate-y-1/2">
-          <h1 className="text-9xl font-extrabold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">LIVE</h1>
-        </div>
-        <div className="absolute top-1/2 right-[-350px] transform -translate-y-1/2">
-          <h1 className="text-9xl font-extrabold bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">VIBE</h1>
-        </div>
-          {/* Slide 1: First Name and Last Name */}
-          {currentSlide === 0 && (
-            <div className="bg-white rounded p-8 shadow-md w-full flex flex-col items-center">
-              <h2 className="text-xl mb-6 font-bold text-center bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
-                Step 1
-              </h2>
-              <div className="mb-4 w-full">
-                <label htmlFor="fullName" className="block bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent text-sm font-extrabold mb-2">
-                  Full Name
-                </label>
-                <input
-                  className="shadow appearance border rounded w-full py-2 px-3 text-black focus:outline-none"
-                  id="fullName"
-                  type="text"
-                  placeholder="Enter..."
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                />
-              </div>
-              <div className="mb-4 w-full">
-                <label htmlFor="dob" className="block bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent text-sm font-extrabold mb-2">
-                  Date of Birth
-                </label>
-                <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black focus:outline-none"
-                  id="dob"
-                  type="date"
-                  placeholder="Enter..."
-                  value={dob}
-                  onChange={(e) => setDob(e.target.value)}
-                />
-              </div>
-              <div className="mb-4 w-full">
-                <label className="block bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent text-sm font-extrabold mb-2">
-                  Gender
-                </label>
-                <div className="flex space-x-4">
-                  <button
-                    type="button"
-                    className={`py-2 px-4 border rounded ${gender === 'male' ? 'bg-teal-400 text-white' : 'bg-white text-black'}`}
-                    onClick={() => setGender('male')}
-                  >
-                    Male
-                  </button>
-                  <button
-                    type="button"
-                    className={`py-2 px-4 border rounded ${gender === 'female' ? 'bg-teal-400 text-white' : 'bg-white text-black'}`}
-                    onClick={() => setGender('female')}
-                  >
-                    Female
-                  </button>
-                  <button
-                    type="button"
-                    className={`py-2 px-4 border rounded ${gender === 'other' ? 'bg-teal-400 text-white' : 'bg-white text-black'}`}
-                    onClick={() => setGender('other')}
-                  >
-                    Other
-                  </button>
-                </div>
-              </div>
-              <div className="flex justify-between w-full mt-6">
-                <button>
-                </button>
-                <button
-                  className="shadow bg-gradient-to-r from-teal-400 to-blue-500 text-white font-bold px-0.5 rounded focus:outline-none "
-                  onClick={handleNext}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
+    <div className="relative mb-5">
+      <input
+        name={name}
+        type={type}
+        value={value}
+        onChange={onChange}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
+        className="w-full border border-gray-300 px-3 pt-5 pb-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-transparent"
+      />
 
-          {/* Slide 2: Email and Password */}
-          {currentSlide === 1 && (
-            <div className="bg-white rounded p-8 shadow-md w-full flex flex-col items-center">
-              <h2 className="text-xl mb-6 font-bold text-center bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
-                Step 2
-              </h2>
-              <div className="mb-4 w-full">
-                <label htmlFor="userName" className="block bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent text-sm font-extrabold mb-2">
-                  Username
-                </label>
-                <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black focus:outline-none"
-                  id="userName"
-                  type="text"
-                  placeholder="Enter..."
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                />
-              </div>
-              <div className="mb-4 w-full">
-                <label htmlFor="password" className="block bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent text-sm font-extrabold mb-2">
-                  Password
-                </label>
-                <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black focus:outline-none"
-                  id="password"
-                  type="password"
-                  placeholder="Enter..."
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <div className="mb-4 w-full">
-                <label htmlFor="password" className="block bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent text-sm font-extrabold mb-2">
-                  Re-Password
-                </label>
-                <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black focus:outline-none"
-                  id="repassword"
-                  type="password"
-                  placeholder="Enter Password Again!!"
-                  value={repassword}
-                  onChange={(e) => setrePassword(e.target.value)}
-                />
-              </div>
-              <div className="flex justify-between w-full mt-6">
-                <button
-                  className="shadow bg-gradient-to-r from-teal-400 to-blue-500 text-white font-bold px-0.5 rounded focus:outline-none "
-                  onClick={handlePrev}
-                >
-                  Prev
-                </button>
-                <button
-                  className="shadow bg-gradient-to-r from-teal-400 to-blue-500 text-white font-bold px-0.5 rounded focus:outline-none "
-                  onClick={handleNext}
-                >
-                  Next
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Slide 3: Username and Date of Birth */}
-          {currentSlide === 2 && (
-            <div className="bg-white rounded p-8 shadow-md w-full flex flex-col items-center">
-              <h2 className="text-xl mb-6 font-bold text-center bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent">
-                Step 3
-              </h2>
-              <div className="mb-4 w-full">
-                <label htmlFor="email" className="block bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent text-sm font-extrabold mb-2">
-                  Email
-                </label>
-                <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black focus:outline-none"
-                  id="email"
-                  type="email"
-                  placeholder="Enter..."
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="mb-4 w-full">
-                <label htmlFor="phoneNumber" className="block bg-gradient-to-r from-teal-400 to-blue-500 bg-clip-text text-transparent text-sm font-extrabold mb-2">
-                  Phone Number
-                </label>
-                <div className="flex items-center">
-                  <select
-                    value={countryCode}
-                    onChange={(event) => setCountryCode(event.target.value)} 
-                    className="border-none bg-transparent shadow appearance-none border rounded focus:outline-none text-gray-500 font-semibold mr-2 py-2 px-2"
-                    aria-label="Country Code"
-                  >
-                    <option value="+1"> US +1</option>
-                    <option value="+44"> UK +44</option>
-                    <option value="+91"> IN +91</option>
-                    <option value="+61"> AU +61</option>
-                    <option value="+81"> JP +81</option>
-                    <option value="+49"> DE +49</option>
-                    <option value="+33"> FR +33</option>
-                    <option value="+86"> CN +86</option>
-                    <option value="+7"> RU +7</option>
-                    <option value="+39"> IT +39</option>
-                  </select>
-                  <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black focus:outline-none"
-                    id="phoneNumber"
-                    type="text"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
-                    placeholder="Enter phone number"
-                  />
-                </div>
-              </div>
-              <div className="text-gray-400">
-                <label htmlFor="termAndConditionChecked" className="flex items-center mt-4 relative">
-                  <input
-                    type="checkbox"
-                    className="appearance-none h-4 w-4 border border-gray-300 rounded-sm bg-white checked:bg-teal-400 checked:border-teal-400 focus:outline-none"
-                    checked={isChecked}
-                    id="termAndConditionChecked"
-                    onChange={(e) => setIsChecked(e.target.checked)}
-                  />
-                  <div
-                    className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${
-                      isChecked ? 'block' : 'hidden'
-                    }`}
-                    style={{ fontSize: '1.2rem', color: 'white', paddingRight: '9.9rem' }}
-                  >
-                    ✓
-                  </div>
-                  <span className="ml-2">Term and Condition</span>
-                </label>
-              </div>
-              <div className="flex justify-between items-center mt-6 w-full">
-                <div className="w-1/3">
-                  <button
-                    className="shadow bg-gradient-to-r from-teal-400 to-blue-500 text-white font-bold px-0.5 rounded focus:outline-none"
-                    onClick={handlePrev}
-                  >
-                    Prev
-                  </button>
-                </div>
-
-                <div className="w-1/3 flex justify-center">
-                  <button
-                    type="submit"
-                    className="shadow bg-gradient-to-r from-teal-400 to-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none"
-                    onClick={handleSubmit}
-                  >
-                    Register
-                  </button>
-                </div>
-                
-                <div className="w-1/3"></div>
-              </div>
-
-              <div className='text-red-400 text-4'>{error}</div>
-
-            </div>
-          )}
-      </div>
-      {showAnimation && <Animation />}
+      <label
+        className={`absolute left-3 transition-all duration-200 pointer-events-none
+          ${
+            isActive
+              ? "top-1 text-xs text-blue-500"
+              : "top-3 text-gray-400"
+          }`}
+      >
+        {label}
+      </label>
     </div>
   );
 };

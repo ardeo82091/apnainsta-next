@@ -14,7 +14,6 @@ const ViewerSchema = new Schema({
 })
 
 const NotificationSchema = new Schema({
-  id: Number,
   type: {
     type: String,
     enum: ["like", "comment", "follow"]
@@ -27,30 +26,28 @@ const NotificationSchema = new Schema({
 })
 
 const FollowersSchema = new Schema({
-  id: Number,
   person: PersonSchema,
-  isOnline: Boolean,
-  isFollowing: Boolean,
-  isFollowed: Boolean
+  createdAt: { type: Date, default: Date.now }
 })
 
 const FollowingsSchema = new Schema({
-  id: Number,
   person: PersonSchema,
-  isOnline: Boolean
+  createdAt: { type: Date, default: Date.now }
 })
 
 const RequestsSchema = new Schema({
-  id: Number,
   person: PersonSchema,
-  isAdded: Boolean,
-  isSent: Boolean
+  type: {
+    type: String,
+    enum: ["sent", "received"]
+  },
+  createdAt: { type: Date, default: Date.now }
 })
 
 const FriendsAndRequestsSchema = new Schema({
-  requests: [RequestsSchema],
-  followers: [FollowersSchema],
-  followings: [FollowingsSchema]
+  requests: { type: [RequestsSchema], default: [] },
+  followers: { type: [FollowersSchema], default: [] },
+  followings: { type: [FollowingsSchema], default: [] }
 })
 
 const UserSchema = new Schema({
@@ -90,7 +87,9 @@ const UserSchema = new Schema({
     default: "user"
   },
 
-  friendAndRequests: FriendsAndRequestsSchema,
+  friendAndRequests: {
+    type: FriendsAndRequestsSchema
+  },
 
   notifications: [NotificationSchema],
 

@@ -40,14 +40,14 @@ import { NextResponse } from 'next/server';
 // }
 
 
-export async function PUT(req : Request){
-  try{
-    const {userName, action} = await req.json();
-    const [isUserUpdated, message] = updateUser(userName, action);
-    return NextResponse.json({success : isUserUpdated, message: message}, {status: isUserUpdated ? 200 :400})
-  }
-  catch (error){
-    console.error('Error updating user:', error);
-    return NextResponse.json({ success: false, message: 'Failed to update user' }, { status: 500 });
-  }
-}
+// export async function PUT(req : Request){
+//   try{
+//     const {userName, action} = await req.json();
+//     const [isUserUpdated, message] = updateUser(userName, action);
+//     return NextResponse.json({success : isUserUpdated, message: message}, {status: isUserUpdated ? 200 :400})
+//   }
+//   catch (error){
+//     console.error('Error updating user:', error);
+//     return NextResponse.json({ success: false, message: 'Failed to update user' }, { status: 500 });
+//   }
+// }

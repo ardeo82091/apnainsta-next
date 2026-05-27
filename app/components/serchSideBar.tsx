@@ -1,144 +1,162 @@
-"use client"
+"use client";
 
-import { FC, useEffect, useState } from "react"
-import { FaTimes, FaSearch, FaCheckCircle, FaUserPlus, FaUserMinus } from "react-icons/fa"
-import axios from "axios"
-import { RootState } from "@/redux/store"
-import { useSelector } from "react-redux"
+import { FC, useEffect, useState, useMemo } from "react";
+import {
+  FaTimes,
+  FaSearch,
+  FaCheckCircle,
+  FaUserPlus,
+  FaUserMinus,
+} from "react-icons/fa";
+import axios from "axios";
+import { RootState } from "@/redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { getSocket } from "./chat/socket";
 
 interface SearchSlideProps {
-  isOpen: boolean
-  onClose: () => void
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
+  const dispatch = useDispatch();
+  const socket = getSocket();
 
-  const [searchUser, setSearchUser] = useState("")
-  const [results, setResults] = useState<any[]>([])
-  const [debouncedSearch, setDebouncedSearch] = useState("")
+  const [searchUser, setSearchUser] = useState("");
+  const [results, setResults] = useState<any[]>([]);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  const myUserName = useSelector((state: RootState) => state.user.userName)
+  const users = useSelector((state: RootState) => state.user);
+  const myUserName = users.userName;
 
+  const requests = users.friendAndRequests?.requests || [];
+  const followings = users.friendAndRequests?.followings || [];
+
+  // 🔥 Debounce
   useEffect(() => {
     const timer = setTimeout(() => {
-      setDebouncedSearch(searchUser)
-    }, 300)
+      setDebouncedSearch(searchUser);
+    }, 300);
 
-    return () => clearTimeout(timer)
-  }, [searchUser])
+    return () => clearTimeout(timer);
+  }, [searchUser]);
 
+  // 🔥 Fetch users
   useEffect(() => {
     const fetchUsers = async () => {
-
       if (debouncedSearch.trim().length < 2) {
-        setResults([])
-        return
+        setResults([]);
+        return;
       }
 
       try {
         const { data } = await axios.get("/api/search", {
           params: {
             query: debouncedSearch,
-            exclude: myUserName
-          }
-        })
+            exclude: myUserName,
+          },
+        });
 
-        setResults(data)
-
+        setResults(data);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
-    }
+    };
 
-    fetchUsers()
+    fetchUsers();
+  }, [debouncedSearch, myUserName]);
 
-  }, [debouncedSearch, myUserName])
+  // 🔥 FAST LOOKUPS (important)
+  const followingSet = useMemo(
+    () => new Set(followings.map((f: any) => f.person.userName)),
+    [followings]
+  );
 
-  const toggleFollow = async (user: any) => {
+  const sentRequestSet = useMemo(
+    () =>
+      new Set(
+        requests
+          .filter((r: any) => r.type === "sent")
+          .map((r: any) => r.person.userName)
+      ),
+    [requests]
+  );
+
+  const receivedRequestSet = useMemo(
+    () =>
+      new Set(
+        requests
+          .filter((r: any) => r.type === "received")
+          .map((r: any) => r.person.userName)
+      ),
+    [requests]
+  );
+
+  // ✅ CORRECT STATUS LOGIC
+  const getUserStatus = (user: any) => {
+    const userName = user.userName;
+
+    if (receivedRequestSet.has(userName)) return "incoming";
+    if (followingSet.has(userName)) return "following";
+    if (sentRequestSet.has(userName)) return "requested";
+
+    return "none";
+  };
+
+  // 🔥 HANDLE ACTION
+  const handleAction = async (action: string, person: any) => {
+    const targetUserName = person.userName;
+
+    dispatch({
+      type: "user/updateAction",
+      payload: { action, targetUserName, user: person },
+    });
 
     try {
+      await axios.post("/api/frndreq", {
+        action,
+        myUserName,
+        targetUserName,
+      });
 
-      if (user.isFollowing) {
-        await axios.post("/api/frndreq", {
-          action: "unfollow",
-          myUserName,
-          targetUserName: user.userName
-        })
+      socket.emit("frnd_action", {
+        action,
+        from: myUserName,
+        to: targetUserName,
+      });
 
-        setResults(prev =>
-          prev.map(u =>
-            u.userName === user.userName
-              ? { ...u, isFollowing: false }
-              : u
-          )
-        )
-      } else if (user.requestSent) {
-        await axios.post("/api/frndreq", {
-          action: "cancel",
-          myUserName,
-          targetUserName: user.userName
-        })
+    } catch (err) {
+      console.error(err);
 
-        setResults(prev =>
-          prev.map(u =>
-            u.userName === user.userName
-              ? { ...u, requestSent: false }
-              : u
-          )
-        )
-      } else {
-        await axios.post("/api/frndreq", {
-          action: "follow",
-          myUserName,
-          targetUserName: user.userName
-        })
-
-        setResults(prev =>
-          prev.map(u =>
-            u.userName === user.userName
-              ? { ...u, requestSent: true }
-              : u
-          )
-        )
-
-      }
-
-    } catch (error) {
-      console.error(error)
+      dispatch({
+        type: "user/rollbackAction",
+        payload: { action, targetUserName, user: person },
+      });
     }
-  }
+  };
 
-  const acceptRequest = async (targetUserName: string) => {
-    await axios.post("/api/frndreq", {
-      action: "accept",
-      myUserName,
-      targetUserName
-    })
+  const statusConfig: any = {
+    following: {
+      label: "Unfollow",
+      icon: <FaUserMinus />,
+      className: "bg-gray-200 text-gray-700 hover:bg-gray-300",
+      action: "unfollow",
+    },
 
-    setResults(prev =>
-      prev.map(u =>
-        u.userName === targetUserName
-          ? { ...u, isFollowing: true, acceptReq: false }
-          : u
-      )
-    )
-  }
+    requested: {
+      label: "Cancel",
+      className: "bg-red-100 text-red-700 hover:bg-red-200",
+      action: "cancel",
+    },
 
-  const rejectRequest = async (targetUserName: string) => {
-    await axios.post("/api/frndreq", {
-      action: "reject",
-      myUserName,
-      targetUserName
-    })
-
-    setResults(prev =>
-      prev.map(u =>
-        u.userName === targetUserName
-          ? { ...u, acceptReq: false }
-          : u
-      )
-    )
-  }
+    none: {
+      label: "Follow",
+      icon: <FaUserPlus />,
+      className:
+        "bg-gradient-to-r from-teal-400 to-blue-500 text-white shadow hover:scale-[1.02]",
+      action: "follow",
+    },
+  };
 
   return (
     <>
@@ -149,19 +167,21 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
         />
       )}
 
+      {/* SIDEBAR */}
       <div
         className={`fixed top-0 right-0 h-screen w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300
         ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
+        {/* HEADER */}
         <div className="flex items-center justify-between px-5 py-4 border-b">
           <h2 className="text-lg font-semibold">Search</h2>
-
           <FaTimes
             className="cursor-pointer text-gray-500 hover:text-black"
             onClick={onClose}
           />
         </div>
 
+        {/* SEARCH INPUT */}
         <div className="p-4">
           <div className="flex items-center gap-3 bg-gray-100 px-3 py-2 rounded-lg">
             <FaSearch className="text-gray-400" />
@@ -175,109 +195,77 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
           </div>
         </div>
 
+        {/* RESULTS */}
         <div className="overflow-y-auto px-4 pb-6 space-y-3">
-
           {results.length === 0 && searchUser.length > 1 && (
-            <p className="text-gray-500 text-sm">
-              No users found
-            </p>
+            <p className="text-gray-500 text-sm">No users found</p>
           )}
 
-          {results.map((user) => (
-            <div
-              key={user.userName}
-              className="flex items-center justify-between gap-3 p-3 border rounded-lg hover:shadow-sm hover:bg-gray-50 transition"
-            >
-              <div className="flex items-center gap-3">
+          {results.map((user) => {
+            const status = getUserStatus(user);
+            const config = statusConfig[status];
 
-                <div className="relative">
+            return (
+              <div
+                key={user.userName}
+                className="flex items-center justify-between gap-3 p-3 border rounded-lg hover:shadow-sm hover:bg-gray-50 transition"
+              >
+                {/* USER INFO */}
+                <div className="flex items-center gap-3">
                   <img
                     src={user.img}
                     className="w-12 h-12 rounded-full object-cover"
                   />
 
-                  <span
-                    className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-white
-                    ${user.isOnline ? "bg-green-500" : "bg-gray-400"}`}
-                  />
-                </div>
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-1">
+                      <span className="font-medium text-sm">
+                        {user.userName}
+                      </span>
+                      {user.isVerified && (
+                        <FaCheckCircle className="text-blue-500 text-xs" />
+                      )}
+                    </div>
 
-                <div className="flex flex-col">
-
-                  <div className="flex items-center gap-1">
-                    <span className="font-medium text-sm">
-                      {user.userName}
+                    <span className="text-xs text-gray-500">
+                      {user.name}
                     </span>
-
-                    {user.isVerified && (
-                      <FaCheckCircle className="text-blue-500 text-xs" />
-                    )}
                   </div>
-
-                  <span className="text-xs text-gray-500">
-                    {user.name}
-                  </span>
-
-                  <span className="text-xs text-gray-400">
-                    {user.followers} followers • {user.mutualFriends} mutual
-                  </span>
-
                 </div>
-              </div>
 
-              <div className="flex items-center gap-2">
-                {user.acceptReq ? (
-                  <div className="flex items-center gap-2">
+                {/* ACTION BUTTON */}
+                {status === "incoming" ? (
+                  <div className="flex gap-2">
                     <button
-                      onClick={() => acceptRequest(user.userName)}
-                      className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-green-100 text-green-700 hover:bg-green-200"
+                      onClick={() => handleAction("accept", user)}
+                      className="px-3 py-1.5 text-xs rounded-lg bg-green-100 text-green-700 hover:bg-green-200"
                     >
                       Accept
                     </button>
 
                     <button
-                      onClick={() => rejectRequest(user.userName)}
-                      className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
+                      onClick={() => handleAction("reject", user)}
+                      className="px-3 py-1.5 text-xs rounded-lg bg-red-100 text-red-700 hover:bg-red-200"
                     >
                       Reject
                     </button>
                   </div>
                 ) : (
                   <button
-                    onClick={() => toggleFollow(user)}
-                    className={`flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition
-                      ${
-                        user.isFollowing
-                          ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                          : user.requestSent
-                          ? "bg-red-100 text-red-700 hover:bg-red-200"
-                          : "bg-green-100 text-green-700 hover:bg-green-200"
-                      }`}
+                    onClick={() => handleAction(config.action, user)}
+                    className={`flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition ${config.className}`}
                   >
-                    {user.isFollowing ? (
-                      <>
-                        <FaUserMinus />
-                        Unfollow
-                      </>
-                    ) : user.requestSent ? (
-                      <>Cancel Request</>
-                    ) : (
-                      <>
-                        <FaUserPlus />
-                        Follow
-                      </>
-                    )}
+                    {config.icon}
+                    {config.label}
                   </button>
                 )}
-
               </div>
-            </div>
-          ))}
-
+            );
+          })}
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default SearchSlideBar
+export default SearchSlideBar;

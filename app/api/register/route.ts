@@ -46,7 +46,6 @@ export async function POST(request: Request) {
         followers:[],
         followings:[]
       },
-      chatPerson:[],
       posts:[],
       notifications:[],
       viewedBy:[]

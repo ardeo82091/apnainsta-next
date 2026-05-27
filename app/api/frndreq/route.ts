@@ -1,174 +1,196 @@
-import { NextResponse } from "next/server"
-import { connectDB } from "@/lib/mongodb"
-import User from "@/models/User"
+import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/mongodb";
+import User from "@/models/User";
+import mongoose from "mongoose";
 
 export async function POST(req: Request) {
+  await connectDB();
 
-  await connectDB()
+  const { action, myUserName, targetUserName } = await req.json();
 
-  const { action, myUserName, targetUserName } = await req.json()
-
-  const myUser = await User.findOne({ userName: myUserName })
-  const targetUser = await User.findOne({ userName: targetUserName })
+  const myUser = await User.findOne({ userName: myUserName });
+  const targetUser = await User.findOne({ userName: targetUserName });
 
   if (!myUser || !targetUser) {
-    return NextResponse.json({ message: "User not found" }, { status: 404 })
+    return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
+
+  const createId = () => new mongoose.Types.ObjectId();
 
   switch (action) {
 
     // FOLLOW REQUEST
-    case "follow":
+    case "follow": {
+
+      // prevent duplicate request
+      const alreadySent = myUser.friendAndRequests.requests.some(
+        (r: any) => r.person.userName === targetUserName && r.isSent
+      );
+
+      if (alreadySent) {
+        return NextResponse.json({ message: "Already requested" });
+      }
 
       targetUser.friendAndRequests.requests.push({
-        id: Date.now(),
         person: {
           userName: myUser.userName,
           name: myUser.fullName,
-          img: myUser.profilePic
+          img: myUser.profilePic,
         },
         isAdded: false,
-        isSent: false
-      })
+        isSent: false,
+      });
 
       myUser.friendAndRequests.requests.push({
-        id: Date.now(),
         person: {
           userName: targetUser.userName,
           name: targetUser.fullName,
-          img: targetUser.profilePic
+          img: targetUser.profilePic,
         },
         isAdded: false,
-        isSent: true
-      })
+        isSent: true,
+      });
 
-      await Promise.all([
-        targetUser.save(),
-        myUser.save()
-      ])
+      await Promise.all([targetUser.save(), myUser.save()]);
 
       return NextResponse.json({
         isFollowing: false,
         requestSent: true,
-        acceptReq: false
-      })
+      });
+    }
 
     // ACCEPT REQUEST
-    case "accept":
+    case "accept": {
 
+      // remove requests BOTH sides
       myUser.friendAndRequests.requests =
         myUser.friendAndRequests.requests.filter(
           (r: any) => r.person.userName !== targetUser.userName
-        )
+        );
 
       targetUser.friendAndRequests.requests =
         targetUser.friendAndRequests.requests.filter(
           (r: any) => r.person.userName !== myUser.userName
-        )
+        );
 
+      // add followers/followings
       myUser.friendAndRequests.followers.push({
-        id: Date.now(),
         person: {
           userName: targetUser.userName,
           name: targetUser.fullName,
-          img: targetUser.profilePic
+          img: targetUser.profilePic,
         },
         isOnline: false,
-        isFollowing: false
-      })
+        isFollowing: false,
+      });
 
       targetUser.friendAndRequests.followings.push({
-        id: Date.now(),
         person: {
           userName: myUser.userName,
           name: myUser.fullName,
-          img: myUser.profilePic
+          img: myUser.profilePic,
         },
         isOnline: false,
-        isFollowing: true
-      })
+        isFollowing: true,
+      });
 
-      await Promise.all([
-        targetUser.save(),
-        myUser.save()
-      ])
+      await Promise.all([targetUser.save(), myUser.save()]);
 
       return NextResponse.json({
         isFollowing: true,
         requestSent: false,
-        acceptReq: false
-      })
+      });
+    }
 
     // REJECT REQUEST
-    case "reject":
+    case "reject": {
 
       targetUser.friendAndRequests.requests =
         targetUser.friendAndRequests.requests.filter(
           (r: any) => r.person.userName !== myUserName
-        )
+        );
 
-      await targetUser.save()
+      myUser.friendAndRequests.requests =
+        myUser.friendAndRequests.requests.filter(
+          (r: any) => r.person.userName !== targetUserName
+        );
+
+      await Promise.all([targetUser.save(), myUser.save()]);
 
       return NextResponse.json({
         isFollowing: false,
-        requestSent: false
-      })
+        requestSent: false,
+      });
+    }
 
     // CANCEL REQUEST
-    case "cancel":
+    case "cancel": {
 
       targetUser.friendAndRequests.requests =
         targetUser.friendAndRequests.requests.filter(
           (r: any) => r.person.userName !== myUserName
-        )
+        );
 
-      await targetUser.save()
+      myUser.friendAndRequests.requests =
+        myUser.friendAndRequests.requests.filter(
+          (r: any) => r.person.userName !== targetUserName
+        );
+
+      await Promise.all([targetUser.save(), myUser.save()]);
 
       return NextResponse.json({
         isFollowing: false,
-        requestSent: false
-      })
+        requestSent: false,
+      });
+    }
 
     // UNFOLLOW
-    case "unfollow":
+    case "unfollow": {
 
+      // remove from their followers
       targetUser.friendAndRequests.followers =
         targetUser.friendAndRequests.followers.filter(
           (f: any) => f.person.userName !== myUserName
-        )
+        );
 
-      await targetUser.save()
+      // remove from your followings
+      myUser.friendAndRequests.followings =
+        myUser.friendAndRequests.followings.filter(
+          (f: any) => f.person.userName !== targetUserName
+        );
+
+      await Promise.all([targetUser.save(), myUser.save()]);
 
       return NextResponse.json({
         isFollowing: false,
-        requestSent: false
-      })
+      });
+    }
 
-    // REMOVE FRIEND
-      case "remove":
+    // REMOVE FRIEND (both sides)
+    case "remove": {
 
-    // remove them from your followers
-    myUser.friendAndRequests.followers =
-      myUser.friendAndRequests.followers.filter(
-        (f: any) => f.person.userName !== targetUser.userName
-      );
+      // remove from your followers
+      myUser.friendAndRequests.followers =
+        myUser.friendAndRequests.followers.filter(
+          (f: any) => f.person.userName !== targetUser.userName
+        );
 
-    // remove you from their following
-    targetUser.friendAndRequests.followings =
-      targetUser.friendAndRequests.followings.filter(
-        (f: any) => f.person.userName !== myUser.userName
-      );
+      targetUser.friendAndRequests.followings =
+        targetUser.friendAndRequests.followings.filter(
+          (f: any) => f.person.userName !== myUser.userName
+        );
 
-    await Promise.all([
-      myUser.save(),
-      targetUser.save()
-    ]);
+      await Promise.all([targetUser.save(), myUser.save()]);
 
-    return NextResponse.json({
-      removed: true
-    });
+      return NextResponse.json({
+        removed: true,
+      });
+    }
 
     default:
-      return NextResponse.json({ message: "Invalid action" }, { status: 400 })
+      return NextResponse.json(
+        { message: "Invalid action" },
+        { status: 400 }
+      );
   }
 }

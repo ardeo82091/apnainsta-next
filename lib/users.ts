@@ -57,24 +57,19 @@ export interface FriendsAndRequests {
 }
 
 export interface Followers {
-  id: number;
   person: Person;
-  isOnline: boolean;
-  isFollowing: boolean;
+  createdAt: Date;
 }
 
 export interface Followings {
-  id: number;
   person: Person;
-  isOnline: boolean;
-  isFollowed: boolean;
+  createdAt: Date;
 }
 
 export interface Requests {
-  id: number;
   person: Person;
-  isAdded: boolean;
-  isSent: boolean;
+  type: "sent" | "received";
+  createdAt: Date;
 }
 
 export interface Person {
