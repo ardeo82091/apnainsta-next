@@ -1,15 +1,18 @@
 'use client'
 
 import Image from "next/image";
-import { useRef, MouseEvent } from "react";
+import { useRef, MouseEvent, FC } from "react";
 import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { useState } from "react";
 import { BiComment } from "react-icons/bi";
 import CommentModal from "../modal/commentModal"
 import AddStoriesModal from "../modal/AddStorieModal";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
 
-const StoriesAndWork = () => {
+const StoriesAndWork = ({}) => {
+  
   const initialPosts = [
     {
       id: 1,
@@ -121,6 +124,8 @@ const StoriesAndWork = () => {
     },
   ];
 
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+  
   const [posts, setPosts] = useState(initialPosts);
   const [openAddComments, setAddComments] = useState(false);
   const [openAddStories, setAddStories] = useState(false);
@@ -170,83 +175,6 @@ const StoriesAndWork = () => {
             like: true
         }
       ];
-      
-      interface ScrollableGridProps {
-        posts : [
-          {
-            id: 1,
-            title: 'Post 1',
-            imageUrl: '/images/profile.jpg',
-            description: 'This is the description for post 1',
-          },
-          {
-            id: 2,
-            title: 'Post 2',
-            imageUrl: '/images/profile.jpg',
-            description: 'This is the description for post 2',
-          },
-          {
-            id: 1,
-            title: 'Post 1',
-            imageUrl: '/images/profile.jpg',
-            description: 'This is the description for post 1',
-          },
-          {
-            id: 2,
-            title: 'Post 2',
-            imageUrl: '/images/profile.jpg',
-            description: 'This is the description for post 2',
-          },
-          {
-            id: 1,
-            title: 'Post 1',
-            imageUrl: '/images/profile.jpg',
-            description: 'This is the description for post 1',
-          },
-          {
-            id: 2,
-            title: 'Post 2',
-            imageUrl: '/images/profile.jpg',
-            description: 'This is the description for post 2',
-          },
-          {
-            id: 1,
-            title: 'Post 1',
-            imageUrl: '/images/profile.jpg',
-            description: 'This is the description for post 1',
-          },
-          {
-            id: 2,
-            title: 'Post 2',
-            imageUrl: '/images/profile.jpg',
-            description: 'This is the description for post 2',
-          },
-          {
-            id: 1,
-            title: 'Post 1',
-            imageUrl: '/images/profile.jpg',
-            description: 'This is the description for post 1',
-          },
-          {
-            id: 2,
-            title: 'Post 2',
-            imageUrl: '/images/profile.jpg',
-            description: 'This is the description for post 2',
-          },
-          {
-            id: 1,
-            title: 'Post 1',
-            imageUrl: '/images/profile.jpg',
-            description: 'This is the description for post 1',
-          },
-          {
-            id: 2,
-            title: 'Post 2',
-            imageUrl: '/images/profile.jpg',
-            description: 'This is the description for post 2',
-          },
-        ];
-      }
 
       const likeCount = (postId : number, isLiked: boolean) => {
         const newposts = posts.map((post)=> 
@@ -258,43 +186,12 @@ const StoriesAndWork = () => {
         )
         setPosts(newposts);
       }
-      
-      // const ScrollableGrid: React.FC<ScrollableGridProps> = ({ posts }) => {
-      //   const scrollRef = useRef<HTMLDivElement | null>(null);
-      
-      //   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
-      //     if (!scrollRef.current) return;
-          
-      //     const slider = scrollRef.current;
-      //     slider.style.cursor = "grabbing";
-      //     slider.dataset.mouseDownAt = e.clientY.toString();
-      //     slider.dataset.scrollTop = slider.scrollTop.toString();
-      //   };
-      
-      //   const handleMouseUp = () => {
-      //     if (!scrollRef.current) return;
-      
-      //     const slider = scrollRef.current;
-      //     slider.style.cursor = "grab";
-      //     slider.dataset.mouseDownAt = "0";
-      //   };
-      
-      //   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-      //     if (!scrollRef.current) return;
-      
-      //     const slider = scrollRef.current;
-      //     if (slider.dataset.mouseDownAt === "0") return;
-      
-      //     const mouseDelta = e.clientY - parseFloat(slider.dataset.mouseDownAt || "0");
-      //     slider.scrollTop = parseFloat(slider.dataset.scrollTop || "0") - mouseDelta;
-      //   };
-      // };
 
     return (
         <div className="ml-4 mt-2 mr-4">
             <div className="flex space-x-4">
                 <div className="flex w-16 h-16 border-4 border-gray-600 rounded-full mt-2">
-                    <button className="bg-white border-2 border-dashed border-blue-500 text-blue-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-bold"
+                    <button className={`bg-white border-2 border-dashed border-blue-500 text-blue-500 rounded-full w-5 h-5 flex items-center justify-center text-sm font-bold ${darkMode ? 'text-white' : 'text-blue-500'}`}
                     onClick={() => setAddStories(true)}
                     >
                         +
@@ -314,12 +211,11 @@ const StoriesAndWork = () => {
                     </div>
                 ))}
             </div>
-            <div className="border border-dashed border-black mt-1"/>
-            <div className="grid grid-cols-1 justify-items-center gap-8 py-6 h-[calc(100vh-68px)] overflow-y-auto">
+            <div className="grid grid-cols-1 justify-items-center gap-8 py-6 mt-4 h-[calc(100vh-68px)] overflow-y-auto">
               {posts.map((post) => (
                 <div
                   key={post.id}
-                  className="w-[400px] bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+                  className={`w-[400px] rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}
                 >
                   <Image
                     src={post.imageUrl}
@@ -329,19 +225,19 @@ const StoriesAndWork = () => {
                     className="w-full h-[480px] object-cover rounded-t-lg"
                   />
                   <div className="p-4">
-                    <h3 className="flex gap-6 text-lg font-semibold text-gray-800 mb-2">
+                    <h3 className={`flex gap-6 text-lg font-semibold ${darkMode ? 'text-white' : 'text-gray-800'} mb-2`}>
                       <button
                         onClick={() => likeCount(post.id, !post.liked)}
                         className="flex items-center gap-2"
                       >
                         {post.liked ? (
                           <>
-                            <HeartSolid className="h-6 w-6 text-red-500" />
+                            <HeartSolid className="h-6 w-6 text-red-500"/>
                             <span>{post.likedCount}</span>
                           </>
                         ) : (
                           <>
-                            <HeartOutline className="h-6 w-6 text-gray-500" />
+                            <HeartOutline className={`h-6 w-6 ${darkMode ? 'text-white' : 'text-gray-500'}`} />
                             <span>{post.likedCount}</span>
                           </>
                         )}
@@ -350,11 +246,11 @@ const StoriesAndWork = () => {
                         onClick={() => setAddComments(true)}
                         className="flex items-center gap-2"
                       >
-                        <BiComment className="h-6 w-6 text-gray-500" />
+                        <BiComment className={`h-6 w-6 ${darkMode ? 'text-white' : 'text-gray-500'}`} />
                         <span>{post.commentCount || 0}</span>
                       </button>
                     </h3>
-                    <p className="text-gray-600 text-sm">{post.description}</p>
+                    <p className={`text-sm ${darkMode ? 'text-white' : 'text-gray-600'}`}>{post.description}</p>
                   </div>
                 </div>
               ))}

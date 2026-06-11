@@ -61,6 +61,7 @@ const userSlice = createSlice({
             state.friendAndRequests.requests.push({
               person: user,
               type: "sent",
+              createdAt: new Date(),
             });
           }
           break;
@@ -89,6 +90,7 @@ const userSlice = createSlice({
           if (!existsFollower) {
             state.friendAndRequests.followers.push({
               person: user,
+              createdAt: new Date(),
             });
           }
 
@@ -99,6 +101,7 @@ const userSlice = createSlice({
           if (!existsFollowing) {
             state.friendAndRequests.followings.push({
               person: user,
+              createdAt: new Date(),
             });
           }
 
@@ -147,6 +150,7 @@ const userSlice = createSlice({
             state.friendAndRequests.requests.push({
               person: user || { userName: from },
               type: "received",
+              createdAt: new Date(),
             });
           }
           break;
@@ -176,6 +180,7 @@ const userSlice = createSlice({
           if (!existsFollower) {
             state.friendAndRequests.followers.push({
               person: user || { userName: from },
+              createdAt: new Date(),
             });
           }
 
@@ -187,6 +192,7 @@ const userSlice = createSlice({
           if (!existsFollowing) {
             state.friendAndRequests.followings.push({
               person: user || { userName: from },
+              createdAt: new Date(),
             });
           }
 

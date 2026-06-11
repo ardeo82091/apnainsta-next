@@ -8,6 +8,7 @@ export function SecuritySettings() {
 
   const dispatch = useDispatch()
   const user = useSelector((state: any) => state.user)
+  const darkMode = useSelector((state: any) => state.theme.darkMode)
 
   const [twoFactor, setTwoFactor] = useState(false)
   const [loginAlerts, setLoginAlerts] = useState(true)
@@ -39,7 +40,7 @@ export function SecuritySettings() {
       </div>
 
       {/* ---------------- CHANGE PASSWORD ---------------- */}
-      <div className="bg-white border rounded-2xl shadow-sm p-6">
+      <div className={`${darkMode ? "bg-gray-900" : "bg-white"} border rounded-2xl shadow-sm p-6`}>
         <h3 className="text-lg font-semibold mb-4">
           Change Password
         </h3>
@@ -52,7 +53,7 @@ export function SecuritySettings() {
             placeholder="Current Password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
-            className="w-full border px-4 py-2 rounded-lg"
+            className={`w-full px-4 py-2 rounded-lg ${darkMode ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-800"}`}
           />
 
           <input
@@ -61,7 +62,7 @@ export function SecuritySettings() {
             placeholder="New Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border px-4 py-2 rounded-lg"
+            className={`w-full px-4 py-2 rounded-lg ${darkMode ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-800"}`}
           />
 
           <input
@@ -70,7 +71,7 @@ export function SecuritySettings() {
             placeholder="Confirm New Password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="w-full border px-4 py-2 rounded-lg"
+            className={`w-full px-4 py-2 rounded-lg ${darkMode ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-800"}`}
           />
 
           <button
@@ -85,12 +86,12 @@ export function SecuritySettings() {
 
 
       {/* ---------------- FORGOT PASSWORD ---------------- */}
-      <div className="bg-white border rounded-2xl shadow-sm p-6">
+      <div className={`${darkMode ? "bg-gray-900" : "bg-white"} border rounded-2xl shadow-sm p-6`}>
         <h3 className="text-lg font-semibold mb-4">
           Forgot Password
         </h3>
 
-        <p className="text-gray-500 mb-4 text-sm">
+        <p className={`${darkMode ? "text-gray-400" : "text-gray-500"} mb-4 text-sm`}>
           If you cannot access your account, we will send a password reset link to your email.
         </p>
 
@@ -101,12 +102,12 @@ export function SecuritySettings() {
             name="email"
             value={user.email}
             disabled
-            className="w-full border px-4 py-2 rounded-lg bg-gray-50"
+            className={`w-full px-4 py-2 rounded-lg ${darkMode ? "bg-gray-700 text-gray-300" : "bg-gray-100 text-gray-500"}`}
           />
 
           <button
             onClick={handleForgotPassword}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 w-full"
+            className={`bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 w-full ${darkMode ? "hover:bg-blue-700" : "hover:bg-blue-700"}`}
           >
             Send Reset Link
           </button>
@@ -116,7 +117,7 @@ export function SecuritySettings() {
 
 
       {/* ---------------- SECURITY OPTIONS ---------------- */}
-      <div className="bg-white border rounded-2xl shadow-sm p-6">
+      <div className={`${darkMode ? "bg-gray-900" : "bg-white"} border rounded-2xl shadow-sm p-6`}>
         <h3 className="text-lg font-semibold mb-4">
           Account Protection
         </h3>
@@ -126,6 +127,7 @@ export function SecuritySettings() {
           description="Add an extra layer of protection to your account."
           enabled={twoFactor}
           onToggle={() => setTwoFactor(!twoFactor)}
+          darkMode={darkMode}
         />
 
         <SecurityToggle
@@ -133,6 +135,7 @@ export function SecuritySettings() {
           description="Receive alerts when your account is accessed from a new device."
           enabled={loginAlerts}
           onToggle={() => setLoginAlerts(!loginAlerts)}
+          darkMode={darkMode}
         />
       </div>
 
@@ -148,15 +151,18 @@ type ToggleProps = {
   description: string
   enabled: boolean
   onToggle: () => void
+  darkMode: boolean
 }
 
-function SecurityToggle({ title, description, enabled, onToggle }: ToggleProps) {
+function SecurityToggle({ title, description, enabled, onToggle, darkMode }: ToggleProps ) {
   return (
     <div className="flex items-center justify-between py-4 border-b last:border-none">
 
       <div>
         <p className="font-medium">{title}</p>
-        <p className="text-sm text-gray-500">{description}</p>
+        <p className={`${darkMode ? "text-gray-400" : "text-gray-500"} text-sm`}>
+          {description}
+        </p>
       </div>
 
       <button
@@ -166,7 +172,8 @@ function SecurityToggle({ title, description, enabled, onToggle }: ToggleProps) 
         }`}
       >
         <div
-          className={`bg-white w-4 h-4 rounded-full shadow-md transform transition ${
+          className={`w-4 h-4 rounded-full shadow-md transform transition ${
+            darkMode ? "bg-gray-800" : "bg-gray-100"} ${
             enabled ? "translate-x-6" : ""
           }`}
         />

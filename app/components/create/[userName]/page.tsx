@@ -2,11 +2,11 @@
 
 import Sidebar from '../../sidebar';
 import Header from '../../header';
-import StoriesAndWork from '../storiesWork';
 import { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
+import CreatePostPage from '../createPostsPage';
 
-const DashboardPage = () => {
+const CreatePost = () => {
 
     const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
@@ -14,10 +14,10 @@ const DashboardPage = () => {
         <div className={`flex h-screen overflow-hidden transition-all duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
             <Sidebar/>
 
-            {/* Dashboard */}
-            <div className={`flex-1 transition-all duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
-                <div className={`min-h-full ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
-                    <StoriesAndWork/>
+            {/* Create Post */}
+            <div className={`flex-1 overflow-y-auto transition-all duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
+                <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
+                    <CreatePostPage />
                 </div>
             </div>
 
@@ -29,4 +29,4 @@ const DashboardPage = () => {
     );
 };
 
-export default DashboardPage;
+export default CreatePost;

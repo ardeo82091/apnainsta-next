@@ -1,9 +1,14 @@
 "use client"
 
+import { RootState } from "@/redux/store";
 import { useState } from "react"
 import { FaTimes } from "react-icons/fa"
+import { useSelector } from "react-redux";
 
 export function AccountSettings() {
+
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+
   const [showDeactivate, setShowDeactivate] = useState(false)
   const [showDelete, setShowDelete] = useState(false)
 
@@ -24,37 +29,37 @@ export function AccountSettings() {
       </div>
 
       {/* ---------- DEACTIVATE ---------- */}
-      <div className="bg-white border rounded-2xl shadow-sm p-6">
+      <div className={`${darkMode ? "bg-gray-900" : "bg-white"} border rounded-2xl shadow-sm p-6`}>
         <h3 className="text-lg font-semibold mb-2">
           Temporarily Deactivate Account
         </h3>
 
-        <p className="text-gray-500 mb-4 text-sm">
+        <p className={`${darkMode ? "text-gray-400" : "text-gray-500"} mb-4 text-sm`}>
           If you need a break, you can deactivate your account temporarily.
           Your chats and profile remain safe.
         </p>
 
         <button
           onClick={() => setShowDeactivate(true)}
-          className="bg-amber-500 text-white px-6 py-2 rounded-lg hover:bg-amber-600"
+          className={`${darkMode ? "bg-amber-600 hover:bg-amber-700" : "bg-amber-500 hover:bg-amber-600"} text-white px-6 py-2 rounded-lg`}
         >
           Deactivate Account
         </button>
       </div>
 
       {/* ---------- DELETE ---------- */}
-      <div className="bg-white border border-red-200 rounded-2xl shadow-sm p-6">
+      <div className={`${darkMode ? "bg-gray-900" : "bg-white"} border border-red-200 rounded-2xl shadow-sm p-6`}>
         <h3 className="text-lg font-semibold text-red-600 mb-2">
           Permanently Delete Account
         </h3>
 
-        <p className="text-gray-500 mb-4 text-sm">
+        <p className={`${darkMode ? "text-gray-400" : "text-gray-500"} mb-4 text-sm`}>
           This action removes everything permanently and cannot be undone.
         </p>
 
         <button
           onClick={() => setShowDelete(true)}
-          className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700"
+          className={`${darkMode ? "bg-red-600 hover:bg-red-700" : "bg-red-500 hover:bg-red-600"} text-white px-6 py-2 rounded-lg`}
         >
           Delete Account Permanently
         </button>
@@ -63,7 +68,7 @@ export function AccountSettings() {
       {/* ---------- DEACTIVATE MODAL ---------- */}
       {showDeactivate && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="relative bg-white p-6 rounded-2xl shadow-lg w-[420px]">
+          <div className={`${darkMode ? "bg-gray-900" : "bg-white"} p-6 rounded-2xl shadow-lg w-[420px]`}>
 
             <FaTimes
               className="absolute top-4 right-4 cursor-pointer text-gray-400"
@@ -113,12 +118,12 @@ export function AccountSettings() {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowDeactivate(false)}
-                className="px-4 py-2 border rounded-lg"
+                className={`${darkMode ? "bg-gray-600 hover:bg-gray-700" : "bg-gray-300 hover:bg-gray-400"} text-gray-800 px-4 py-2 rounded-lg`}
               >
                 Cancel
               </button>
 
-              <button className="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600">
+              <button className={`${darkMode ? "bg-amber-600 hover:bg-amber-700" : "bg-amber-500 hover:bg-amber-600"} text-white px-4 py-2 rounded-lg`}>
                 Confirm Deactivation
               </button>
             </div>
@@ -129,7 +134,7 @@ export function AccountSettings() {
       {/* ---------- DELETE MODAL ---------- */}
       {showDelete && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="relative bg-white p-6 rounded-2xl shadow-lg w-[420px]">
+          <div className={`${darkMode ? "bg-gray-900" : "bg-white"} p-6 rounded-2xl shadow-lg w-[420px]`}>
 
             <FaTimes
               className="absolute top-4 right-4 cursor-pointer text-gray-400"
@@ -169,12 +174,12 @@ export function AccountSettings() {
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowDelete(false)}
-                className="px-4 py-2 border rounded-lg"
+                className={`${darkMode ? "bg-gray-600 hover:bg-gray-700" : "bg-gray-300 hover:bg-gray-400"} text-gray-800 px-4 py-2 rounded-lg`}
               >
                 Cancel
               </button>
 
-              <button className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+              <button className={`${darkMode ? "bg-red-600 hover:bg-red-700" : "bg-red-500 hover:bg-red-600"} text-white px-4 py-2 rounded-lg`}>
                 Delete Permanently
               </button>
             </div>

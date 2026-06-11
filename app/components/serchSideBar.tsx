@@ -27,6 +27,7 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const users = useSelector((state: RootState) => state.user);
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
   const myUserName = users.userName;
 
   const requests = users.friendAndRequests?.requests || [];
@@ -169,11 +170,12 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
 
       {/* SIDEBAR */}
       <div
-        className={`fixed top-0 right-0 h-screen w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300
+        className={`fixed top-0 right-0 h-screen w-96 shadow-2xl z-50 transform transition-transform duration-300
+        ${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}  
         ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* HEADER */}
-        <div className="flex items-center justify-between px-5 py-4 border-b">
+        <div className="flex items-center justify-between px-5 py-4">
           <h2 className="text-lg font-semibold">Search</h2>
           <FaTimes
             className="cursor-pointer text-gray-500 hover:text-black"
@@ -183,7 +185,7 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
 
         {/* SEARCH INPUT */}
         <div className="p-4">
-          <div className="flex items-center gap-3 bg-gray-100 px-3 py-2 rounded-lg">
+          <div className={`flex items-center gap-3 px-3 py-2 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
             <FaSearch className="text-gray-400" />
             <input
               type="text"
@@ -198,7 +200,9 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
         {/* RESULTS */}
         <div className="overflow-y-auto px-4 pb-6 space-y-3">
           {results.length === 0 && searchUser.length > 1 && (
-            <p className="text-gray-500 text-sm">No users found</p>
+            <p className={`text-sm ${darkMode ? 'text-gray-800' : 'text-white'}`}>
+              No users found
+            </p>
           )}
 
           {results.map((user) => {
@@ -208,7 +212,7 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
             return (
               <div
                 key={user.userName}
-                className="flex items-center justify-between gap-3 p-3 border rounded-lg hover:shadow-sm hover:bg-gray-50 transition"
+                className={`flex items-center justify-between gap-3 p-3 rounded-lg hover:shadow-sm ${darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-200'} transition`}
               >
                 {/* USER INFO */}
                 <div className="flex items-center gap-3">

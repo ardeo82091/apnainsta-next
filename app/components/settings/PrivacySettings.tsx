@@ -1,6 +1,9 @@
 "use client"
 
+import { RootState } from "@/redux/store"
+import { title } from "process"
 import { useMemo, useState } from "react"
+import { useSelector } from "react-redux"
 
 type Friend = {
   id: number
@@ -20,6 +23,8 @@ const mockFriends: Friend[] = [
 ]
 
 export function PrivacySettings() {
+
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
   const [friends] = useState(mockFriends)
 
   const [allowFriendRequests, setAllowFriendRequests] = useState(true)
@@ -90,10 +95,11 @@ export function PrivacySettings() {
         </p>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border p-6 space-y-5">
+      <div className={`${darkMode ? "bg-gray-900" : "bg-white"} rounded-2xl shadow-sm border p-6 space-y-5`}>
         <SettingToggle
           title="Friend Requests"
           desc="Allow people to send you requests"
+          darkMode={darkMode}
           value={allowFriendRequests}
           onChange={() => setAllowFriendRequests(!allowFriendRequests)}
         />
@@ -101,12 +107,13 @@ export function PrivacySettings() {
         <SettingToggle
           title="Messages From Anyone"
           desc="Receive messages from non-friends"
+          darkMode={darkMode}
           value={allowMessagesFromAnyone}
           onChange={() => setAllowMessagesFromAnyone(!allowMessagesFromAnyone)}
         />
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border p-6 space-y-5">
+      <div className={`${darkMode ? "bg-gray-900" : "bg-white"} rounded-2xl shadow-sm border p-6 space-y-5`}>
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-semibold">Online Status</h3>
@@ -120,7 +127,7 @@ export function PrivacySettings() {
             }`}
           >
             <div
-              className={`w-5 h-5 bg-white rounded-full shadow transform ${
+              className={`w-5 h-5 ${darkMode ? "bg-gray-800" : "bg-white"} rounded-full shadow transform ${
                 onlineVisible ? "translate-x-6" : "translate-x-1"
               }`}
             />
@@ -129,32 +136,42 @@ export function PrivacySettings() {
 
         {onlineVisible && (
           <div className="space-y-3 pt-2">
+
             <AudienceOption
-              active={onlineAudience === "everyone"}
+              active={"selected"}
+              title="Hide from Users"
+              onClick={() => setOnlineAudience("selected")}
+              extra={`${onlineHiddenUsers.length}`}
+              darkMode={darkMode}
+              setShowOnlinePopup={setShowOnlinePopup}
+              onlineAudience={onlineAudience}
+            />
+
+            <AudienceOption
+              active={"everyone"}
               title="Visible to everyone"
               onClick={() => setOnlineAudience("everyone")}
+              darkMode={darkMode}
+              setShowOnlinePopup={setShowOnlinePopup}
+              onlineAudience={onlineAudience}
             />
 
-            <AudienceOption
-              active={onlineAudience === "selected"}
-              title="Hide from selected users"
-              onClick={() => setOnlineAudience("selected")}
-              extra={`${onlineHiddenUsers.length} selected`}
-            />
-
-            {onlineAudience === "selected" && (
+            {/* {onlineAudience === "selected" && (
               <button
                 onClick={() => setShowOnlinePopup(true)}
                 className="text-sm border px-4 py-2 rounded-lg w-fit"
               >
                 Manage Users
               </button>
-            )}
+            )} */}
 
             <AudienceOption
-              active={onlineAudience === "nobody"}
+              active={"nobody"}
               title="Hide from everyone"
               onClick={() => setOnlineAudience("nobody")}
+              darkMode={darkMode}
+              setShowOnlinePopup={setShowOnlinePopup}
+              onlineAudience={onlineAudience}
             />
           </div>
         )}
@@ -166,6 +183,7 @@ export function PrivacySettings() {
           desc="Hide stories from selected people"
           count={storyRestricted.length}
           onClick={() => setShowStoryPopup(true)}
+          darkMode={darkMode}
         />
 
         <ActionCard
@@ -173,10 +191,11 @@ export function PrivacySettings() {
           desc="Hide posts from selected people"
           count={postRestricted.length}
           onClick={() => setShowPostPopup(true)}
+          darkMode={darkMode}
         />
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border p-6">
+      <div className={`${darkMode ? "bg-gray-900" : "bg-white"} rounded-2xl shadow-sm border p-6`}>
         <h3 className="text-lg font-semibold mb-4">Blocked Users</h3>
 
         <div className="space-y-2">
@@ -184,7 +203,7 @@ export function PrivacySettings() {
             <button
               key={user}
               onClick={() => setSelectedBlocked(user)}
-              className="w-full flex justify-between items-center border rounded-xl px-4 py-3 hover:bg-red-50"
+              className={`${darkMode ? "bg-gray-800 hover:bg-gray-600" : "bg-white hover:bg-gray-200"} w-full flex justify-between items-center border rounded-xl px-4 py-3`}
             >
               <span>{user}</span>
               <span className="text-xs text-red-600 bg-red-100 px-2 py-1 rounded-md">
@@ -208,50 +227,53 @@ export function PrivacySettings() {
       </div>
 
       {showStoryPopup && (
-        <Popup title="Hide Story From">
+        <Popup title="Hide Story From" darkMode={darkMode}>
           <FriendPicker
             friends={friends}
             restricted={storyRestricted}
             onToggle={(u:string) => toggleRestrict(u, "story")}
             onClose={() => setShowStoryPopup(false)}
+            darkMode={darkMode}
           />
         </Popup>
       )}
 
       {showPostPopup && (
-        <Popup title="Hide Post From">
+        <Popup title="Hide Post From" darkMode={darkMode}>
           <FriendPicker
             friends={friends}
             restricted={postRestricted}
             onToggle={(u:string) => toggleRestrict(u, "post")}
             onClose={() => setShowPostPopup(false)}
+            darkMode={darkMode}
           />
         </Popup>
       )}
 
       {showOnlinePopup && (
-        <Popup title="Hide Online Status From">
+        <Popup title="Hide Online Status From" darkMode={darkMode}>
           <FriendPicker
             friends={friends}
             restricted={onlineHiddenUsers}
             onToggle={(u:string) => toggleRestrict(u, "online")}
             onClose={() => setShowOnlinePopup(false)}
+            darkMode={darkMode}
           />
         </Popup>
       )}
 
       {selectedBlocked && (
-        <Popup title="Unblock User">
+        <Popup title="Unblock User" darkMode={darkMode}>
           <div className="space-y-4">
-            <p className="text-gray-600">
+            <p className={`${darkMode ? "text-gray-200" : "text-gray-600"}`}>
               Do you want to unblock <b>{selectedBlocked}</b>?
             </p>
 
             <div className="flex justify-end gap-3">
-              <button onClick={() => setSelectedBlocked(null)} className="border px-4 py-2 rounded-lg">
+              <button onClick={() => setSelectedBlocked(null)} className={`border px-4 py-2 rounded-lg ${darkMode ? "bg-gray-800 text-white" : "bg-white text-gray-800"}`}>
                 Cancel
               </button>
-              <button onClick={unblockUser} className="bg-red-600 text-white px-4 py-2 rounded-lg">
+              <button onClick={unblockUser} className={`bg-red-600 text-white px-4 py-2 rounded-lg ${darkMode ? "hover:bg-red-700" : "hover:bg-red-500"}`}>
                 Unblock
               </button>
             </div>
@@ -262,7 +284,7 @@ export function PrivacySettings() {
   )
 }
 
-function SettingToggle({ title, desc, value, onChange }: any) {
+function SettingToggle({ title, desc, darkMode, value, onChange }: any) {
   return (
     <div className="flex justify-between items-center">
       <div>
@@ -277,7 +299,7 @@ function SettingToggle({ title, desc, value, onChange }: any) {
         }`}
       >
         <div
-          className={`w-5 h-5 bg-white rounded-full shadow transform ${
+          className={`w-5 h-5 ${darkMode ? "bg-gray-800" : "bg-white"} rounded-full shadow transform ${
             value ? "translate-x-6" : "translate-x-1"
           }`}
         />
@@ -286,32 +308,75 @@ function SettingToggle({ title, desc, value, onChange }: any) {
   )
 }
 
-function AudienceOption({ title, active, onClick, extra }: any) {
+function AudienceOption({ title, active, onClick, extra, darkMode, setShowOnlinePopup, onlineAudience }: any) {
+  const isCurrent = active === onlineAudience
   return (
     <button
       onClick={onClick}
       className={`w-full flex justify-between items-center border rounded-xl px-4 py-3 ${
-        active ? "border-blue-500 bg-blue-50" : ""
+        isCurrent ? darkMode ? "bg-gray-800 border-white" : "bg-gray-200 border-gray-900" : ""
       }`}
     >
-      <span>{title}</span>
-      <span className="text-sm text-gray-500">
-        {active ? "Active" : extra}
-      </span>
+      {active === "selected" ? (
+        <div className="flex items-center justify-between w-full gap-3">
+          <span>{title}</span>
+
+          <div className="flex items-center gap-2">
+            {isCurrent && (
+              <span
+                className={`text-sm font-bold px-3 py-2 rounded-lg ${
+                  darkMode
+                    ? "text-white"
+                    : "text-gray-800"
+                }`}
+              >
+                {extra} Selected
+              </span>
+            )}
+
+            {onlineAudience === "selected" && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowOnlinePopup(true);
+                }}
+              className={`text-sm border px-4 py-2 rounded-lg ${darkMode ? "bg-gray-700 text-white" : "bg-gray-100 text-gray-800"}`}
+            >
+              Manage Users
+            </button>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="flex justify-between items-center w-full">
+          <span>{title}</span>
+
+          <span
+            className={`text-sm ${
+              darkMode
+                ? "text-white font-bold"
+                : "text-gray-800 font-bold"
+            }`}
+          >
+            {isCurrent ? "Active" : extra}
+          </span>
+        </div>
+      )}
     </button>
-  )
+  );
 }
 
-function ActionCard({ title, desc, count, onClick }: any) {
+function ActionCard({ title, desc, count, onClick, darkMode }: any) {
   return (
     <button
       onClick={onClick}
-      className="bg-white border rounded-2xl p-6 text-left hover:shadow-md"
+      className={`${darkMode ? "bg-gray-900" : "bg-white"} border rounded-2xl p-6 text-left hover:shadow-md`}
     >
       <div className="flex justify-between items-center mb-2">
         <h3 className="font-semibold">{title}</h3>
         {count > 0 && (
-          <span className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-md">
+          <span className={`text-xs ${darkMode ? "bg-gray-700 text-gray-300" : "bg-blue-50 text-blue-600"} px-2 py-1 rounded-md`}>
             {count} restricted
           </span>
         )}
@@ -321,7 +386,7 @@ function ActionCard({ title, desc, count, onClick }: any) {
   )
 }
 
-function FriendPicker({ friends, restricted, onToggle, onClose }: any) {
+function FriendPicker({ friends, restricted, onToggle, onClose, darkMode }: any) {
   const [search, setSearch] = useState("")
 
   const filtered = friends.filter((f:any) =>
@@ -330,12 +395,12 @@ function FriendPicker({ friends, restricted, onToggle, onClose }: any) {
   )
 
   return (
-    <div className="space-y-4">
+    <div className={`space-y-4 ${darkMode ? "bg-gray-900" : "bg-white"}`}>
       <input
         value={search}
         onChange={(e:any) => setSearch(e.target.value)}
         placeholder="Search people..."
-        className="w-full border rounded-xl px-4 py-2"
+        className={`w-full border rounded-xl px-4 py-2 ${darkMode ? "bg-gray-800 text-white border-gray-600" : "bg-white text-gray-800 border-gray-300"}`}
       />
 
       <div className="max-h-[420px] overflow-y-auto space-y-2">
@@ -347,7 +412,8 @@ function FriendPicker({ friends, restricted, onToggle, onClose }: any) {
               key={user.id}
               onClick={() => onToggle(user.userName)}
               className={`w-full flex items-center justify-between border rounded-xl px-4 py-3 ${
-                active ? "border-red-500 bg-red-50" : "hover:bg-gray-50"
+                active ? 
+                darkMode ? "border-white bg-gray-800" : "border-gray-800 bg-gray-100" : darkMode ? "border-gray-600 hover:bg-gray-800" : "border-gray-300 hover:bg-gray-200"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -356,18 +422,18 @@ function FriendPicker({ friends, restricted, onToggle, onClose }: any) {
                 </div>
                 <div className="text-left">
                   <p className="text-sm font-medium">{user.name}</p>
-                  <p className="text-xs text-gray-500">@{user.userName}</p>
+                  <p className={`text-xs ${darkMode ? "text-gray-200" : "text-gray-500"}`}>@{user.userName}</p>
                 </div>
               </div>
 
-              {active && <span className="text-xs text-red-600">Hidden</span>}
+              {active && <span className={`text-xs font-bold ${darkMode ? "text-white" : "text-gray-500"}`}>Hidden</span>}
             </button>
           )
         })}
       </div>
 
       <div className="flex justify-end">
-        <button onClick={onClose} className="px-5 py-2 rounded-lg bg-black text-white">
+        <button onClick={onClose} className={`px-5 py-2 rounded-lg ${darkMode ? "bg-gray-700 text-white" : "bg-black text-white"}`}>
           Done
         </button>
       </div>
@@ -375,11 +441,11 @@ function FriendPicker({ friends, restricted, onToggle, onClose }: any) {
   )
 }
 
-function Popup({ title, children }: any) {
+function Popup({ title, children, darkMode }: any) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white w-[500px] rounded-2xl p-6 shadow-lg">
-        <h3 className="font-semibold mb-4">{title}</h3>
+      <div className={`w-[500px] rounded-2xl p-6 shadow-lg ${darkMode ? "bg-gray-900" : "bg-white"}`}>
+        <h3 className={`font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>{title}</h3>
         {children}
       </div>
     </div>

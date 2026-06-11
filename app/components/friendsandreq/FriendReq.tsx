@@ -7,11 +7,13 @@ import { FaCheck, FaInbox, FaPaperPlane, FaTimes } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { getSocket } from "../chat/socket";
 
-const FriendRequest = () => {
+const FriendRequest = ({}) => {
   const dispatch = useDispatch();
   const socket = getSocket();
 
   const user = useSelector((state: RootState) => state.user);
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+  
   const myUserName = user.userName || "";
 
   const [selectedTab, setSelectedTab] = useState<"received" | "sent">("received");
@@ -64,25 +66,29 @@ const FriendRequest = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 ml-1">
+    <div className={`flex flex-col h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'} ml-1`}>
 
       {/* HEADER */}
-      <div className="bg-white px-6 py-4 border-b shadow-sm">
-        <h2 className="font-semibold text-xl text-gray-800">
-          Friend Requests
+      <div className={`px-6 py-4 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
+        <h2 className={`font-semibold text-xl ${darkMode ? 'text-white' : 'text-gray-800'}`}>
+          Requests
         </h2>
       </div>
 
       {/* TABS */}
       <div className="px-6 pt-4">
-        <div className="flex bg-gray-100 rounded-xl p-1 w-full">
+        <div className={`flex ${darkMode ? 'bg-gray-800' : 'bg-gray-100'} rounded-xl p-1 w-full`}>
 
           <button
             onClick={() => setSelectedTab("received")}
             className={`flex items-center justify-center gap-2 flex-1 py-2 rounded-lg transition
               ${
                 selectedTab === "received"
-                  ? "bg-white shadow text-blue-600"
+                ? darkMode
+                  ? "bg-gray-800 shadow text-blue-400"
+                  : "bg-gray-200 shadow text-blue-600"
+                : darkMode
+                  ? "bg-gray-900 text-gray-400 hover:text-white"
                   : "text-gray-600 hover:text-gray-800"
               }`}
           >
@@ -95,7 +101,11 @@ const FriendRequest = () => {
             className={`flex items-center justify-center gap-2 flex-1 py-2 rounded-lg transition
               ${
                 selectedTab === "sent"
-                  ? "bg-white shadow text-blue-600"
+                ? darkMode
+                  ? "bg-gray-800 shadow text-blue-400"
+                  : "bg-gray-200 shadow text-blue-600"
+                : darkMode
+                  ? "bg-gray-900 text-gray-400 hover:text-white"
                   : "text-gray-600 hover:text-gray-800"
               }`}
           >
@@ -110,7 +120,7 @@ const FriendRequest = () => {
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-3">
 
         {filteredUsers.length === 0 && (
-          <div className="text-center text-gray-500 mt-20">
+          <div className={`text-center ${darkMode ? 'text-white' : 'text-gray-500'} mt-20`}>
             No friend requests
           </div>
         )}
@@ -121,7 +131,7 @@ const FriendRequest = () => {
           return (
             <div
               key={reqUser.person.userName}
-              className="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition"
+              className={`flex items-center justify-between ${darkMode ? 'bg-gray-800' : 'bg-white'} p-4 rounded-xl shadow-sm hover:shadow-md transition`}
             >
 
               {/* USER INFO */}
@@ -133,10 +143,10 @@ const FriendRequest = () => {
                 />
 
                 <div>
-                  <p className="font-medium text-gray-800">
+                  <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                     {reqUser.person.name}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                     @{reqUser.person.userName}
                   </p>
                 </div>

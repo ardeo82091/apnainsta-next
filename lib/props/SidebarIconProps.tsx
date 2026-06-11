@@ -10,7 +10,7 @@ export const SidebarIcon = ({ icon: Icon, label, darkMode, onClick }: SidebarIco
   return (
     <button
         onClick={onClick}
-        className={`flex items-center text-white transition-all duration-200 rounded-xl p-3 w-full overflow-hidden
+        className={`flex items-center transition-all duration-200 rounded-xl p-3 w-full overflow-hidden
             ${darkMode ? 'text-white hover:bg-gray-800' : 'text-black hover:bg-gray-100'}`
         }>
         <Icon size={22} />

@@ -53,7 +53,7 @@ const Sidebar = () => {
   }
 
   return (
-    <div className="h-screen w-[320px] pr-6 pl-4 py-4 ml-2 border-r bg-white flex flex-col">
+    <div className="h-screen w-[320px] pr-6 pl-4 py-4 ml-2 border-r flex flex-col">
 
       <div className="border-b pb-6">
         <div className="flex items-center gap-4">

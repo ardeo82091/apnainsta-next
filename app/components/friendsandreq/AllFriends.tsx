@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { RootState } from "@/redux/store";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, FC } from "react";
 import {
   FaUserMinus,
   FaUserPlus,
@@ -13,12 +13,17 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import ConfirmModal from "../ui/Modal/ConfirmModal";
 import { getSocket } from "../chat/socket";
+interface AllFriendsProps {
+    darkMode: boolean;
+}
 
-export default function FriendsTabs() {
+const AllFriends = ({}) => {
   const dispatch = useDispatch();
   const socket = getSocket();
 
   const users = useSelector((state: RootState) => state.user);
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+  
   const myUserName = users.userName || "";
 
   const requests = users.friendAndRequests?.requests || [];
@@ -99,23 +104,27 @@ export default function FriendsTabs() {
   };
 
   return (
-    <div className="flex flex-1 flex-col h-screen bg-gray-50">
+    <div className={`flex flex-1 flex-col h-screen ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
 
       {/* HEADER */}
-      <div className="bg-white border-b px-6 py-4 shadow-sm">
-        <h1 className="text-2xl font-semibold text-gray-800">Friends</h1>
+      <div className={`px-6 py-4 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
+        <h1 className="text-2xl font-semibold">Connections</h1>
       </div>
 
       {/* TABS */}
       <div className="px-6 pt-4">
-        <div className="flex bg-gray-100 rounded-xl p-1 w-fit">
+        <div className={`flex ${darkMode ? 'bg-gray-900' : 'bg-white'} rounded-xl p-1 w-fit`}>
 
           <button
             onClick={() => setActiveTab("followers")}
             className={`flex items-center gap-2 px-5 py-2 rounded-lg transition
               ${activeTab === "followers"
-                ? "bg-white shadow text-blue-600"
-                : "text-gray-600 hover:text-gray-800"
+                ? darkMode
+                  ? "bg-gray-800 shadow text-blue-400"
+                  : "bg-gray-200 shadow text-blue-600"
+                : darkMode
+                  ? "bg-gray-900 text-gray-400 hover:text-white"
+                  : "text-gray-600 hover:text-gray-800"
               }`}
           >
             <FaUserFriends />
@@ -126,8 +135,12 @@ export default function FriendsTabs() {
             onClick={() => setActiveTab("following")}
             className={`flex items-center gap-2 px-5 py-2 rounded-lg transition
               ${activeTab === "following"
-                ? "bg-white shadow text-blue-600"
-                : "text-gray-600 hover:text-gray-800"
+                ? darkMode
+                  ? "bg-gray-800 shadow text-blue-400"
+                  : "bg-gray-200 shadow text-blue-600"
+                : darkMode
+                  ? "bg-gray-900 text-gray-400 hover:text-white"
+                  : "text-gray-600 hover:text-gray-800"
               }`}
           >
             <FaUserCheck />
@@ -141,7 +154,7 @@ export default function FriendsTabs() {
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-3">
 
         {filteredUsers.length === 0 && (
-          <div className="text-center text-gray-500 mt-20">
+          <div className={`text-center ${darkMode ? 'text-white' : 'text-gray-500'} mt-20`}>
             No users found
           </div>
         )}
@@ -155,7 +168,7 @@ export default function FriendsTabs() {
           return (
             <div
               key={userName}
-              className="flex items-center justify-between bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition"
+              className={`flex items-center justify-between p-4 rounded-xl shadow-sm hover:shadow-md transition ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}
             >
 
               {/* USER INFO */}
@@ -168,10 +181,10 @@ export default function FriendsTabs() {
                 />
 
                 <div>
-                  <p className="font-medium text-gray-800">
+                  <p className={`font-medium ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                     {user.person.name}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>
                     @{userName}
                   </p>
                 </div>
@@ -260,3 +273,5 @@ export default function FriendsTabs() {
     </div>
   );
 }
+
+export default AllFriends;

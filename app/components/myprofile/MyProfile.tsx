@@ -17,7 +17,7 @@ export default function MyProfile() {
 
   const posts = user.posts || []
 
-  const videos = posts.filter((p) => p.isVideo)
+  const videos = posts.filter((p) => p.media.some((m) => m.isVideo))
 
   const likedPosts =
     posts.filter((p) =>
@@ -204,11 +204,11 @@ export default function MyProfile() {
             >
 
               <img
-                src={post.src}
+                src={post.media[0].src}
                 className="w-full h-full object-cover"
               />
 
-              {post.isVideo && (
+              {post.media.some((m) => m.isVideo) && (
 
                 <FaPlay className="absolute top-2 right-2 text-white" />
 
@@ -286,11 +286,11 @@ export default function MyProfile() {
             >
 
               <img
-                src={post.src}
+                src={post.media[0].src}
                 className="w-full h-full object-cover"
               />
 
-              {post.isVideo && (
+              {post.media.some((m) => m.isVideo) && (
 
                 <FaPlay className="absolute top-2 right-2 text-white" />
 

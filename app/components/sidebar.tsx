@@ -11,21 +11,22 @@ import SearchSlideBar from './serchSideBar';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { setUser } from '@/redux/userSlice';
+import { toggleTheme } from '@/redux/themeSlice';
 
 import axios from 'axios';
 
-const Sidebar: FC = () => {
+const Sidebar = ({}) => {
     const router = useRouter();
     const dispatch = useDispatch();
 
     const user = useSelector((state: RootState) => state.user);
+    const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
-    const [isExpanded, setIsExpanded] = useState(false);
     const [isSearchSidebarOpen, setIsSearchSidebarOpen] = useState(false);
     const [isViewedByOpen, setIsViewedByOpen] = useState(false);
     const [isMoreOpen, setIsMoreOpen] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(false);
     const [error, setError] = useState('');
-    const [darkMode, setDarkMode] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -51,14 +52,6 @@ const Sidebar: FC = () => {
         fetchUserData();
     }, [dispatch]);
 
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('theme');
-
-        if (savedTheme === 'dark') {
-            setDarkMode(true);
-        }
-    }, []);
-
     const handlePages = (page: string) => {
         page !== 'login'
             ? router.push(`/components/${page}/${user.userName}`)
@@ -78,19 +71,6 @@ const Sidebar: FC = () => {
         }
     };
 
-    const toggleTheme = () => {
-        setDarkMode((prev) => {
-            const newTheme = !prev;
-
-            localStorage.setItem(
-                'theme',
-                newTheme ? 'dark' : 'light'
-            );
-
-            return newTheme;
-        });
-    };
-
     return (
         <>
             <div
@@ -99,17 +79,40 @@ const Sidebar: FC = () => {
                     setIsExpanded(false);
                     setIsMoreOpen(false);
                 }}
-                className={`min-h-screen relative flex flex-col justify-between transition-all duration-300 ease-in-out border-r px-3
+                className={`h-screen flex flex-col justify-between transition-all duration-300 ease-in-out px-3 border-r overflow-hidden
                     ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200 shadow-sm'}
                     ${isExpanded ? 'w-60' : 'w-20'}`
                 }
             >
                 <div className="mt-4 flex items-center justify-center w-full">
-                    <Image
-                        src={LiveAndVibe}
-                        alt="Logo"
-                        className={`transition-all duration-300 object-contain ${isExpanded ? 'w-16 h-16' : 'w-10 h-10'}`}
-                    />
+                    <div className="relative group">
+                        
+                        <div
+                            className={`
+                                absolute inset-0 rounded-full blur-xl opacity-40
+                                transition-all duration-500
+                                ${
+                                    darkMode
+                                        ? 'bg-blue-500'
+                                        : 'bg-pink-400'
+                                }
+                                group-hover:scale-125
+                            `}
+                        />
+
+                        <Image
+                            src={LiveAndVibe}
+                            alt="Logo"
+                            className={`
+                                relative z-10 object-contain transition-all duration-300 animate-float
+                                ${
+                                    isExpanded
+                                        ? 'w-16 h-16'
+                                        : 'w-10 h-10'
+                                }
+                            `}
+                        />
+                    </div>
                 </div>
 
                 <div className="space-y-3 w-full px-1">
@@ -189,9 +192,10 @@ const Sidebar: FC = () => {
                         icon={FaEllipsisH}
                         label={isExpanded ? 'More' : ''}
                         darkMode={darkMode}
-                        onClick={() =>
-                            setIsMoreOpen(!isMoreOpen)
-                        }
+                        onClick={() => {
+                            setIsExpanded(true);
+                            setIsMoreOpen(!isMoreOpen);
+                        }}
                     />
 
                     {isMoreOpen && isExpanded && (
@@ -204,7 +208,7 @@ const Sidebar: FC = () => {
                                 </span>
 
                                 <button
-                                    onClick={toggleTheme}
+                                    onClick={() => dispatch(toggleTheme())}
                                     className={`relative w-12 h-6 rounded-full transition-all duration-300 ${ darkMode ? 'bg-blue-500' : 'bg-gray-300' }`}
                                 >
                                     <div
