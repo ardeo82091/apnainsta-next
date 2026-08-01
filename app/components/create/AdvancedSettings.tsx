@@ -13,9 +13,6 @@ interface Props {
   isPinned: boolean;
   setIsPinned: (v: boolean) => void;
 
-  altText: string;
-  setAltText: (v: string) => void;
-
   scheduleAt: string;
   setScheduleAt: (v: string) => void;
 
@@ -31,8 +28,6 @@ export default function AdvancedSettings({
   setHideLikes,
   isPinned,
   setIsPinned,
-  altText,
-  setAltText,
   scheduleAt,
   setScheduleAt,
   darkMode,
@@ -52,36 +47,41 @@ export default function AdvancedSettings({
       </summary>
 
       <div className="space-y-4 mt-5">
+        <div>
+          <label
+            htmlFor="schedule-post"
+            className={`
+              block mb-2 text-sm font-medium
+              ${
+                darkMode
+                  ? "text-gray-200"
+                  : "text-gray-700"
+              }
+            `}
+          >
+            📅 Schedule Post
+          </label>
 
-        <textarea
-          value={altText}
-          onChange={(e) =>
-            setAltText(e.target.value)
-          }
-          placeholder="Accessibility description"
-          className={`
-            w-full
-            border
-            rounded-xl
-            p-3
-            ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}
-          `}
-        />
-
-        <input
-          type="datetime-local"
-          value={scheduleAt}
-          onChange={(e) =>
-            setScheduleAt(e.target.value)
-          }
-          className={`
-            w-full
-            border
-            rounded-xl
-            p-3
-            ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}
-          `}
-        />
+          <input
+            id="schedule-post"
+            type="datetime-local"
+            value={scheduleAt}
+            onChange={(e) =>
+              setScheduleAt(e.target.value)
+            }
+            className={`
+              w-full
+              border
+              rounded-xl
+              p-3
+              ${
+                darkMode
+                  ? "bg-gray-900 text-white border-gray-700 dark-calendar"
+                  : "bg-white text-gray-900 border-gray-300"
+              }
+            `}
+          />
+        </div>
 
         <ToggleSelect
           title="Allow Comments"

@@ -12,6 +12,9 @@ interface Props {
     direction: "left" | "right"
   ) => void;
   darkMode: boolean;
+  onUpload: (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => void;
 }
 
 export default function MediaPreview({
@@ -21,6 +24,7 @@ export default function MediaPreview({
   removeMedia,
   moveMedia,
   darkMode,
+  onUpload
 }: Props) {
   if (!media.length) return null;
 
@@ -31,7 +35,7 @@ export default function MediaPreview({
       p-4
       space-y-4
     `}>
-
+      
       <div className="aspect-square overflow-hidden rounded-3xl bg-black">
 
         {media[activeMedia]?.isVideo ? (
@@ -48,8 +52,40 @@ export default function MediaPreview({
           />
         )}
       </div>
-
+      
       <div className="flex gap-3 overflow-x-auto">
+
+              <label
+  className={`
+    w-24
+    h-24
+    shrink-0
+    rounded-xl
+    border-2
+    border-dashed
+    flex
+    items-center
+    justify-center
+    cursor-pointer
+    ${
+      darkMode
+        ? "border-gray-700 bg-gray-800"
+        : "border-gray-300 bg-gray-100"
+    }
+  `}
+>
+  <span className="text-3xl">
+    +
+  </span>
+
+  <input
+    hidden
+    type="file"
+    multiple
+    accept="image/*,video/*"
+    onChange={onUpload}
+  />
+</label>
 
         {media.map((item, index) => (
           <div
@@ -100,6 +136,7 @@ export default function MediaPreview({
           </div>
         ))}
       </div>
+
     </div>
   );
 }

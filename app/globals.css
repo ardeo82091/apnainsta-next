@@ -81,3 +81,7 @@ body {
 .animate-float {
     animation: float 3s ease-in-out infinite;
 }
+
+.dark-calendar::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

@@ -1,6 +1,5 @@
 "use client";
 
-import CreateHeader from "./CreateHeader";
 import MediaUploader from "./MediaUploader";
 import MediaPreview from "./MediaPreview";
 import CaptionSection from "./CaptionSection";
@@ -16,13 +15,10 @@ export default function CreatePostPage() {
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-2xl mx-auto py-6 px-4 space-y-5">
+<div className="min-h-screen p-10">
+    <div className="grid grid-cols-12 gap-6 mt-4">
 
-        <CreateHeader 
-          darkMode={darkMode}
-        />
-
+      <div className="col-span-7 space-y-5">
         <MediaUploader
           media={post.media}
           onUpload={post.handleMediaUpload}
@@ -37,6 +33,7 @@ export default function CreatePostPage() {
             removeMedia={post.removeMedia}
             moveMedia={post.moveMedia}
             darkMode={darkMode}
+            onUpload={post.handleMediaUpload}
           />
         )}
 
@@ -46,6 +43,10 @@ export default function CreatePostPage() {
           hashtags={post.hashtags}
           darkMode={darkMode}
         />
+
+      </div>
+
+      <div className="col-span-5 space-y-5">
 
         <PostOptions
           audience={post.audience}
@@ -68,20 +69,23 @@ export default function CreatePostPage() {
           setHideLikes={post.setHideLikes}
           isPinned={post.isPinned}
           setIsPinned={post.setIsPinned}
-          altText={post.altText}
-          setAltText={post.setAltText}
           scheduleAt={post.scheduleAt}
           setScheduleAt={post.setScheduleAt}
           darkMode={darkMode}
         />
 
-        <PublishBar
-          saveDraft={post.saveDraft}
-          publishPost={post.publishPost}
-          darkMode={darkMode}
-        />
-
       </div>
+
     </div>
+
+    <div className="mt-8">
+      <PublishBar
+        saveDraft={post.saveDraft}
+        publishPost={post.publishPost}
+        darkMode={darkMode}
+      />
+    </div>
+
+</div>
   );
 }

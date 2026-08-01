@@ -6,44 +6,18 @@ import { MediaItem } from "@/lib/users";
 export function useCreatePost() {
   const [caption, setCaption] = useState("");
   const [location, setLocation] = useState("");
-
   const [media, setMedia] = useState<MediaItem[]>([]);
-
-  const [audience, setAudience] = useState<
-    "everyone" | "followers" | "selected" | "closeFriends"
-  >("everyone");
-
+  const [audience, setAudience] = useState<"everyone" | "followers" | "selected" | "closeFriends">("everyone");
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-
-  const [allowComments, setAllowComments] =
-    useState(true);
-
-  const [allowSharing, setAllowSharing] =
-    useState(true);
-
-  const [hideLikes, setHideLikes] =
-    useState(false);
-
-  const [isPinned, setIsPinned] =
-    useState(false);
-
-  const [activeMedia, setActiveMedia] =
-    useState(0);
-
-  const [hashtags, setHashtags] =
-    useState<string[]>([]);
-
-  const [mentions, setMentions] =
-    useState<string[]>([]);
-
-  const [scheduleAt, setScheduleAt] =
-    useState("");
-
-  const [collaborators, setCollaborators] =
-    useState<string[]>([]);
-
-  const [altText, setAltText] =
-    useState("");
+  const [allowComments, setAllowComments] = useState(true);
+  const [allowSharing, setAllowSharing] = useState(true);
+  const [hideLikes, setHideLikes] = useState(false);
+  const [isPinned, setIsPinned] = useState(false);
+  const [activeMedia, setActiveMedia] = useState(0);
+  const [hashtags, setHashtags] = useState<string[]>([]);
+  const [mentions, setMentions] = useState<string[]>([]);
+  const [scheduleAt, setScheduleAt] = useState("");
+  const [collaborators, setCollaborators] = useState<string[]>([]);
 
   useEffect(() => {
     const tags =
@@ -66,21 +40,10 @@ export function useCreatePost() {
       const parsed = JSON.parse(draft);
 
       setCaption(parsed.caption || "");
-      setAudience(
-        parsed.audience || "everyone"
-      );
-
-      setSelectedUsers(
-        parsed.selectedUsers || []
-      );
-
-      setLocation(
-        parsed.location || ""
-      );
-
-      setCollaborators(
-        parsed.collaborators || []
-      );
+      setAudience(parsed.audience || "everyone");
+      setSelectedUsers(parsed.selectedUsers || []);
+      setLocation(parsed.location || "");
+      setCollaborators(parsed.collaborators || [])
     } catch {
       console.error(
         "Failed to load draft"
@@ -148,14 +111,7 @@ export function useCreatePost() {
     )
       return;
 
-    [
-      updated[currentIndex],
-      updated[targetIndex],
-    ] = [
-      updated[targetIndex],
-      updated[currentIndex],
-    ];
-
+    [updated[currentIndex],updated[targetIndex]] = [updated[targetIndex],updated[currentIndex]];
     setMedia(updated);
   };
 
@@ -230,7 +186,6 @@ export function useCreatePost() {
       collaborators,
       location,
       isPinned,
-      altText,
       scheduleAt,
       allowComments,
       allowSharing,
@@ -273,7 +228,6 @@ export function useCreatePost() {
       setCollaborators([]);
       setHashtags([]);
       setMentions([]);
-      setAltText("");
       setScheduleAt("");
       setActiveMedia(0);
     } catch {
@@ -286,54 +240,36 @@ export function useCreatePost() {
   return {
     caption,
     setCaption,
-
     location,
     setLocation,
-
     media,
     setMedia,
-
     audience,
     setAudience,
-
     selectedUsers,
     setSelectedUsers,
-
     allowComments,
     setAllowComments,
-
     allowSharing,
     setAllowSharing,
-
     hideLikes,
     setHideLikes,
-
     isPinned,
     setIsPinned,
-
     activeMedia,
     setActiveMedia,
-
     hashtags,
     mentions,
-
     scheduleAt,
     setScheduleAt,
-
     collaborators,
     addCollaborator,
     removeCollaborator,
-
-    altText,
-    setAltText,
-
     handleMediaUpload,
     removeMedia,
     moveMedia,
-
     saveDraft,
     publishPost,
   };
-  
 }
 
