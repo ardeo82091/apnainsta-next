@@ -14,6 +14,7 @@ const ViewerSchema = new Schema({
 })
 
 const NotificationSchema = new Schema({
+  id: { type: Number, required: true },
   type: {
     type: String,
     enum: ["like", "comment", "follow"]
@@ -23,7 +24,7 @@ const NotificationSchema = new Schema({
   comment: String,
   timestamp: Date,
   read: Boolean
-})
+}, { _id: false })
 
 const FollowersSchema = new Schema({
   person: PersonSchema,
@@ -71,6 +72,10 @@ const UserSchema = new Schema({
 
   profilePic: String,
 
+  isPrivate: { type: Boolean, default: false },
+
+  profileViews: { type: [ViewerSchema], default: [] },
+
   bio: String,
 
   dob: Date,
@@ -80,6 +85,21 @@ const UserSchema = new Schema({
   isActive: {
     type: Boolean,
     default: true
+  },
+
+  // This state is owned by the server.  Do not use `isActive` for comment
+  // moderation: that flag represents the account as a whole.
+  commentModeration: {
+    status: {
+      type: String,
+      enum: ["active", "suspended", "blocked", "permanently_locked"],
+      default: "active"
+    },
+    abusiveCommentCount: { type: Number, default: 0, min: 0 },
+    strikes: { type: Number, default: 0, min: 0 },
+    suspendedUntil: { type: Date, default: null },
+    wasAdminUnblocked: { type: Boolean, default: false },
+    lastOffenseAt: { type: Date, default: null }
   },
 
   role: {

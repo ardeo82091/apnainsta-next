@@ -1,4 +1,27 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ApnaInsta
+
+Next.js, TypeScript and MongoDB social application with profiles, follow requests, chat, posts and comments.
+
+## Required environment
+
+```env
+MONGODB_URI=mongodb://...
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=use-a-long-random-secret
+# Optional: enables OpenAI moderation. A conservative local detector is used when omitted.
+OPENAI_API_KEY=...
+```
+
+## Comment safety policy
+
+Comments are stored in their own `Comment` collection rather than embedded in a post document. This keeps post documents small and allows indexed queries by post.
+
+- A mutual follow (both users follow each other), or a post owner commenting on their own post, is trusted and is not penalized.
+- Other comments are checked by OpenAI moderation when `OPENAI_API_KEY` is set; a local abuse detector is the outage/development fallback.
+- Abusive comments are rejected. Every 10 rejected abusive comments, across all profiles, applies a strike: 7-day comment suspension, then 30-day suspension, then an admin-review block.
+- An admin can unblock a review-blocked user with `PATCH /api/admin/comment-moderation` and `{ "userName": "...", "action": "unblock" }`. The next 10-comment violation after an admin unblock permanently locks commenting.
+
+The comments API never accepts an author name from the browser: it gets the authenticated user from the NextAuth session. A blocked response includes `requiresAdminAppeal: true`, which clients should use to display the appeal dialog/mail link.
 
 ## Getting Started
 

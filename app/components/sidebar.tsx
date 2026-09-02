@@ -27,6 +27,9 @@ const Sidebar = ({}) => {
     const [isMoreOpen, setIsMoreOpen] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
     const [error, setError] = useState('');
+    const [unreadChats, setUnreadChats] = useState(0);
+    const receivedRequests = user.friendAndRequests?.requests?.filter((request: any) => request.type === 'received').length || 0;
+    const recentViews = user.viewedBy?.length || 0;
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -51,6 +54,11 @@ const Sidebar = ({}) => {
 
         fetchUserData();
     }, [dispatch]);
+
+    useEffect(() => {
+        if (!user.userName) return;
+        axios.get(`/api/chats/${user.userName}`).then(({ data }) => setUnreadChats(data.reduce((total: number, chat: any) => total + (chat.messages || []).filter((message: any) => message.sender !== user.userName && !(message.readBy || []).includes(user.userName)).length, 0))).catch(() => undefined);
+    }, [user.userName]);
 
     const handlePages = (page: string) => {
         page !== 'login'
@@ -132,6 +140,7 @@ const Sidebar = ({}) => {
                         onClick={() =>
                             handlePages('friendsandreq')
                         }
+                        badge={receivedRequests}
                     />
 
                     <SidebarIcon
@@ -148,6 +157,7 @@ const Sidebar = ({}) => {
                         label={isExpanded ? 'Chats' : ''}
                         darkMode={darkMode}
                         onClick={() => handlePages('chat')}
+                        badge={unreadChats}
                     />
 
                     <SidebarIcon
@@ -166,6 +176,7 @@ const Sidebar = ({}) => {
                         onClick={() =>
                             rightSidebar('viewedBy')
                         }
+                        badge={recentViews}
                     />
 
                     <SidebarIcon

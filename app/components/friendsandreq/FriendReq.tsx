@@ -5,11 +5,13 @@ import { RootState } from "@/redux/store";
 import { useState } from "react";
 import { FaCheck, FaInbox, FaPaperPlane, FaTimes } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import { useToast } from "../ui/ToastProvider";
 import { getSocket } from "../chat/socket";
 
 const FriendRequest = ({}) => {
   const dispatch = useDispatch();
   const socket = getSocket();
+  const toast = useToast();
 
   const user = useSelector((state: RootState) => state.user);
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
@@ -41,11 +43,12 @@ const FriendRequest = ({}) => {
     });
 
     try {
-      await axios.post("/api/frndreq", {
+      const response = await axios.post("/api/frndreq", {
         action,
         myUserName,
         targetUserName,
       });
+      toast(response.data.message || "Request updated");
 
       socket.emit("frnd_action", {
         action,
@@ -60,6 +63,7 @@ const FriendRequest = ({}) => {
         type: "user/rollbackAction",
         payload: { action, targetUserName },
       });
+      toast(axios.isAxiosError(err) ? err.response?.data?.message || "Unable to send request" : "Unable to send request", "error");
     } finally {
       setLoadingUser(null);
     }

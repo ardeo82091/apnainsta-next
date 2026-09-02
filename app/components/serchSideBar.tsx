@@ -11,7 +11,9 @@ import {
 import axios from "axios";
 import { RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import { getSocket } from "./chat/socket";
+import { useToast } from "./ui/ToastProvider";
 
 interface SearchSlideProps {
   isOpen: boolean;
@@ -21,6 +23,8 @@ interface SearchSlideProps {
 const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const socket = getSocket();
+  const toast = useToast();
+  const router = useRouter();
 
   const [searchUser, setSearchUser] = useState("");
   const [results, setResults] = useState<any[]>([]);
@@ -125,6 +129,7 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
         from: myUserName,
         to: targetUserName,
       });
+      toast(action === "follow" ? "Follow request sent" : action === "accept" ? "Follow request accepted" : "Request updated");
 
     } catch (err) {
       console.error(err);
@@ -133,6 +138,7 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
         type: "user/rollbackAction",
         payload: { action, targetUserName, user: person },
       });
+      toast("Could not update request", "error");
     }
   };
 
@@ -215,7 +221,7 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
                 className={`flex items-center justify-between gap-3 p-3 rounded-lg hover:shadow-sm ${darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-200'} transition`}
               >
                 {/* USER INFO */}
-                <div className="flex items-center gap-3">
+                <button onClick={() => { onClose(); router.push(`/components/profile/${user.userName}`); }} className="flex items-center gap-3 text-left">
                   <img
                     src={user.img}
                     className="w-12 h-12 rounded-full object-cover"
@@ -235,7 +241,7 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
                       {user.name}
                     </span>
                   </div>
-                </div>
+                </button>
 
                 {/* ACTION BUTTON */}
                 {status === "incoming" ? (

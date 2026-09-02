@@ -1,21 +1,47 @@
 'use client'
 
 import Image from "next/image"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/redux/store"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { FaHeart, FaComment, FaPlay } from "react-icons/fa"
 import { FaCamera } from "react-icons/fa";
+import { setUser } from "@/redux/userSlice";
+import { useToast } from "@/app/components/ui/ToastProvider";
 
 export default function MyProfile() {
 
   const user = useSelector((state: RootState) => state.user)
   const darkMode = useSelector((state: RootState) => state.theme.darkMode)
+  const dispatch = useDispatch()
+  const toast = useToast()
 
   const [activeTab, setActiveTab] = useState("posts")
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editBio, setEditBio] = useState("");
+  const [editPrivate, setEditPrivate] = useState(false);
+  const [databasePosts, setDatabasePosts] = useState<any[]>([])
+  const [highlights, setHighlights] = useState<any[]>([])
+  const [availableStories, setAvailableStories] = useState<any[]>([])
+
+  const saveProfile = async () => {
+    const response = await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName: editName, bio: editBio, isPrivate: editPrivate }) });
+    const data = await response.json();
+    if (!response.ok) return toast(data.message || "Could not save profile", "error");
+    dispatch(setUser(data.user)); setEditing(false); toast("Profile updated");
+  };
+  const shareProfile = async () => { await navigator.clipboard.writeText(`${window.location.origin}/components/profile/${user.userName}`); toast("Profile link copied"); };
+  const togglePin = async (postId: string) => {
+    const response = await fetch(`/api/posts/${postId}/pin`, { method: "PATCH" });
+    const data = await response.json();
+    if (!response.ok) return toast(data.message || "Could not update pin", "error");
+    setDatabasePosts((items) => items.map((post) => post._id === postId ? { ...post, isPinned: data.isPinned } : post));
+    toast(data.isPinned ? "Post pinned" : "Post unpinned");
+  };
 
   const handleProfileUpload = (
     e: React.ChangeEvent<HTMLInputElement>
@@ -24,7 +50,16 @@ export default function MyProfile() {
 
     if (!file) return;
 
-    setProfileImage(URL.createObjectURL(file));
+    if (file.size > 2 * 1024 * 1024) { toast("Choose a profile photo smaller than 2 MB", "error"); return; }
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const profilePic = String(reader.result);
+      const response = await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profilePic }) });
+      const data = await response.json();
+      if (!response.ok) return toast(data.message || "Could not update photo", "error");
+      setProfileImage(profilePic); dispatch(setUser(data.user)); toast("Profile photo updated");
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleCoverUpload = (
@@ -37,18 +72,32 @@ export default function MyProfile() {
     setCoverImage(URL.createObjectURL(file));
   };
 
-  const posts = user.posts || []
+  useEffect(() => {
+    if (!user.userName) return
+    fetch(`/api/profile/${user.userName}`).then((response) => response.json()).then((data) => setDatabasePosts(data.posts || []) ).catch(() => undefined)
+  }, [user.userName])
+  useEffect(() => { fetch("/api/highlights").then((response) => response.json()).then((data) => { setHighlights(data.highlights || []); setAvailableStories(data.stories || []) }).catch(() => undefined) }, [])
+  const addHighlight = async () => {
+    if (!availableStories[0]) return toast("Share a story first", "error")
+    const title = window.prompt("Highlight name")?.trim()
+    if (!title) return
+    const response = await fetch("/api/highlights", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, storyId: availableStories[0]._id }) })
+    const data = await response.json(); if (!response.ok) return toast(data.message || "Could not add highlight", "error")
+    setHighlights((items) => [data.highlight, ...items]); toast("Highlight added")
+  }
 
-  const videos = posts.filter((p) => p.media.some((m) => m.isVideo))
+  const posts: any[] = databasePosts.length ? databasePosts : user.posts || []
+
+  const videos = posts.filter((p: any) => (p.media || []).some((m: any) => m.isVideo))
 
   const likedPosts =
-    posts.filter((p) =>
-      p.likes?.some((l) => l.userName === user.userName)
+    posts.filter((p: any) =>
+      p.likes?.some((l: any) => l.userName === user.userName)
     )
 
   const archivedPosts = posts.slice(-25)
 
-  const pinnedPosts = posts.slice(0, 8)
+  const pinnedPosts = posts.filter((post: any) => post.isPinned).slice(0, 8)
 
   const displayPosts =
     activeTab === "posts"
@@ -241,11 +290,11 @@ export default function MyProfile() {
 
           <div className="flex gap-3">
 
-            <button className={`px-4 py-2 text-sm border rounded-md ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+            <button onClick={() => { setEditName(user.fullName); setEditBio(user.bio || ""); setEditPrivate(Boolean((user as any).isPrivate)); setEditing(true); }} className={`px-4 py-2 text-sm border rounded-md ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
               Edit Profile
             </button>
 
-            <button className={`px-4 py-2 text-sm border rounded-md ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+            <button onClick={shareProfile} className={`px-4 py-2 text-sm border rounded-md ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
               Share
             </button>
 
@@ -256,7 +305,7 @@ export default function MyProfile() {
 
         {/* BIO */}
         <div className={`mt-4 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'} max-w-xl`}>
-          Passionate developer building social media apps.
+          {user.bio || "Add a bio to tell people about yourself."}
         </div>
 
 
@@ -317,19 +366,18 @@ export default function MyProfile() {
         {/* STORY HIGHLIGHTS */}
         <div className="flex gap-8 mt-10">
 
-          {["Travel", "Work", "Friends", "Events"].map((item) => (
+          <button onClick={addHighlight} className="flex flex-col items-center"><div className="w-16 h-16 rounded-full border flex items-center justify-center text-lg">+</div><p className="text-xs mt-1">New</p></button>
+          {highlights.map((item: any) => (
 
             <div
-              key={item}
+              key={item._id}
               className="flex flex-col items-center"
             >
 
-              <div className="w-16 h-16 rounded-full border flex items-center justify-center text-lg">
-                +
-              </div>
+              <img src={item.coverUrl || "/images/profile.jpg"} className="w-16 h-16 rounded-full border object-cover" alt={item.title}/>
 
               <p className="text-xs mt-1 ${darkMode ? 'text-gray-400' : 'text-gray-600'}">
-                {item}
+                {item.title}
               </p>
 
             </div>
@@ -360,7 +408,9 @@ export default function MyProfile() {
                 className="w-full h-full object-cover"
               />
 
-              {post.media.some((m) => m.isVideo) && (
+              <span className="absolute left-2 top-2 rounded bg-black/60 px-2 py-1 text-xs text-white">Pinned</span>
+
+              {(post.media || []).some((m: any) => m.isVideo) && (
 
                 <FaPlay className="absolute top-2 right-2 ${darkMode ? 'text-white' : 'text-black'}" />
 
@@ -474,7 +524,11 @@ export default function MyProfile() {
                 className="w-full h-full object-cover"
               />
 
-              {post.media.some((m) => m.isVideo) && (
+              {!(post.media || []).some((m: any) => m.isVideo) && post._id && (
+                <button onClick={() => togglePin(post._id)} className="absolute left-2 top-2 rounded bg-black/60 px-2 py-1 text-xs text-white">{post.isPinned ? "Unpin" : "Pin"}</button>
+              )}
+
+              {(post.media || []).some((m: any) => m.isVideo) && (
 
                 <FaPlay className="absolute top-2 right-2 text-white" />
 
@@ -585,6 +639,7 @@ export default function MyProfile() {
           </div>
         </div>
       )}
+      {editing && <div className="fixed inset-0 z-[1000] grid place-items-center bg-black/50 p-4"><div className={`w-full max-w-md rounded-2xl p-5 ${darkMode ? "bg-gray-900" : "bg-white"}`}><h2 className="font-semibold">Edit profile</h2><label className="mt-4 block text-sm">Name<input value={editName} onChange={(event) => setEditName(event.target.value)} className="mt-1 w-full rounded border p-2 text-black"/></label><label className="mt-3 block text-sm">Bio<textarea value={editBio} onChange={(event) => setEditBio(event.target.value)} maxLength={150} className="mt-1 w-full rounded border p-2 text-black"/></label><label className="mt-3 flex items-center gap-2 text-sm"><input type="checkbox" checked={editPrivate} onChange={(event) => setEditPrivate(event.target.checked)}/> Private account</label><div className="mt-5 flex justify-end gap-3"><button onClick={() => setEditing(false)}>Cancel</button><button onClick={saveProfile} className="rounded bg-blue-600 px-3 py-2 text-white">Save</button></div></div></div>}
     </div>
   )
 }

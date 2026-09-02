@@ -58,17 +58,23 @@ export function useCreatePost() {
       e.target.files || []
     );
 
-    const uploaded: MediaItem[] =
-      files.map((file, index) => ({
+    const oversized = files.find((file) => file.size > 10 * 1024 * 1024)
+    if (oversized) {
+      alert("Each image or video must be smaller than 10 MB")
+      return
+    }
+    const uploaded: MediaItem[] = await Promise.all(files.map(async (file, index) => ({
         id: crypto.randomUUID(),
-        src: URL.createObjectURL(file),
+        // blob URLs disappear on reload. A data URL keeps the current MongoDB
+        // implementation durable until object storage (S3/Cloudinary) is added.
+        src: await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = reject; reader.readAsDataURL(file) }),
         isVideo:
           file.type.startsWith(
             "video"
           ),
         order:
           media.length + index,
-      }));
+      })));
 
     setMedia((prev) => [
       ...prev,
@@ -272,4 +278,3 @@ export function useCreatePost() {
     publishPost,
   };
 }
-

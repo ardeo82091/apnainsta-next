@@ -5,18 +5,22 @@ import ChatTab from "../chat";
 import Sidebar from "../../sidebar";
 import ChatSidebar from "../ChatProfileBar";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { ChatPerson, Messages } from "@/lib/users";
 import { Socket } from "socket.io-client";
 import { getSocket } from "../socket";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
+import { useToast } from "@/app/components/ui/ToastProvider";
 
 let socket: Socket;
 
 const ChatWithPerson: React.FC = () => {
 
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+  const toast = useToast();
+  const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<number>(0);
   const [multipleActiveTab, setMultipleActiveTab] = useState<ChatPerson[]>([]);
@@ -49,6 +53,15 @@ const ChatWithPerson: React.FC = () => {
 
     if (myUserName) fetchChats();
   }, [myUserName]);
+
+  // Socket events arrive instantly; polling is a reliable fallback when the
+  // socket service is temporarily unreachable on another device.
+  useEffect(() => {
+    if (!myUserName) return
+    const refresh = () => axios.get(`/api/chats/${myUserName}`).then((response) => setChatPersons(response.data)).catch(() => undefined)
+    const timer = window.setInterval(refresh, 4000)
+    return () => window.clearInterval(timer)
+  }, [myUserName])
 
   // AUTO SCROLL
   useEffect(() => {
@@ -239,17 +252,17 @@ const ChatWithPerson: React.FC = () => {
   };
 
   // START NEW CHAT
-  const startNewChat = (userData: any) => {
-    const chat: ChatPerson = {
-      chatId: "",
-      person: {
-        userName: userData.userName,
-        name: userData.name,
-        img: userData.img,
-      },
-      messages: [],
-    };
-    openChatTab(chat);
+  const startNewChat = async (userData: any) => {
+    try {
+      const { data } = await axios.post("/api/chats", { userName: userData.userName });
+      const chat: ChatPerson = { ...data, messages: [] };
+      setChatPersons((current) => current.some((item) => item.chatId === chat.chatId) ? current : [chat, ...current]);
+      openChatTab(chat);
+      toast("Chat ready");
+    } catch {
+      // The API response is the source of truth; do not open a non-persistent chat tab.
+      toast("Could not start chat", "error");
+    }
   };
 
   // CLOSE TAB
@@ -270,13 +283,14 @@ const ChatWithPerson: React.FC = () => {
   };
 
   // SEND MESSAGE
-  const sendMessage = (chatId: string, content: string) => {
+  const sendMessage = (chat: ChatPerson, content: string) => {
     if (!myUserName) return;
 
-    const message: Messages = {
+    const message: Messages & { recipient: string } = {
       tempId: crypto.randomUUID(),
-      chatId,
+      chatId: chat.chatId,
       sender: myUserName,
+      recipient: chat.person.userName,
       content,
       readBy: [myUserName],
       createdAt: new Date(),
@@ -288,17 +302,17 @@ const ChatWithPerson: React.FC = () => {
 
     setMultipleActiveTab((prev) =>
       prev.map((tab) =>
-        tab.chatId === chatId
+        tab.chatId === chat.chatId
           ? { ...tab, messages: [...tab.messages, message] }
           : tab
       )
     );
 
     setChatPersons((prev) =>
-      prev.map((chat) =>
-        chat.chatId === chatId
-          ? { ...chat, messages: [...chat.messages, message] }
-          : chat
+      prev.map((currentChat) =>
+        currentChat.chatId === chat.chatId
+          ? { ...currentChat, messages: [...currentChat.messages, message] }
+          : currentChat
       )
     );
 
@@ -393,7 +407,7 @@ const ChatWithPerson: React.FC = () => {
               onClick={() => {
                 const chat = multipleActiveTab[activeTab];
                 if (chat && messageInput.trim()) {
-                  sendMessage(chat.chatId, messageInput);
+                  sendMessage(chat, messageInput);
                 }
               }}
               className="bg-blue-500 text-white px-5 rounded-xl"
@@ -434,7 +448,7 @@ const ChatWithPerson: React.FC = () => {
                       setSearchResults([]);
                     }}
                   >
-                    <img src={u.img} className="w-10 h-10 rounded-full" />
+                  <img src={u.img} className="w-10 h-10 rounded-full" />
                     <div>
                       <div className="font-semibold text-sm">{u.userName}</div>
                       <div className="text-xs text-gray-500">{u.name}</div>
@@ -467,8 +481,7 @@ const ChatWithPerson: React.FC = () => {
                     src={chat.person.img}
                     className="w-10 h-10 rounded-full mr-3 cursor-pointer"
                     onClick={() => {
-                      viewChatProfile();
-                      setChatProfileUserName(chat.person.userName);
+                      router.push(`/components/profile/${chat.person.userName}`);
                     }}
                   />
 

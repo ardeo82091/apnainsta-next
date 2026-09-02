@@ -3,6 +3,7 @@
 import axios from "axios";
 import { RootState } from "@/redux/store";
 import { useState, useEffect, useMemo, FC } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   FaUserMinus,
   FaUserPlus,
@@ -25,12 +26,13 @@ const AllFriends = ({}) => {
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
   
   const myUserName = users.userName || "";
+  const searchParams = useSearchParams();
 
   const requests = users.friendAndRequests?.requests || [];
   const followers = users.friendAndRequests?.followers || [];
   const followings = users.friendAndRequests?.followings || [];
 
-  const [activeTab, setActiveTab] = useState<"followers" | "following">("followers");
+  const [activeTab, setActiveTab] = useState<"followers" | "following">(searchParams.get("tab") === "following" ? "following" : "followers");
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<any | null>(null);
 

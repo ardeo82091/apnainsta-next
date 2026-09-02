@@ -3,6 +3,7 @@
 import { useSelector, useDispatch } from "react-redux"
 import { RootState } from "@/redux/store"
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { FaBell, FaHeart, FaComment, FaUserPlus } from "react-icons/fa"
 import { formatDistanceToNow } from "date-fns"
 
@@ -11,6 +12,8 @@ import { markNotificationRead, markAllNotificationsRead } from "@/redux/userSlic
 const Sidebar = () => {
   const dispatch = useDispatch()
   const user = useSelector((state: RootState) => state.user)
+  const router = useRouter()
+  const [suggestions, setSuggestions] = useState<any[]>([])
 
   const notifications = user?.notifications || []
 
@@ -23,6 +26,7 @@ const Sidebar = () => {
     const interval = setInterval(() => forceUpdate(v => v + 1), 30000)
     return () => clearInterval(interval)
   }, [])
+  useEffect(() => { fetch("/api/suggestions").then((response) => response.json()).then(setSuggestions).catch(() => undefined) }, [])
 
   const unreadCount = notifications.filter(n => !n.read).length
 
@@ -46,10 +50,12 @@ const Sidebar = () => {
 
   const handleMarkRead = (notifId: number) => {
     dispatch(markNotificationRead(notifId))
+    fetch("/api/notifications/read", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: notifId }) })
   }
 
   const handleMarkAllRead = () => {
     dispatch(markAllNotificationsRead())
+    fetch("/api/notifications/read", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ all: true }) })
   }
 
   return (
@@ -84,14 +90,14 @@ const Sidebar = () => {
             <p className="font-semibold">{user?.posts?.length || 0}</p>
             <p className="text-xs text-gray-500">Posts</p>
           </div>
-          <div>
+          <button onClick={() => router.push(`/components/friendsandreq/${user.userName}?tab=followers`)}>
             <p className="font-semibold">{followersCount}</p>
             <p className="text-xs text-gray-500">Followers</p>
-          </div>
-          <div>
+          </button>
+          <button onClick={() => router.push(`/components/friendsandreq/${user.userName}?tab=following`)}>
             <p className="font-semibold">{followingCount}</p>
             <p className="text-xs text-gray-500">Following</p>
-          </div>
+          </button>
         </div>
       </div>
 
@@ -179,20 +185,20 @@ const Sidebar = () => {
 
         <div className="space-y-3">
 
-          {["Rahul", "Divya", "Aman", "Priya"].map((u) => (
+          {suggestions.map((suggestion) => (
 
-            <div key={u} className="flex items-center justify-between">
+            <div key={suggestion.userName} className="flex items-center justify-between">
 
               <div className="flex items-center gap-3">
                 <img
-                  src="https://i.pravatar.cc/150"
+                  src={suggestion.profilePic || "/images/profile.jpg"}
                   className="w-10 h-10 rounded-full"
                 />
-                <p className="text-sm font-medium">{u}</p>
+                <button onClick={() => router.push(`/components/profile/${suggestion.userName}`)} className="text-sm font-medium">{suggestion.fullName}</button>
               </div>
 
-              <button className="text-xs px-3 py-1 bg-blue-500 text-white rounded-full hover:bg-blue-600">
-                Follow
+              <button onClick={() => router.push(`/components/profile/${suggestion.userName}`)} className="text-xs px-3 py-1 bg-blue-500 text-white rounded-full hover:bg-blue-600">
+                View
               </button>
 
             </div>

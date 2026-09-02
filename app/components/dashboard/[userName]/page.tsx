@@ -2,7 +2,7 @@
 
 import Sidebar from '../../sidebar';
 import Header from '../../header';
-import StoriesAndWork from '../storiesWork';
+import Feed from '../../feed/Feed';
 import { RootState } from '@/redux/store';
 import { useSelector } from 'react-redux';
 
@@ -15,9 +15,9 @@ const DashboardPage = () => {
             <Sidebar/>
 
             {/* Dashboard */}
-            <div className={`flex-1 transition-all duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
-                <div className={`min-h-full ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
-                    <StoriesAndWork/>
+            <div className={`min-w-0 flex-1 overflow-y-auto transition-all duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
+                <div className={`min-h-full pb-12 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
+                    <Feed />
                 </div>
             </div>
 

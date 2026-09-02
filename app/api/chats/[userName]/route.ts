@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import Chat from "@/models/Chat"
+import Message from "@/models/Message"
 import User from "@/models/User"
 import { connectDB } from "@/lib/mongodb"
 
@@ -11,26 +12,17 @@ export async function GET(
     await connectDB()
 
     const { userName } = params
-    const currentUser = await User.findOne({ userName })
-
-    if (!currentUser) {
-      return NextResponse.json(
-        { message: "User not found" },
-        { status: 404 }
-      )
-    }
-
-    const userId = currentUser._id
     const chats = await Chat.find({
-      participants: userId
+      participants: userName
     })
       .sort({ updatedAt: -1 })
-      .populate("participants", "userName fullName profilePic")
 
-    const results = chats.map((chat: any) => {
-      const otherUser = chat.participants.find(
-        (p: any) => p._id.toString() !== userId.toString()
-      )
+    const results = await Promise.all(chats.map(async (chat: any) => {
+      const otherUserName = chat.participants.find((participant: string) => participant !== userName)
+      const [otherUser, messages] = await Promise.all([
+        User.findOne({ userName: otherUserName }).select("userName fullName profilePic").lean(),
+        Message.find({ chatId: chat._id }).sort({ createdAt: 1 }).limit(50).lean()
+      ])
 
       return {
         chatId: chat._id,
@@ -43,9 +35,10 @@ export async function GET(
         },
 
         lastMessage: chat.lastMessage || null,
-        updatedAt: chat.updatedAt
+        updatedAt: chat.updatedAt,
+        messages
       }
-    })
+    }))
 
     return NextResponse.json(results, { status: 200 })
 

@@ -9,7 +9,7 @@ export default function Page() {
 
       <Sidebar />
         {/* Profile Scroll Area */}
-        <div className="flex-1 ml-40 bg-white overflow-y-auto">
+        <div className="flex-1 bg-white overflow-y-auto">
           <ViewMyFeed />
         </div>
 

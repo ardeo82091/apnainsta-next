@@ -2,6 +2,8 @@ import { NextResponse } from "next/server"
 import User from "@/models/User"
 import { connectDB } from "@/lib/mongodb"
 
+export const dynamic = "force-dynamic"
+
 export async function GET(req: Request) {
 
     await connectDB()
@@ -27,27 +29,29 @@ export async function GET(req: Request) {
     })
     .limit(10);
 
+    const currentUser = await User.findOne({ userName: exclude }).lean()
     const results = users.map((u: any) => {
 
         const isFollowing =
-        u.friendAndRequests.followings.some(
-            (f: any) => f.person.userName === exclude
+        currentUser?.friendAndRequests?.followings?.some(
+            (f: any) => f.person.userName === u.userName
         )
 
         const requestSent =
-        u.friendAndRequests.requests.some(
-            (r: any) => r.person.userName === exclude && !r.isSent
+        currentUser?.friendAndRequests?.requests?.some(
+            (r: any) => r.person.userName === u.userName && r.type === "sent"
         )
 
         const acceptReq =
-        u.friendAndRequests.requests.some(
-            (r: any) => r.person.userName === exclude && r.isSent
+        currentUser?.friendAndRequests?.requests?.some(
+            (r: any) => r.person.userName === u.userName && r.type === "received"
         )
 
         return {
         userName: u.userName,
         name: u.fullName,
         img: u.profilePic,
+        isPrivate: Boolean(u.isPrivate),
         followers: u.friendAndRequests.followers.length,
         mutualFriends: 0,
         isFollowing,
