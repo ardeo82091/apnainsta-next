@@ -1,36 +1,158 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ApnaInsta
 
-## Getting Started
+A full-stack social media web application built with Next.js, TypeScript, MongoDB, and Socket.IO.
 
-First, run the development server:
+ApnaInsta provides a complete social experience including posts, likes, comments, user connections, real-time chat, notifications, profile discovery, profile-view tracking, and more.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### User & Profile
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- User registration and authentication
+- User profiles
+- Profile picture and bio
+- Profile view tracking
+- Recently viewed profiles
+- User search
+- Recent search functionality
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+### Posts & Feed
 
-## Learn More
+- Create image and video posts
+- Social feed
+- Like and unlike posts
+- Post comments
+- Comment replies
+- Media viewing
+- Post timestamps
 
-To learn more about Next.js, take a look at the following resources:
+### Connections
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Send follow requests
+- Receive and manage requests
+- Followers and following
+- Follow and unfollow users
+- Connection activity notifications
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+### Real-Time Chat
 
-## Deploy on Vercel
+- One-to-one conversations
+- Real-time messaging with Socket.IO
+- Text messages
+- Image and video messages
+- Chat history
+- Read/unread message tracking
+- Last-message preview
+- Message timestamps
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Notifications
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Notifications for:
+
+- Likes
+- Comments
+- Follows
+- Requests
+
+Notifications support read/unread state and timestamps.
+
+### Profile Discovery
+
+- Search users
+- Discover profiles
+- Track profile views
+- Recently viewed profiles
+- Recent searches
+
+## Tech Stack
+
+### Frontend
+
+- Next.js
+- React
+- TypeScript
+- Redux
+
+### Backend
+
+- Next.js
+- REST APIs
+- Node.js
+- Socket.IO
+
+### Database
+
+- MongoDB
+
+### Authentication
+
+- NextAuth
+- Credentials authentication
+- Password hashing
+
+## Architecture
+
+\`\`\`text
+                    ApnaInsta
+                        │
+            ┌───────────┴───────────┐
+            │                       │
+        Next.js                 Socket.IO
+            │                       │
+     ┌──────┴──────┐                │
+     │             │                │
+   React        REST APIs      Real-time Chat
+     │             │                │
+     └─────────────┴────────────────┘
+                   │
+                   ▼
+                MongoDB
+\`\`\`
+
+## Core Data
+
+The application manages entities such as:
+
+- Users
+- Posts
+- Comments
+- Replies
+- Likes
+- Followers
+- Following
+- Requests
+- Notifications
+- Profile Views
+- Chats
+- Messages
+
+## What I Built
+
+This project was built as a personal full-stack application to explore and implement real-world social application functionality.
+
+It covers:
+
+- Full-stack application architecture
+- REST API development
+- MongoDB data modeling
+- Authentication
+- State management
+- Real-time communication
+- Social relationship management
+- Notification systems
+- Profile activity tracking
+- Search functionality
+- Media-based posts
+- Responsive UI
+
+## Project Status
+
+Personal project — actively developed.
+
+## Author
+
+**Ankit Raj**
+
+Full-Stack Software Developer
+
+[GitHub](https://github.com/ardeo82091)
