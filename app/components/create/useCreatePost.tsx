@@ -51,35 +51,86 @@ export function useCreatePost() {
     }
   }, []);
 
-  async function handleMediaUpload(
-    e: React.ChangeEvent<HTMLInputElement>
-  ) {
-    const files = Array.from(
-      e.target.files || []
-    );
+  // async function handleMediaUpload(
+  //   e: React.ChangeEvent<HTMLInputElement>
+  // ) {
+  //   const files = Array.from(
+  //     e.target.files || []
+  //   );
 
-    const oversized = files.find((file) => file.size > 10 * 1024 * 1024)
+  //   const oversized = files.find((file) => file.size > 10 * 1024 * 1024)
+  //   if (oversized) {
+  //     alert("Each image or video must be smaller than 10 MB")
+  //     return
+  //   }
+  //   const uploaded: MediaItem[] = await Promise.all(files.map(async (file, index) => ({
+  //       id: crypto.randomUUID(),
+  //       src: await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = reject; reader.readAsDataURL(file) }),
+  //       isVideo:
+  //         file.type.startsWith(
+  //           "video"
+  //         ),
+  //       order:
+  //         media.length + index,
+  //     })));
+
+  //   setMedia((prev) => [
+  //     ...prev,
+  //     ...uploaded,
+  //   ]);
+  // }
+
+  async function handleMediaUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files || []);
+
+    if (!files.length) return;
+
+    const oversized = files.find((file) => file.size > 10 * 1024 * 1024);
     if (oversized) {
-      alert("Each image or video must be smaller than 10 MB")
-      return
+      alert("Each image or video must be smaller than 10 MB");
+      return;
     }
-    const uploaded: MediaItem[] = await Promise.all(files.map(async (file, index) => ({
-        id: crypto.randomUUID(),
-        // blob URLs disappear on reload. A data URL keeps the current MongoDB
-        // implementation durable until object storage (S3/Cloudinary) is added.
-        src: await new Promise<string>((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = reject; reader.readAsDataURL(file) }),
-        isVideo:
-          file.type.startsWith(
-            "video"
-          ),
-        order:
-          media.length + index,
-      })));
 
-    setMedia((prev) => [
-      ...prev,
-      ...uploaded,
-    ]);
+    try {
+      const uploaded: MediaItem[] = await Promise.all(files.map(async (file, index) => {
+          const formData = new FormData();
+
+          formData.append("file", file);
+          formData.append(
+            "upload_preset",
+            process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!
+          );
+
+          const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Cloudinary upload failed");
+          }
+
+          const data = await response.json();
+
+          return {
+            id: crypto.randomUUID(),
+            src: data.secure_url,
+            isVideo: file.type.startsWith("video/"),
+            order: media.length + index,
+          };
+        })
+      );
+
+      setMedia((prev) => [...prev, ...uploaded]);
+    } catch (error) {
+      console.error("Media upload failed:", error);
+      alert("Failed to upload media");
+    } finally {
+      e.target.value = "";
+    }
   }
 
   const removeMedia = (

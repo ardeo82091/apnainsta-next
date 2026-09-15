@@ -64,7 +64,7 @@ const Sidebar = () => {
       <div className="border-b pb-6">
         <div className="flex items-center gap-4">
           <img
-            src={user?.profilePic || "https://i.pravatar.cc/150"}
+            src={user?.profilePic}
             className="w-20 h-20 rounded-full object-cover"
           />
           <div className="flex-1">
