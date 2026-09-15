@@ -92,7 +92,7 @@ Notifications support read/unread state and timestamps.
 
 ## Architecture
 
-\`\`\`text
+```text
                     ApnaInsta
                         │
             ┌───────────┴───────────┐
@@ -107,7 +107,7 @@ Notifications support read/unread state and timestamps.
                    │
                    ▼
                 MongoDB
-\`\`\`
+```
 
 ## Core Data
 
