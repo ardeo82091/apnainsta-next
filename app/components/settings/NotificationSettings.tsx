@@ -1,8 +1,13 @@
 "use client"
 
+import { RootState } from "@/redux/store";
 import { useState } from "react"
+import { useSelector } from "react-redux";
 
 export function NotificationSettings() {
+
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+
   const [settings, setSettings] = useState({
     message: true,
     friendRequest: false,
@@ -27,13 +32,13 @@ export function NotificationSettings() {
           Notification Settings
         </h2>
 
-        <p className="text-gray-500 mt-1">
+        <p className={`${darkMode ? "text-gray-400" : "text-gray-500"} mt-1`}>
           Dear user, choose how you want to be notified. You can change these preferences anytime.
         </p>
       </div>
 
       {/* ---------------- IN-APP NOTIFICATIONS ---------------- */}
-      <div className="bg-white border rounded-2xl shadow-sm p-6">
+      <div className={`${darkMode ? "bg-gray-900" : "bg-white"} border rounded-2xl shadow-sm p-6`}>
         <h3 className="text-lg font-semibold mb-4">
           In-App Notifications
         </h3>
@@ -43,6 +48,7 @@ export function NotificationSettings() {
           description="Get notified instantly when someone sends you a message."
           enabled={settings.message}
           onToggle={() => toggle("message")}
+          darkMode={darkMode}
         />
 
         <SettingToggle
@@ -50,11 +56,12 @@ export function NotificationSettings() {
           description="Receive alerts when someone sends you a friend request."
           enabled={settings.friendRequest}
           onToggle={() => toggle("friendRequest")}
+          darkMode={darkMode}
         />
       </div>
 
       {/* ---------------- EMAIL NOTIFICATIONS ---------------- */}
-      <div className="bg-white border rounded-2xl shadow-sm p-6">
+      <div className={`${darkMode ? "bg-gray-900" : "bg-white"} border rounded-2xl shadow-sm p-6`}>
         <h3 className="text-lg font-semibold mb-4">
           Email Notifications
         </h3>
@@ -64,6 +71,7 @@ export function NotificationSettings() {
           description="Receive important updates and summaries via email."
           enabled={settings.email}
           onToggle={() => toggle("email")}
+          darkMode={darkMode}
         />
 
         <SettingToggle
@@ -71,11 +79,12 @@ export function NotificationSettings() {
           description="Receive product updates, tips, and offers."
           enabled={settings.marketing}
           onToggle={() => toggle("marketing")}
+          darkMode={darkMode}
         />
       </div>
 
       {/* ---------------- SECURITY ---------------- */}
-      <div className="bg-white border rounded-2xl shadow-sm p-6">
+      <div className={`${darkMode ? "bg-gray-900" : "bg-white"} border rounded-2xl shadow-sm p-6`}>
         <h3 className="text-lg font-semibold mb-4">
           Security Alerts
         </h3>
@@ -85,6 +94,7 @@ export function NotificationSettings() {
           description="Get alerts for login attempts and account changes."
           enabled={settings.security}
           onToggle={() => toggle("security")}
+          darkMode={darkMode}
         />
       </div>
 
@@ -92,7 +102,7 @@ export function NotificationSettings() {
       <div className="flex justify-end">
         <button
           onClick={handleSave}
-          className="bg-yellow-500 text-white px-8 py-3 rounded-lg hover:bg-yellow-600 transition"
+          className={` ${darkMode ? "bg-yellow-600 hover:bg-yellow-700 text-white" : "bg-yellow-500 hover:bg-yellow-600 text-white"} px-8 py-3 rounded-lg transition`}
         >
           Save Notification Preferences
         </button>
@@ -109,14 +119,17 @@ type ToggleProps = {
   description: string
   enabled: boolean
   onToggle: () => void
+  darkMode: boolean
 }
 
-function SettingToggle({ title, description, enabled, onToggle }: ToggleProps) {
+function SettingToggle({ title, description, enabled, onToggle, darkMode }: ToggleProps) {
   return (
     <div className="flex items-center justify-between py-4 border-b last:border-none">
       <div>
         <p className="font-medium">{title}</p>
-        <p className="text-sm text-gray-500">{description}</p>
+        <p className={`${darkMode ? "text-gray-400" : "text-gray-500"} text-sm`}>
+          {description}
+        </p>
       </div>
 
       <button
@@ -126,7 +139,9 @@ function SettingToggle({ title, description, enabled, onToggle }: ToggleProps) {
         }`}
       >
         <div
-          className={`bg-white w-4 h-4 rounded-full shadow transform transition ${
+          className={`w-4 h-4 rounded-full shadow transform transition ${
+            darkMode ? "bg-gray-900" : "bg-white"
+          } ${
             enabled ? "translate-x-6" : ""
           }`}
         />

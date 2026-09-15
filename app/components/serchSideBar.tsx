@@ -11,7 +11,9 @@ import {
 import axios from "axios";
 import { RootState } from "@/redux/store";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
 import { getSocket } from "./chat/socket";
+import { useToast } from "./ui/ToastProvider";
 
 interface SearchSlideProps {
   isOpen: boolean;
@@ -21,12 +23,15 @@ interface SearchSlideProps {
 const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const socket = getSocket();
+  const toast = useToast();
+  const router = useRouter();
 
   const [searchUser, setSearchUser] = useState("");
   const [results, setResults] = useState<any[]>([]);
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const users = useSelector((state: RootState) => state.user);
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
   const myUserName = users.userName;
 
   const requests = users.friendAndRequests?.requests || [];
@@ -124,6 +129,7 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
         from: myUserName,
         to: targetUserName,
       });
+      toast(action === "follow" ? "Follow request sent" : action === "accept" ? "Follow request accepted" : "Request updated");
 
     } catch (err) {
       console.error(err);
@@ -132,6 +138,7 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
         type: "user/rollbackAction",
         payload: { action, targetUserName, user: person },
       });
+      toast("Could not update request", "error");
     }
   };
 
@@ -169,11 +176,12 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
 
       {/* SIDEBAR */}
       <div
-        className={`fixed top-0 right-0 h-screen w-96 bg-white shadow-2xl z-50 transform transition-transform duration-300
+        className={`fixed top-0 right-0 h-screen w-96 shadow-2xl z-50 transform transition-transform duration-300
+        ${darkMode ? "bg-gray-900 text-white" : "bg-white text-gray-900"}  
         ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* HEADER */}
-        <div className="flex items-center justify-between px-5 py-4 border-b">
+        <div className="flex items-center justify-between px-5 py-4">
           <h2 className="text-lg font-semibold">Search</h2>
           <FaTimes
             className="cursor-pointer text-gray-500 hover:text-black"
@@ -183,7 +191,7 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
 
         {/* SEARCH INPUT */}
         <div className="p-4">
-          <div className="flex items-center gap-3 bg-gray-100 px-3 py-2 rounded-lg">
+          <div className={`flex items-center gap-3 px-3 py-2 rounded-lg ${darkMode ? 'bg-gray-800' : 'bg-gray-100'}`}>
             <FaSearch className="text-gray-400" />
             <input
               type="text"
@@ -198,7 +206,9 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
         {/* RESULTS */}
         <div className="overflow-y-auto px-4 pb-6 space-y-3">
           {results.length === 0 && searchUser.length > 1 && (
-            <p className="text-gray-500 text-sm">No users found</p>
+            <p className={`text-sm ${darkMode ? 'text-gray-800' : 'text-white'}`}>
+              No users found
+            </p>
           )}
 
           {results.map((user) => {
@@ -208,10 +218,10 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
             return (
               <div
                 key={user.userName}
-                className="flex items-center justify-between gap-3 p-3 border rounded-lg hover:shadow-sm hover:bg-gray-50 transition"
+                className={`flex items-center justify-between gap-3 p-3 rounded-lg hover:shadow-sm ${darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-200'} transition`}
               >
                 {/* USER INFO */}
-                <div className="flex items-center gap-3">
+                <button onClick={() => { onClose(); router.push(`/components/profile/${user.userName}`); }} className="flex items-center gap-3 text-left">
                   <img
                     src={user.img}
                     className="w-12 h-12 rounded-full object-cover"
@@ -231,7 +241,7 @@ const SearchSlideBar: FC<SearchSlideProps> = ({ isOpen, onClose }) => {
                       {user.name}
                     </span>
                   </div>
-                </div>
+                </button>
 
                 {/* ACTION BUTTON */}
                 {status === "incoming" ? (

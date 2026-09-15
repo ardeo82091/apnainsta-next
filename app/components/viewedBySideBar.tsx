@@ -14,7 +14,8 @@ interface ViewedBySlideBarProps {
 
 const ViewedBySlideBar: FC<ViewedBySlideBarProps> = ({ isOpen, onClose }) => {
   // Get current user from Redux
-  const user = useSelector((state: RootState) => state.user)
+  const user = useSelector((state: RootState) => state.user);
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   if (!isOpen) return null
 
@@ -36,11 +37,11 @@ const ViewedBySlideBar: FC<ViewedBySlideBarProps> = ({ isOpen, onClose }) => {
 
       {/* Slide-in Sidebar */}
       <div
-        className={`fixed right-0 top-0 h-screen w-80 bg-white z-50 shadow-xl flex flex-col p-4 transform transition-transform duration-300
+        className={`fixed right-0 top-0 h-screen w-80 ${darkMode ? 'bg-gray-900' : 'bg-white'} z-50 shadow-xl flex flex-col p-4 transform transition-transform duration-300
           ${isOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         {/* Header */}
-        <div className="flex justify-between items-center text-gray-800 text-lg font-semibold mb-4 border-b pb-2">
+        <div className={`flex justify-between items-center text-lg font-semibold mb-4 ${darkMode ? 'text-white' : 'text-gray-800'} border-b pb-2`}>
           <span>Last Viewed</span>
           <FaTimes
             className="cursor-pointer text-gray-600 hover:text-red-500"
@@ -51,7 +52,7 @@ const ViewedBySlideBar: FC<ViewedBySlideBarProps> = ({ isOpen, onClose }) => {
         {/* Viewer List */}
         <div className="flex flex-col gap-3 overflow-y-auto">
           {viewers.length === 0 && (
-            <p className="text-gray-400 text-sm text-center mt-4">
+            <p className={`text-sm ${darkMode ? 'text-white' : 'text-gray-800'} text-center mt-4`}>
               No profile views yet
             </p>
           )}
@@ -59,7 +60,7 @@ const ViewedBySlideBar: FC<ViewedBySlideBarProps> = ({ isOpen, onClose }) => {
           {viewers.slice(0, 20).map((viewer, index) => (
             <div
               key={index}
-              className="flex items-center justify-between gap-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer transition"
+              className={`flex items-center justify-between gap-3 p-2 rounded-md hover:${darkMode ? 'bg-gray-800' : 'bg-gray-100'} cursor-pointer transition`}
             >
               {/* Left: Avatar + Info */}
               <div className="flex items-center gap-3">
@@ -73,17 +74,17 @@ const ViewedBySlideBar: FC<ViewedBySlideBarProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 <div className="flex flex-col text-sm">
-                  <span className="font-semibold text-gray-800">
+                  <span className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                     {viewer.name}
                   </span>
-                  <span className="text-gray-500 text-xs">
+                  <span className={`text-xs ${darkMode ? 'text-white' : 'text-gray-800'}`}>
                     @{viewer.username}
                   </span>
                 </div>
               </div>
 
               {/* Right: ViewedAt */}
-              <span className="text-gray-400 text-xs">
+              <span className={`text-xs ${darkMode ? 'text-white' : 'text-gray-400'}`}>
                 {formatDistanceToNow(viewer.viewedAt, { addSuffix: true })}
               </span>
             </div>

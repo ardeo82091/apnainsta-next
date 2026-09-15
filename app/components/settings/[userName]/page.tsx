@@ -7,13 +7,13 @@ import Setting from '../Setting';
 
 const Settings = () => {
 
-    const user = useSelector((state: RootState) => state.user);
+    const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
     return (
         <>
-            <div className="flex flex-col">
+            <div className={`flex h-screen overflow-hidden transition-all duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'}`}>
                 <Sidebar />
-                <div className="flex-1 ml-40 bg-white">
+                <div className="flex-1 transition-all duration-300 ">
                   <Setting />
                 </div>
             </div>

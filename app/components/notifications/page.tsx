@@ -16,6 +16,7 @@ const MyProfile = () => {
                 <ChatProfileBar
                     userName={user.userName}
                     isOpen={true}
+                    onClose={() => undefined}
                 />
 
             </div>

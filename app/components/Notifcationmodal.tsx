@@ -9,9 +9,9 @@ interface NotificationModalProps {
 }
 
 const NotificationModal: FC<NotificationModalProps> = ({ isOpen, onClose }) => {
-  if (!isOpen) return null;
-
   const user = useSelector((state: RootState) => state.user);
+
+  if (!isOpen) return null;
 
   return (
     <div className="inset-0 bg-black bg-opacity-50 flex justify-center z-50 fixed">
@@ -42,7 +42,9 @@ const NotificationModal: FC<NotificationModalProps> = ({ isOpen, onClose }) => {
                   {notification.type === "like" && <FaHeart className="text-red-600 mr-2" />}
                   {notification.type === "comment" && <FaComment className="text-sky-700 mr-2" />}
                   {notification.type === "follow" && <FaUserPlus className="text-teal-600 mr-2" />}
-                  <span className="ml-2 text-xs">{notification.message}</span>
+                  <span className="ml-2 text-xs">
+                    {notification.comment || `${notification.user?.name || "Someone"} ${notification.type}ed your post`}
+                  </span>
                 </div>
               </div>
               <div className="mt-1 text-xs text-gray-500 text-right">

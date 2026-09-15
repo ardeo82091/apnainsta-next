@@ -16,13 +16,33 @@ export interface User {
   viewedBy: Viewer[];
 }
 
-export interface Posts {
-  id: number;
+export interface MediaItem {
+  id: string;
   src: string;
   isVideo: boolean;
+  thumbnail?: string;
+  order: number;
+}
+
+export interface Posts {
+  id: number;
+  author: Person;
+  caption?: string;
+  media: MediaItem[];
   likes: LikedBy[];
   comments: Comments[];
+  audience: "everyone" | "followers" | "selected" | "closeFriends";
+  selectedUsers?: string[];
+  location?: string;
+  taggedUsers?: string[];
+  hashtags?: string[];
+  allowComments: boolean;
+  allowSharing: boolean;
+  hideLikes: boolean;
+  isEdited: boolean;
+  isPinned: boolean;
   createdAt: Date;
+  updatedAt?: Date;
 }
 
 export interface Notification {

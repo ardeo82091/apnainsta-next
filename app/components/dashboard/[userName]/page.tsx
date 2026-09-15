@@ -1,36 +1,29 @@
 'use client';
 
-import { useParams } from 'next/navigation';
 import Sidebar from '../../sidebar';
 import Header from '../../header';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useSelector } from 'react-redux';
+import Feed from '../../feed/Feed';
 import { RootState } from '@/redux/store';
-import StoriesAndWork from '../storiesWork';
+import { useSelector } from 'react-redux';
 
 const DashboardPage = () => {
-    const user = useSelector(
-        (state: RootState) => state.user
-    );
+
+    const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
     return (
-        <div className="flex h-screen bg-gray-50 overflow-hidden">
-            
-            {/* Sidebar */}
-            <Sidebar />
+        <div className={`flex h-screen overflow-hidden transition-all duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
+            <Sidebar/>
 
-            <div className="flex flex-1">
-                
-                <div className="flex-1 overflow-y-auto p-6">
-                    <div className="bg-white rounded-2xl shadow-sm min-h-full">
-                        <StoriesAndWork />
-                    </div>
+            {/* Dashboard */}
+            <div className={`min-w-0 flex-1 overflow-y-auto transition-all duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
+                <div className={`min-h-full pb-12 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
+                    <Feed />
                 </div>
+            </div>
 
-                <div className="w-[320px] bg-white border-l border-gray-200 sticky top-0 h-screen">
-                    <Header />
-                </div>
+            {/* Header */}
+            <div className={`w-[320px] border-l sticky top-0 h-screen transition-all duration-300 ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+                <Header />
             </div>
         </div>
     );

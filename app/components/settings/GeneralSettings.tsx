@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { text } from "stream/consumers";
 
 export function GeneralSettings() {
 
   const user = useSelector((state: any) => state.user)
+  const darkMode = useSelector((state: any) => state.theme.darkMode)
 
   const posts = user.posts || []
 
@@ -35,7 +37,7 @@ export function GeneralSettings() {
     other: 3
   }
 
-  const likedPosts = posts.slice(0, 25)
+  const liked = posts.slice(0, 25)
 
   const handleImageChange = (e: any) => {
     const file = e.target.files?.[0]
@@ -52,13 +54,20 @@ export function GeneralSettings() {
 
   return (
 
-    <div className="h-full overflow-y-auto bg-gray-50 px-8 py-10 animate-fadeIn">
+    <div className="max-w-4xl mx-auto space-y-8">
+      <div>
+        <h2 className="text-3xl font-semibold">General Settings</h2>
+        <p className={`${darkMode ? "text-gray-400" : "text-gray-500"} mt-1`}>
+          Dear user, View and manage your general account settings.
+        </p>
+      </div>
+    <div className={`h-full overflow-y-auto border rounded-xl ${darkMode ? "bg-gray-900" : "bg-white"} px-8 py-10 animate-fadeIn`}>
 
       <div className="max-w-6xl mx-auto space-y-12">
 
         {/* PROFILE */}
 
-        <div className="bg-white rounded-3xl p-8 shadow-sm">
+        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"}`}>
 
           <div className="flex justify-between items-start">
 
@@ -71,14 +80,14 @@ export function GeneralSettings() {
                   {profileImage ? (
                     <img src={profileImage} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                    <div className={`w-full h-full flex items-center justify-center ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
                       No Photo
                     </div>
                   )}
 
                 </div>
 
-                <label className="absolute bottom-0 right-0 bg-indigo-600 text-white text-xs px-3 py-1 rounded-full cursor-pointer">
+                <label className={`absolute bottom-0 right-0 ${darkMode ? "bg-indigo-600 hover:bg-indigo-700" : "bg-indigo-500 hover:bg-indigo-600"} text-white text-xs px-3 py-1 rounded-full cursor-pointer`}>
                   Change
                   <input type="file" className="hidden" onChange={handleImageChange} />
                 </label>
@@ -122,7 +131,7 @@ export function GeneralSettings() {
 
             <button
               onClick={() => setEditing(!editing)}
-              className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:opacity-90"
+              className={`${darkMode ? "bg-indigo-600 hover:bg-indigo-700" : "bg-indigo-500 hover:bg-indigo-600"} text-white px-6 py-2 rounded-lg hover:opacity-90`}
             >
               {editing ? "Save" : "Edit Profile"}
             </button>
@@ -133,7 +142,7 @@ export function GeneralSettings() {
 
         {/* PROFILE REACH */}
 
-        <div className="bg-white rounded-3xl p-8 shadow-sm space-y-6">
+        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"} space-y-6`}>
 
           <h3 className="font-semibold text-lg">Profile Reach</h3>
 
@@ -143,7 +152,7 @@ export function GeneralSettings() {
 
             <div>
 
-              <p className="text-sm text-gray-500 mb-3">This Week</p>
+              <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"} mb-3`}>This Week</p>
 
               <div className="h-32 flex items-end gap-3">
 
@@ -157,7 +166,7 @@ export function GeneralSettings() {
 
               </div>
 
-              <p className="text-sm mt-3 text-gray-600">
+              <p className={`text-sm mt-3 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
                 Total: {weeklyReach.reduce((a, b) => a + b, 0)}
               </p>
 
@@ -167,7 +176,7 @@ export function GeneralSettings() {
 
             <div>
 
-              <p className="text-sm text-gray-500 mb-3">This Month</p>
+              <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"} mb-3`}>This Month</p>
 
               <div className="h-32 flex items-end gap-3">
 
@@ -181,7 +190,7 @@ export function GeneralSettings() {
 
               </div>
 
-              <p className="text-sm mt-3 text-gray-600">
+              <p className={`text-sm mt-3 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
                 Total: {monthlyReach.reduce((a, b) => a + b, 0)}
               </p>
 
@@ -193,9 +202,9 @@ export function GeneralSettings() {
 
         {/* FOLLOWER GROWTH */}
 
-        <div className="bg-white rounded-3xl p-8 shadow-sm space-y-6">
+        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"} space-y-6`}>
 
-          <h3 className="font-semibold text-lg">Follower Growth</h3>
+          <h3 className={`font-semibold text-lg ${darkMode ? "text-gray-400" : "text-gray-700"}`}>Follower Growth</h3>
 
           <div className="h-36 flex items-end gap-3">
 
@@ -209,7 +218,7 @@ export function GeneralSettings() {
 
           </div>
 
-          <p className="text-sm text-gray-500">
+          <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
             +{followerGrowth[followerGrowth.length - 1] - followerGrowth[0]} followers this week
           </p>
 
@@ -217,30 +226,30 @@ export function GeneralSettings() {
 
         {/* STORY ANALYTICS */}
 
-        <div className="bg-white rounded-3xl p-8 shadow-sm">
+        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"}`}>
 
-          <h3 className="font-semibold text-lg mb-6">Story Viewer Analytics</h3>
+          <h3 className={`font-semibold text-lg mb-6 ${darkMode ? "text-gray-400" : "text-gray-700"}`}>Story Viewer Analytics</h3>
 
           <div className="grid grid-cols-4 gap-6">
 
-            <div className="bg-blue-50 p-4 rounded-xl text-center">
-              <p className="text-sm text-gray-500">Views</p>
-              <p className="text-xl font-semibold text-blue-600">{storyAnalytics.views}</p>
+            <div className={`bg-blue-50 p-4 rounded-xl text-center ${darkMode ? "bg-gray-700" : "bg-white"}`}>
+              <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Views</p>
+              <p className={`text-xl font-semibold ${darkMode ? "text-blue-400" : "text-blue-600"}`}>{storyAnalytics.views}</p>
             </div>
 
-            <div className="bg-green-50 p-4 rounded-xl text-center">
-              <p className="text-sm text-gray-500">Replies</p>
-              <p className="text-xl font-semibold text-green-600">{storyAnalytics.replies}</p>
+            <div className={`bg-green-50 p-4 rounded-xl text-center ${darkMode ? "bg-gray-700" : "bg-white"}`}>
+              <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Replies</p>
+              <p className={`text-xl font-semibold ${darkMode ? "text-green-400" : "text-green-600"}`}>{storyAnalytics.replies}</p>
             </div>
 
-            <div className="bg-purple-50 p-4 rounded-xl text-center">
-              <p className="text-sm text-gray-500">Shares</p>
-              <p className="text-xl font-semibold text-purple-600">{storyAnalytics.shares}</p>
+            <div className={`bg-purple-50 p-4 rounded-xl text-center ${darkMode ? "bg-gray-700" : "bg-white"}`}>
+              <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Shares</p>
+              <p className={`text-xl font-semibold ${darkMode ? "text-purple-400" : "text-purple-600"}`}>{storyAnalytics.shares}</p>
             </div>
 
-            <div className="bg-red-50 p-4 rounded-xl text-center">
-              <p className="text-sm text-gray-500">Exits</p>
-              <p className="text-xl font-semibold text-red-500">{storyAnalytics.exits}</p>
+            <div className={`bg-red-50 p-4 rounded-xl text-center ${darkMode ? "bg-gray-700" : "bg-white"}`}>
+              <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Exits</p>
+              <p className={`text-xl font-semibold ${darkMode ? "text-red-400" : "text-red-500"}`}>{storyAnalytics.exits}</p>
             </div>
 
           </div>
@@ -249,9 +258,9 @@ export function GeneralSettings() {
 
         {/* TOP POSTS */}
 
-        <div className="bg-white rounded-3xl p-8 shadow-sm">
+        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"}`}>
 
-          <h3 className="font-semibold mb-6 text-lg">Top Performing Posts</h3>
+          <h3 className={`font-semibold mb-6 text-lg ${darkMode ? "text-gray-400" : "text-gray-700"}`}>Top Performing Posts</h3>
 
           <div className="grid grid-cols-3 gap-4">
 
@@ -272,9 +281,9 @@ export function GeneralSettings() {
 
         {/* DEMOGRAPHICS */}
 
-        <div className="bg-white rounded-3xl p-8 shadow-sm space-y-6">
+        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"} space-y-6`}>
 
-          <h3 className="font-semibold text-lg">Audience Demographics</h3>
+          <h3 className={`font-semibold text-lg ${darkMode ? "text-gray-400" : "text-gray-700"}`}>Audience Demographics</h3>
 
           <div className="space-y-4">
 
@@ -323,13 +332,13 @@ export function GeneralSettings() {
 
         {/* LIKED */}
 
-        <div className="bg-white rounded-3xl p-8 shadow-sm">
+        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"}`}>
 
-          <h3 className="font-semibold mb-6 text-lg">Last 25 Liked</h3>
+          <h3 className={`font-semibold mb-6 text-lg ${darkMode ? "text-gray-400" : "text-gray-700"}`}>Last 25 Liked</h3>
 
           <div className="grid grid-cols-5 gap-3">
 
-            {likedPosts.map((post: any) => (
+            {posts.slice(0, 25).map((post: any) => (
               <div key={post.id} className="aspect-square rounded-lg overflow-hidden">
 
                 <img
@@ -344,6 +353,7 @@ export function GeneralSettings() {
 
         </div>
 
+      </div>
       </div>
 
       <style jsx>{`

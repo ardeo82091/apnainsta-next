@@ -5,14 +5,23 @@ import ChatTab from "../chat";
 import Sidebar from "../../sidebar";
 import ChatSidebar from "../ChatProfileBar";
 import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 import { ChatPerson, Messages } from "@/lib/users";
 import { Socket } from "socket.io-client";
 import { getSocket } from "../socket";
+import { RootState } from "@/redux/store";
+import { useSelector } from "react-redux";
+import { useToast } from "@/app/components/ui/ToastProvider";
 
 let socket: Socket;
 
 const ChatWithPerson: React.FC = () => {
+
+  const darkMode = useSelector((state: RootState) => state.theme.darkMode);
+  const toast = useToast();
+  const router = useRouter();
+
   const [activeTab, setActiveTab] = useState<number>(0);
   const [multipleActiveTab, setMultipleActiveTab] = useState<ChatPerson[]>([]);
   const [formattedMessages, setFormattedMessages] = useState<Messages[]>([]);
@@ -44,6 +53,15 @@ const ChatWithPerson: React.FC = () => {
 
     if (myUserName) fetchChats();
   }, [myUserName]);
+
+  // Socket events arrive instantly; polling is a reliable fallback when the
+  // socket service is temporarily unreachable on another device.
+  useEffect(() => {
+    if (!myUserName) return
+    const refresh = () => axios.get(`/api/chats/${myUserName}`).then((response) => setChatPersons(response.data)).catch(() => undefined)
+    const timer = window.setInterval(refresh, 4000)
+    return () => window.clearInterval(timer)
+  }, [myUserName])
 
   // AUTO SCROLL
   useEffect(() => {
@@ -234,17 +252,17 @@ const ChatWithPerson: React.FC = () => {
   };
 
   // START NEW CHAT
-  const startNewChat = (userData: any) => {
-    const chat: ChatPerson = {
-      chatId: "",
-      person: {
-        userName: userData.userName,
-        name: userData.name,
-        img: userData.img,
-      },
-      messages: [],
-    };
-    openChatTab(chat);
+  const startNewChat = async (userData: any) => {
+    try {
+      const { data } = await axios.post("/api/chats", { userName: userData.userName });
+      const chat: ChatPerson = { ...data, messages: [] };
+      setChatPersons((current) => current.some((item) => item.chatId === chat.chatId) ? current : [chat, ...current]);
+      openChatTab(chat);
+      toast("Chat ready");
+    } catch {
+      // The API response is the source of truth; do not open a non-persistent chat tab.
+      toast("Could not start chat", "error");
+    }
   };
 
   // CLOSE TAB
@@ -265,13 +283,14 @@ const ChatWithPerson: React.FC = () => {
   };
 
   // SEND MESSAGE
-  const sendMessage = (chatId: string, content: string) => {
+  const sendMessage = (chat: ChatPerson, content: string) => {
     if (!myUserName) return;
 
-    const message: Messages = {
+    const message: Messages & { recipient: string } = {
       tempId: crypto.randomUUID(),
-      chatId,
+      chatId: chat.chatId,
       sender: myUserName,
+      recipient: chat.person.userName,
       content,
       readBy: [myUserName],
       createdAt: new Date(),
@@ -283,17 +302,17 @@ const ChatWithPerson: React.FC = () => {
 
     setMultipleActiveTab((prev) =>
       prev.map((tab) =>
-        tab.chatId === chatId
+        tab.chatId === chat.chatId
           ? { ...tab, messages: [...tab.messages, message] }
           : tab
       )
     );
 
     setChatPersons((prev) =>
-      prev.map((chat) =>
-        chat.chatId === chatId
-          ? { ...chat, messages: [...chat.messages, message] }
-          : chat
+      prev.map((currentChat) =>
+        currentChat.chatId === chat.chatId
+          ? { ...currentChat, messages: [...currentChat.messages, message] }
+          : currentChat
       )
     );
 
@@ -301,19 +320,113 @@ const ChatWithPerson: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen">
+    <div className={`flex h-screen overflow-hidden ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
       <Sidebar />
 
-      <div className="flex flex-row-reverse">
+      <div className="flex flex-1 overflow-hidden">
+        <div className={`flex-1 flex flex-col ${darkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
+          {/* TABS */}
+          <div className={`flex border-b text-sm ${darkMode ? 'border-gray-800 bg-black' : 'border-gray-200 bg-white'}`}>
+            {multipleActiveTab.map((chat, index) => (
+              <ChatTab
+                key={chat.chatId}
+                label={chat.person.name}
+                isActive={activeTab === index}
+                onClick={() => openChatTab(chat)}
+                onClose={() => closeChatTab(index)}
+              />
+            ))}
+          </div>
+
+          {/* MESSAGES */}
+          <div className="flex-1 p-4 overflow-y-auto">
+            {formattedMessages.map((message, idx) => {
+              const isSeenByOthers = (message.readBy ?? []).some(
+                (u) => u !== myUserName
+              );
+
+              return (
+                <div
+                  key={message._id || message.tempId}
+                  className={`mb-2 flex ${
+                    message.sender === myUserName
+                      ? "justify-end"
+                      : "justify-start"
+                  }`}
+                >
+                  <div className={`p-2 rounded-lg text-sm max-w-[70%] ${message.sender === myUserName ? 'bg-blue-500 text-white' : darkMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
+                    <div className="flex items-center gap-1">
+                      <span>{message.content}</span>
+
+                      {message.sender === myUserName && (
+                        <span className="text-xs">
+                          {isSeenByOthers ? "✔✔" : "✔"}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+
+            {typingUsers.length > 0 && (
+              <div className="text-xs text-gray-500">
+                {typingUsers.join(", ")} typing...
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* INPUT */}
+          <div className={`p-4 flex gap-2 ${darkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
+            <input
+              value={messageInput}
+              onChange={(e) => {
+                setMessageInput(e.target.value);
+
+                const chat = multipleActiveTab[activeTab];
+                if (!chat) return;
+
+                socket.emit("typing", {
+                  chatId: chat.chatId,
+                  user: myUserName,
+                });
+
+                setTimeout(() => {
+                  socket.emit("stopTyping", {
+                    chatId: chat.chatId,
+                    user: myUserName,
+                  });
+                }, 1000);
+              }}
+              className={`flex-1 p-3 rounded-xl outline-none ${darkMode ? 'bg-gray-800 text-white border-gray-600' : 'bg-white text-black border-gray-300'}`}
+            />
+
+            <button
+              onClick={() => {
+                const chat = multipleActiveTab[activeTab];
+                if (chat && messageInput.trim()) {
+                  sendMessage(chat, messageInput);
+                }
+              }}
+              className="bg-blue-500 text-white px-5 rounded-xl"
+            >
+              Send
+            </button>
+          </div>
+        </div>
+      </div>
+
         {/* RIGHT SIDEBAR */}
-        <div className="h-screen bg-white w-1/3 flex flex-col p-4 ml-1">
-          <div className="font-bold text-gray-600 mb-4">Messages</div>
+        <div className={`w-[350px] border-l flex flex-col p-4 overflow-y-auto ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+          <div className="font-bold mb-4">Messages</div>
 
           <input
             type="text"
             placeholder="Search..."
             onChange={(e) => searchUsers(e.target.value)}
-            className="w-full p-2 mb-4 rounded bg-gray-700 text-white"
+            className={`w-full p-3 mb-4 rounded-xl outline-none ${darkMode ? 'bg-gray-800 text-white' : 'bg-gray-100 text-black'}`}
           />
 
           {searchValue && (
@@ -326,7 +439,7 @@ const ChatWithPerson: React.FC = () => {
                 return (
                   <div
                     key={u.userName}
-                    className="flex gap-3 p-2 hover:bg-gray-100 cursor-pointer"
+                    className={`flex gap-3 p-2 hover:${darkMode ? 'bg-gray-600' : 'bg-gray-200'} cursor-pointer`}
                     onClick={() => {
                       if (existingChat) openChatTab(existingChat);
                       else startNewChat(u);
@@ -335,7 +448,7 @@ const ChatWithPerson: React.FC = () => {
                       setSearchResults([]);
                     }}
                   >
-                    <img src={u.img} className="w-10 h-10 rounded-full" />
+                  <img src={u.img} className="w-10 h-10 rounded-full" />
                     <div>
                       <div className="font-semibold text-sm">{u.userName}</div>
                       <div className="text-xs text-gray-500">{u.name}</div>
@@ -368,8 +481,7 @@ const ChatWithPerson: React.FC = () => {
                     src={chat.person.img}
                     className="w-10 h-10 rounded-full mr-3 cursor-pointer"
                     onClick={() => {
-                      viewChatProfile();
-                      setChatProfileUserName(chat.person.userName);
+                      router.push(`/components/profile/${chat.person.userName}`);
                     }}
                   />
 
@@ -419,104 +531,6 @@ const ChatWithPerson: React.FC = () => {
             onClose={viewChatProfile}
           />
         )}
-
-        {/* MAIN CHAT */}
-        <div className="flex-1 flex flex-col ml-40">
-          <div className="flex flex-col h-screen bg-gray-100">
-            {/* TABS */}
-            <div className="flex border-b text-sm">
-              {multipleActiveTab.map((chat, index) => (
-                <ChatTab
-                  key={chat.chatId}
-                  label={chat.person.name}
-                  isActive={activeTab === index}
-                  onClick={() => openChatTab(chat)}
-                  onClose={() => closeChatTab(index)}
-                />
-              ))}
-            </div>
-
-            {/* MESSAGES */}
-            <div className="flex-1 p-4 overflow-y-auto">
-              {formattedMessages.map((message, idx) => {
-                const isSeenByOthers = (message.readBy ?? []).some(
-                  (u) => u !== myUserName
-                );
-
-                return (
-                  <div
-                    key={message._id || message.tempId}
-                    className={`mb-2 flex ${
-                      message.sender === myUserName
-                        ? "justify-end"
-                        : "justify-start"
-                    }`}
-                  >
-                    <div className="bg-gray-700 text-white p-2 rounded-lg text-sm">
-                      <div className="flex items-center gap-1">
-                        <span>{message.content}</span>
-
-                        {message.sender === myUserName && (
-                          <span className="text-xs">
-                            {isSeenByOthers ? "✔✔" : "✔"}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* ✅ TYPING */}
-              {typingUsers.length > 0 && (
-                <div className="text-xs text-gray-500">
-                  {typingUsers.join(", ")} typing...
-                </div>
-              )}
-
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* INPUT */}
-            <div className="border-t p-4 flex">
-              <input
-                value={messageInput}
-                onChange={(e) => {
-                  setMessageInput(e.target.value);
-
-                  const chat = multipleActiveTab[activeTab];
-                  if (!chat) return;
-
-                  socket.emit("typing", {
-                    chatId: chat.chatId,
-                    user: myUserName,
-                  });
-
-                  setTimeout(() => {
-                    socket.emit("stopTyping", {
-                      chatId: chat.chatId,
-                      user: myUserName,
-                    });
-                  }, 1000);
-                }}
-                className="flex-1 p-2 border"
-              />
-
-              <button
-                onClick={() => {
-                  const chat = multipleActiveTab[activeTab];
-                  if (chat && messageInput.trim()) {
-                    sendMessage(chat.chatId, messageInput);
-                  }
-                }}
-                className="bg-blue-500 text-white px-4"
-              >
-                Send
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

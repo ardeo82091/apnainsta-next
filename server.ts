@@ -4,6 +4,7 @@ import { Messages } from "./lib/users";
 import mongoose from "mongoose";
 import Chat from "./models/Chat";
 import Message from "./models/Message";
+import User from "./models/User";
 import next from "next";
 
 const dev = process.env.NODE_ENV !== "production";
@@ -60,6 +61,13 @@ app.prepare().then(async () => {
       }
 
       console.log("Current users:", users);
+      io.emit("onlineUsers", Object.keys(users));
+    });
+
+    socket.on("frnd_action", async ({ action, from, to }: { action: string; from: string; to: string }) => {
+      if (!users[to]) return;
+      const person = await User.findOne({ userName: from }).select("userName fullName profilePic").lean();
+      io.to(users[to]).emit("frnd_action_update", { action, from, user: person ? { userName: person.userName, name: person.fullName, img: person.profilePic } : { userName: from } });
     });
 
     // SEND MESSAGE
@@ -159,6 +167,7 @@ app.prepare().then(async () => {
       for (const [userName, id] of Object.entries(users)) {
         if (id === socket.id) {
           delete users[userName];
+          io.emit("onlineUsers", Object.keys(users));
           console.log(`Removed ${userName} from users`);
           break;
         }
