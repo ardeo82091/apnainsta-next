@@ -36,7 +36,7 @@ export default function MediaPreview({
       space-y-4
     `}>
       
-      <div className="aspect-square overflow-hidden rounded-3xl bg-black">
+      <div className="aspect-[9/16] max-h-[70vh] overflow-hidden rounded-3xl bg-black">
 
         {media[activeMedia]?.isVideo ? (
           <video

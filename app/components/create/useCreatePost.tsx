@@ -3,6 +3,24 @@
 import { useEffect, useState } from "react";
 import { MediaItem } from "@/lib/users";
 
+const PORTRAIT_RATIO = 9 / 16;
+
+async function cropImageToPortrait(file: File): Promise<File> {
+  if (!file.type.startsWith("image/")) return file;
+  const source = await createImageBitmap(file);
+  const sourceRatio = source.width / source.height;
+  const cropWidth = sourceRatio > PORTRAIT_RATIO ? Math.round(source.height * PORTRAIT_RATIO) : source.width;
+  const cropHeight = sourceRatio > PORTRAIT_RATIO ? source.height : Math.round(source.width / PORTRAIT_RATIO);
+  const offsetX = Math.max(0, Math.round((source.width - cropWidth) / 2));
+  const offsetY = Math.max(0, Math.round((source.height - cropHeight) / 2));
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080; canvas.height = 1920;
+  canvas.getContext("2d")?.drawImage(source, offsetX, offsetY, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob((result) => result ? resolve(result) : reject(new Error("Could not crop image")), "image/jpeg", 0.9));
+  source.close();
+  return new File([blob], `${file.name.replace(/\.[^.]+$/, "")}.jpg`, { type: "image/jpeg" });
+}
+
 export function useCreatePost() {
   const [caption, setCaption] = useState("");
   const [location, setLocation] = useState("");
@@ -93,9 +111,10 @@ export function useCreatePost() {
 
     try {
       const uploaded: MediaItem[] = await Promise.all(files.map(async (file, index) => {
+          const uploadFile = await cropImageToPortrait(file);
           const formData = new FormData();
 
-          formData.append("file", file);
+          formData.append("file", uploadFile);
           formData.append(
             "upload_preset",
             process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!

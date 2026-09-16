@@ -41,6 +41,22 @@ type Story = {
   viewedBy?: { userName: string }[];
 };
 
+const STORY_RATIO = 9 / 16;
+
+async function storyImageToPortrait(file: File): Promise<string> {
+  const source = await createImageBitmap(file);
+  const ratio = source.width / source.height;
+  const cropWidth = ratio > STORY_RATIO ? Math.round(source.height * STORY_RATIO) : source.width;
+  const cropHeight = ratio > STORY_RATIO ? source.height : Math.round(source.width / STORY_RATIO);
+  const x = Math.max(0, Math.round((source.width - cropWidth) / 2));
+  const y = Math.max(0, Math.round((source.height - cropHeight) / 2));
+  const canvas = document.createElement("canvas");
+  canvas.width = 1080; canvas.height = 1920;
+  canvas.getContext("2d")?.drawImage(source, x, y, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
+  source.close();
+  return await new Promise<string>((resolve, reject) => canvas.toBlob((blob) => { if (!blob) return reject(new Error("Could not crop image")); const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = reject; reader.readAsDataURL(blob); }, "image/jpeg", 0.9));
+}
+
 export default function Feed({
   showStories = true,
 }: {
@@ -249,12 +265,7 @@ export default function Feed({
     if (!file) return;
     if (!file.type.startsWith("image/") || file.size > 5 * 1024 * 1024)
       return toast("Choose an image smaller than 5 MB", "error");
-    const mediaUrl = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result));
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
+    const mediaUrl = await storyImageToPortrait(file);
     const response = await fetch("/api/stories", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

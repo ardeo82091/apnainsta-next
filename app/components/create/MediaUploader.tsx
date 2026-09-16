@@ -43,7 +43,7 @@ export default function MediaUploader({
       </h2>
 
       <p className="px-4 text-center text-sm text-gray-500">
-        Drag files here or click to browse
+        Photos are centered and cropped to a 9:16 portrait frame
       </p>
 
       <input

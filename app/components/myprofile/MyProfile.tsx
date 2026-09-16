@@ -327,18 +327,6 @@ export default function MyProfile() {
         </div>
 
 
-        {/* INFO */}
-        <div className={`text-sm ${darkMode ? 'text-gray-400' : 'text-gray-500'} mt-2 space-y-1`}>
-
-          <p>📍 India</p>
-
-          <p>🌐 www.ankitraj.dev</p>
-
-          <p>📅 Joined Aug 2024</p>
-
-        </div>
-
-
         {/* STATS */}
         <div className="flex gap-7 sm:gap-16 mt-6">
 
