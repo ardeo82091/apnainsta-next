@@ -18,7 +18,7 @@ export default function MediaUploader({
   return (
     <label
       className={`
-        h-[420px]
+        h-64 sm:h-[420px]
         ${darkMode ? 'bg-gray-900' : 'bg-white'}
         rounded-3xl
         border-2
@@ -38,11 +38,11 @@ export default function MediaUploader({
         📸
       </div>
 
-      <h2 className="mt-4 text-xl font-semibold">
+      <h2 className="mt-4 text-center text-lg font-semibold sm:text-xl">
         Upload Photos & Videos
       </h2>
 
-      <p className="text-gray-500">
+      <p className="px-4 text-center text-sm text-gray-500">
         Drag files here or click to browse
       </p>
 

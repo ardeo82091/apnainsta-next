@@ -12,7 +12,7 @@ export default function PublishBar({
     <div
       className="bottom-0 p-4 z-20"
     >
-      <div className="max-w-2xl mx-auto flex gap-3">
+      <div className="mx-auto flex max-w-2xl flex-col gap-3 sm:flex-row">
 
         <button
           onClick={saveDraft}

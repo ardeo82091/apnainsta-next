@@ -56,22 +56,22 @@ export function GeneralSettings() {
 
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
-        <h2 className="text-3xl font-semibold">General Settings</h2>
+        <h2 className="text-2xl font-semibold sm:text-3xl">General Settings</h2>
         <p className={`${darkMode ? "text-gray-400" : "text-gray-500"} mt-1`}>
           Dear user, View and manage your general account settings.
         </p>
       </div>
-    <div className={`h-full overflow-y-auto border rounded-xl ${darkMode ? "bg-gray-900" : "bg-white"} px-8 py-10 animate-fadeIn`}>
+    <div className={`h-full overflow-y-auto border rounded-xl ${darkMode ? "bg-gray-900" : "bg-white"} px-4 py-6 sm:px-8 sm:py-10 animate-fadeIn`}>
 
       <div className="max-w-6xl mx-auto space-y-12">
 
         {/* PROFILE */}
 
-        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className={`rounded-3xl p-4 sm:p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"}`}>
 
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col gap-5 sm:flex-row sm:justify-between sm:items-start">
 
-            <div className="flex gap-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:gap-8">
 
               <div className="relative group">
 
@@ -142,11 +142,11 @@ export function GeneralSettings() {
 
         {/* PROFILE REACH */}
 
-        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"} space-y-6`}>
+        <div className={`rounded-3xl p-4 sm:p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"} space-y-6`}>
 
           <h3 className="font-semibold text-lg">Profile Reach</h3>
 
-          <div className="grid grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-10">
 
             {/* WEEK */}
 
@@ -202,7 +202,7 @@ export function GeneralSettings() {
 
         {/* FOLLOWER GROWTH */}
 
-        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"} space-y-6`}>
+        <div className={`rounded-3xl p-4 sm:p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"} space-y-6`}>
 
           <h3 className={`font-semibold text-lg ${darkMode ? "text-gray-400" : "text-gray-700"}`}>Follower Growth</h3>
 
@@ -226,11 +226,11 @@ export function GeneralSettings() {
 
         {/* STORY ANALYTICS */}
 
-        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className={`rounded-3xl p-4 sm:p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"}`}>
 
           <h3 className={`font-semibold text-lg mb-6 ${darkMode ? "text-gray-400" : "text-gray-700"}`}>Story Viewer Analytics</h3>
 
-          <div className="grid grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
 
             <div className={`bg-blue-50 p-4 rounded-xl text-center ${darkMode ? "bg-gray-700" : "bg-white"}`}>
               <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Views</p>
@@ -258,11 +258,11 @@ export function GeneralSettings() {
 
         {/* TOP POSTS */}
 
-        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className={`rounded-3xl p-4 sm:p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"}`}>
 
           <h3 className={`font-semibold mb-6 text-lg ${darkMode ? "text-gray-400" : "text-gray-700"}`}>Top Performing Posts</h3>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
 
             {posts.slice(0, 3).map((post: any) => (
               <div key={post.id} className="rounded-xl overflow-hidden bg-gray-200 hover:scale-105 transition">
@@ -281,7 +281,7 @@ export function GeneralSettings() {
 
         {/* DEMOGRAPHICS */}
 
-        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"} space-y-6`}>
+        <div className={`rounded-3xl p-4 sm:p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"} space-y-6`}>
 
           <h3 className={`font-semibold text-lg ${darkMode ? "text-gray-400" : "text-gray-700"}`}>Audience Demographics</h3>
 
@@ -332,11 +332,11 @@ export function GeneralSettings() {
 
         {/* LIKED */}
 
-        <div className={`rounded-3xl p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"}`}>
+        <div className={`rounded-3xl p-4 sm:p-8 shadow-sm ${darkMode ? "bg-gray-800" : "bg-white"}`}>
 
           <h3 className={`font-semibold mb-6 text-lg ${darkMode ? "text-gray-400" : "text-gray-700"}`}>Last 25 Liked</h3>
 
-          <div className="grid grid-cols-5 gap-3">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
 
             {posts.slice(0, 25).map((post: any) => (
               <div key={post.id} className="aspect-square rounded-lg overflow-hidden">

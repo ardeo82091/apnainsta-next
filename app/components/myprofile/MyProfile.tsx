@@ -4,10 +4,11 @@ import Image from "next/image"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/redux/store"
 import { useEffect, useState } from "react"
-import { FaHeart, FaComment, FaPlay } from "react-icons/fa"
+import { FaHeart, FaComment, FaPlay, FaCog } from "react-icons/fa"
 import { FaCamera } from "react-icons/fa";
 import { setUser } from "@/redux/userSlice";
 import { useToast } from "@/app/components/ui/ToastProvider";
+import { useRouter } from "next/navigation";
 
 export default function MyProfile() {
 
@@ -15,6 +16,7 @@ export default function MyProfile() {
   const darkMode = useSelector((state: RootState) => state.theme.darkMode)
   const dispatch = useDispatch()
   const toast = useToast()
+  const router = useRouter()
 
   const [activeTab, setActiveTab] = useState("posts")
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -112,6 +114,7 @@ export default function MyProfile() {
 
     <div className="w-full overflow-y-auto pb-20">
       <div className="relative w-full h-72">
+        <button onClick={() => router.push(`/components/settings/${user.userName}`)} aria-label="Open settings" className={`absolute right-4 top-4 z-20 grid h-10 w-10 place-items-center rounded-full shadow ${darkMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'}`}><FaCog /></button>
 
         {/* COVER IMAGE */}
         <div className="relative w-full h-full group">

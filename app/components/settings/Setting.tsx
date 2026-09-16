@@ -17,12 +17,12 @@ export default function SettingsPage() {
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   return (
-    <div className={`flex h-screen duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
-      <aside className={`w-64 ${darkMode ? 'bg-gray-900' : 'bg-white'} shadow-md p-6 space-y-4 h-full`}>
-        <h2 className="text-xl font-bold mb-6">⚙️ Settings</h2>
-        <nav className="flex flex-col gap-2">
+    <div className={`flex h-full min-h-screen flex-col duration-300 md:h-screen md:flex-row ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'}`}>
+      <aside className={`w-full shrink-0 ${darkMode ? 'bg-gray-900' : 'bg-white'} border-b p-4 shadow-md md:h-full md:w-64 md:border-b-0 md:p-6`}>
+        <h2 className="mb-3 text-xl font-bold md:mb-6">⚙️ Settings</h2>
+        <nav className="grid grid-cols-3 gap-2 md:flex md:flex-col">
           <button
-            className={`text-left px-3 py-2 rounded-lg
+            className={`min-w-0 text-center text-sm px-2 py-2 rounded-lg md:text-left md:px-3
               ${activeTab === "general"
                 ? darkMode
                   ? "bg-blue-800 text-white"
@@ -37,7 +37,7 @@ export default function SettingsPage() {
           </button>
 
           <button
-            className={`text-left px-3 py-2 rounded-lg ${
+            className={`min-w-0 text-center text-sm px-2 py-2 rounded-lg md:text-left md:px-3 ${
               activeTab === "privacy" 
                 ? darkMode
                   ? "bg-blue-800 text-white"
@@ -52,7 +52,7 @@ export default function SettingsPage() {
           </button>
 
           <button
-            className={`text-left px-3 py-2 rounded-lg ${
+            className={`min-w-0 text-center text-sm px-2 py-2 rounded-lg md:text-left md:px-3 ${
               activeTab === "security"
                 ? darkMode
                   ? "bg-blue-800 text-white"
@@ -67,7 +67,7 @@ export default function SettingsPage() {
           </button>
 
           <button
-            className={`text-left px-3 py-2 rounded-lg ${
+            className={`min-w-0 text-center text-sm px-2 py-2 rounded-lg md:text-left md:px-3 ${
               activeTab === "notifications"
                 ? darkMode
                   ? "bg-blue-800 text-white"
@@ -82,7 +82,7 @@ export default function SettingsPage() {
           </button>
 
           <button
-            className={`text-left px-3 py-2 rounded-lg ${
+            className={`min-w-0 text-center text-sm px-2 py-2 rounded-lg md:text-left md:px-3 ${
               activeTab === "account"
                 ? darkMode
                   ? "bg-blue-800 text-white"
@@ -98,7 +98,7 @@ export default function SettingsPage() {
         </nav>
       </aside>
 
-      <main className="flex-1 overflow-y-auto p-8">
+      <main className="min-h-0 min-w-0 flex-1 overflow-y-auto p-4 pb-24 sm:p-6 sm:pb-24 md:p-8">
         {activeTab === "general" && <GeneralSettings />}
         {activeTab === "privacy" && <PrivacySettings />}
         {activeTab === "security" && <SecuritySettings />}

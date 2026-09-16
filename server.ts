@@ -6,13 +6,22 @@ import Chat from "./models/Chat";
 import Message from "./models/Message";
 import User from "./models/User";
 import next from "next";
+import { loadEnvConfig } from "@next/env";
+
+// This socket server runs outside Next's normal bootstrap, so load `.env.local`
+// explicitly before reading the database URI.
+loadEnvConfig(process.cwd());
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
 app.prepare().then(async () => {
-  await mongoose.connect(process.env.MONGODB_URI as string);
+  const mongoUri = process.env.MONGODB_URI;
+  if (!mongoUri) {
+    throw new Error("MONGODB_URI is missing. Add it to .env.local before starting the socket server.");
+  }
+  await mongoose.connect(mongoUri);
   console.log("MongoDB connected");
 
   const httpServer = createServer((req, res) => handle(req, res));
@@ -178,4 +187,7 @@ app.prepare().then(async () => {
   httpServer.listen(4000, () => {
     console.log("Server is running on port 4000");
   });
+}).catch((error) => {
+  console.error("Server startup failed:", error.message || error);
+  process.exit(1);
 });

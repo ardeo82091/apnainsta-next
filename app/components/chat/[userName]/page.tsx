@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { FaArrowLeft, FaTimes } from "react-icons/fa";
 import ChatTab from "../chat";
 import Sidebar from "../../sidebar";
 import ChatSidebar from "../ChatProfileBar";
@@ -31,6 +32,7 @@ const ChatWithPerson: React.FC = () => {
   const [searchValue, setSearchValue] = useState("");
   const [isChatProfileOpen, setIsChatProfileOpen] = useState(false);
   const [chatProfileUserName, setChatProfileUserName] = useState("");
+  const [mobileConversationOpen, setMobileConversationOpen] = useState(false);
 
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
@@ -208,6 +210,7 @@ const ChatWithPerson: React.FC = () => {
 
   // OPEN CHAT TAB + MARK READ
   const openChatTab = async (chat: ChatPerson) => {
+    setMobileConversationOpen(true);
     const isOpen = multipleActiveTab.findIndex(
       (tab) => tab.chatId === chat.chatId
     );
@@ -323,8 +326,13 @@ const ChatWithPerson: React.FC = () => {
     <div className={`flex h-screen overflow-hidden ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
       <Sidebar />
 
-      <div className="flex flex-1 overflow-hidden">
-        <div className={`flex-1 flex flex-col ${darkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
+      <div className={`flex flex-1 overflow-hidden ${mobileConversationOpen ? 'max-md:fixed max-md:inset-0 max-md:z-[60]' : ''}`}>
+        <div className={`flex-1 flex flex-col ${!mobileConversationOpen ? 'max-md:hidden' : ''} ${darkMode ? 'bg-gray-900' : 'bg-gray-100'}`}>
+          <div className={`md:hidden flex items-center justify-between border-b px-4 py-3 ${darkMode ? 'border-gray-800 bg-gray-900' : 'border-gray-200 bg-white'}`}>
+            <button onClick={() => setMobileConversationOpen(false)} aria-label="Back to chats" className="rounded-full p-2"><FaArrowLeft /></button>
+            <b className="truncate">{multipleActiveTab[activeTab]?.person.name || 'Chat'}</b>
+            <button onClick={() => { setMobileConversationOpen(false); router.back(); }} aria-label="Close chat" className="rounded-full p-2"><FaTimes /></button>
+          </div>
           {/* TABS */}
           <div className={`flex border-b text-sm ${darkMode ? 'border-gray-800 bg-black' : 'border-gray-200 bg-white'}`}>
             {multipleActiveTab.map((chat, index) => (
@@ -419,7 +427,7 @@ const ChatWithPerson: React.FC = () => {
       </div>
 
         {/* RIGHT SIDEBAR */}
-        <div className={`w-[350px] border-l flex flex-col p-4 overflow-y-auto ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+        <div className={`w-[350px] max-md:w-full max-md:border-l-0 max-md:pb-20 border-l flex flex-col p-4 overflow-y-auto ${mobileConversationOpen ? 'max-md:hidden' : ''} ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
           <div className="font-bold mb-4">Messages</div>
 
           <input

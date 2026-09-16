@@ -11,9 +11,9 @@ import { RootState } from '@/redux/store';
 const ViewFriendsProfiles = () => {
   const user = useSelector((state: RootState) => state.user);
   return (
-    <div className="flex flex-col">
+    <div className="flex min-h-screen flex-col pb-16 md:pb-0">
       <Sidebar />
-      <div className="flex-1 ml-16">
+      <div className="flex-1 md:ml-16">
         <Header />
         <div className="p-4">
           <div className="max-w-4xl mx-auto">

@@ -16,12 +16,12 @@ const FriendsAndRequest = () => {
             <div className="flex flex-1">
                 
                 {/* All Friends */}
-                <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 pb-16 md:pb-0 overflow-y-auto">
                     <AllFriends/>
                 </div>
 
                 {/* Friend Request */}
-                <div className={`w-[320px] border-l overflow-y-auto ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+                <div className={`hidden lg:block w-[320px] border-l overflow-y-auto ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
                     <FriendRequest/>
                 </div>
             </div>

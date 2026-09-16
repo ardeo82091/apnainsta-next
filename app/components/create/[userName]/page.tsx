@@ -15,14 +15,14 @@ const CreatePost = () => {
             <Sidebar/>
 
             {/* Create Post */}
-            <div className={`flex-1 overflow-y-auto transition-all duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
+            <div className={`flex-1 pb-16 md:pb-0 overflow-y-auto transition-all duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
                 <div className={`min-h-screen ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
                     <CreatePostPage />
                 </div>
             </div>
 
             {/* Header */}
-            <div className={`w-[320px] border-l sticky top-0 h-screen transition-all duration-300 ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+            <div className={`hidden lg:block w-[320px] border-l sticky top-0 h-screen transition-all duration-300 ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
                 <Header />
             </div>
         </div>

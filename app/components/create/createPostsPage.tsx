@@ -15,10 +15,11 @@ export default function CreatePostPage() {
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
 
   return (
-<div className="min-h-screen p-10">
-    <div className="grid grid-cols-12 gap-6 mt-4">
+<div className="mx-auto min-h-screen max-w-6xl px-4 py-5 pb-24 sm:px-6 sm:py-8 md:pb-8">
+    <div className="mb-6"><h1 className="text-2xl font-bold sm:text-3xl">Create post</h1><p className="mt-1 text-sm text-gray-500">Share photos, videos, and updates with your community.</p></div>
+    <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 lg:gap-6">
 
-      <div className="col-span-7 space-y-5">
+      <div className="space-y-5 lg:col-span-7">
         <MediaUploader
           media={post.media}
           onUpload={post.handleMediaUpload}
@@ -46,7 +47,7 @@ export default function CreatePostPage() {
 
       </div>
 
-      <div className="col-span-5 space-y-5">
+      <div className="space-y-5 lg:col-span-5">
 
         <PostOptions
           audience={post.audience}
@@ -78,7 +79,7 @@ export default function CreatePostPage() {
 
     </div>
 
-    <div className="mt-8">
+    <div className="mt-6">
       <PublishBar
         saveDraft={post.saveDraft}
         publishPost={post.publishPost}

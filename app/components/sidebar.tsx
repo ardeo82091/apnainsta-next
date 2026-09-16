@@ -1,7 +1,7 @@
 'use client';
 
 import { FC, useEffect, useRef, useState } from 'react';
-import { FaHome, FaUser, FaUserFriends, FaVideo, FaRocketchat, FaSignOutAlt, FaEye, FaCog, FaSearch, FaPlus, FaEllipsisH, } from 'react-icons/fa';
+import { FaHome, FaUser, FaUserFriends, FaVideo, FaRocketchat, FaSignOutAlt, FaEye, FaCog, FaSearch, FaPlus, FaEllipsisH, FaBell, } from 'react-icons/fa';
 import { SidebarIcon } from '@/lib/props/SidebarIconProps';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -14,6 +14,7 @@ import { setUser } from '@/redux/userSlice';
 import { toggleTheme } from '@/redux/themeSlice';
 
 import axios from 'axios';
+import MobileChatLauncher from './MobileChatLauncher';
 
 const Sidebar = ({}) => {
     const router = useRouter();
@@ -87,7 +88,7 @@ const Sidebar = ({}) => {
                     setIsExpanded(false);
                     setIsMoreOpen(false);
                 }}
-                className={`h-screen flex flex-col justify-between transition-all duration-300 ease-in-out px-3 border-r overflow-hidden
+                className={`hidden md:flex h-screen flex-col justify-between transition-all duration-300 ease-in-out px-3 border-r overflow-hidden
                     ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200 shadow-sm'}
                     ${isExpanded ? 'w-60' : 'w-20'}`
                 }
@@ -273,6 +274,17 @@ const Sidebar = ({}) => {
                 </div>
             </div>
 
+            <nav className={`md:hidden fixed inset-x-0 bottom-0 z-40 flex h-16 items-center justify-around border-t px-1 pb-[env(safe-area-inset-bottom)] ${darkMode ? 'border-gray-800 bg-gray-900' : 'border-gray-200 bg-white'}`}>
+                <MobileNav icon={FaHome} label="Home" onClick={() => handlePages('dashboard')} />
+                <MobileNav icon={FaBell} label="Alerts" badge={user.notifications?.filter((n: any) => !n.read).length} onClick={() => router.push('/components/notifications')} />
+                <MobileNav icon={FaVideo} label="Feed" onClick={() => handlePages('viewfeed')} />
+                <MobileNav icon={FaPlus} label="Create" onClick={() => handlePages('create')} />
+                <MobileNav icon={FaSearch} label="Search" onClick={() => rightSidebar('search')} />
+                <MobileNav icon={FaUser} label="Profile" onClick={() => handlePages('myprofile')} />
+            </nav>
+
+            <MobileChatLauncher userName={user.userName} />
+
             {isSearchSidebarOpen && (
                 <SearchSlideBar
                     isOpen={isSearchSidebarOpen}
@@ -293,5 +305,12 @@ const Sidebar = ({}) => {
         </>
     );
 };
+
+function MobileNav({ icon: Icon, label, badge, onClick }: { icon: any; label: string; badge?: number; onClick: () => void }) {
+    return <button onClick={onClick} className="relative grid min-w-12 place-items-center gap-0.5 px-1 text-gray-600" aria-label={label}>
+        <span className="relative"><Icon className="text-lg" />{badge ? <i className="absolute -right-2 -top-2 grid h-4 min-w-4 place-items-center rounded-full bg-red-500 px-1 text-[9px] not-italic text-white">{badge}</i> : null}</span>
+        <span className="text-[10px]">{label}</span>
+    </button>;
+}
 
 export default Sidebar;

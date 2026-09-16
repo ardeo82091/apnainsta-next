@@ -22,7 +22,7 @@ export function AccountSettings() {
     <div className="max-w-4xl mx-auto space-y-8">
 
       <div>
-        <h2 className="text-3xl font-semibold">Account Settings</h2>
+        <h2 className="text-2xl font-semibold sm:text-3xl">Account Settings</h2>
         <p className="text-gray-500 mt-1">
           Manage account deactivation or permanent deletion.
         </p>
@@ -68,7 +68,7 @@ export function AccountSettings() {
       {/* ---------- DEACTIVATE MODAL ---------- */}
       {showDeactivate && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className={`${darkMode ? "bg-gray-900" : "bg-white"} p-6 rounded-2xl shadow-lg w-[420px]`}>
+          <div className={`relative ${darkMode ? "bg-gray-900" : "bg-white"} m-4 w-[calc(100vw-2rem)] max-w-[420px] p-4 sm:p-6 rounded-2xl shadow-lg`}>
 
             <FaTimes
               className="absolute top-4 right-4 cursor-pointer text-gray-400"
@@ -134,7 +134,7 @@ export function AccountSettings() {
       {/* ---------- DELETE MODAL ---------- */}
       {showDelete && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className={`${darkMode ? "bg-gray-900" : "bg-white"} p-6 rounded-2xl shadow-lg w-[420px]`}>
+          <div className={`relative ${darkMode ? "bg-gray-900" : "bg-white"} m-4 w-[calc(100vw-2rem)] max-w-[420px] p-4 sm:p-6 rounded-2xl shadow-lg`}>
 
             <FaTimes
               className="absolute top-4 right-4 cursor-pointer text-gray-400"

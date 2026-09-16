@@ -89,7 +89,7 @@ export function PrivacySettings() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
-        <h2 className="text-3xl font-semibold">Privacy Settings</h2>
+        <h2 className="text-2xl font-semibold sm:text-3xl">Privacy Settings</h2>
         <p className="text-gray-500 mt-1">
           Dear user, manage your visibility and interaction preferences.
         </p>
@@ -444,7 +444,7 @@ function FriendPicker({ friends, restricted, onToggle, onClose, darkMode }: any)
 function Popup({ title, children, darkMode }: any) {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className={`w-[500px] rounded-2xl p-6 shadow-lg ${darkMode ? "bg-gray-900" : "bg-white"}`}>
+      <div className={`m-4 w-[calc(100vw-2rem)] max-w-[500px] rounded-2xl p-4 shadow-lg sm:p-6 ${darkMode ? "bg-gray-900" : "bg-white"}`}>
         <h3 className={`font-semibold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>{title}</h3>
         {children}
       </div>

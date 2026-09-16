@@ -171,7 +171,7 @@ export default function PostOptions({
             align="start"
             className={`
               z-50
-              min-w-[300px]
+              w-[calc(100vw-2rem)] max-w-[300px]
               rounded-2xl
               shadow-xl
               border

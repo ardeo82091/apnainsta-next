@@ -14,14 +14,14 @@ export default function Page() {
     <div className={`flex h-screen overflow-hidden transition-all duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
       <Sidebar/>
 
-      <div className={`flex-1 transition-all overflow-y-auto duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
+      <div className={`flex-1 pb-16 md:pb-0 transition-all overflow-y-auto duration-300 ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
           <div className={`min-h-full ${darkMode ? 'bg-gray-900 text-white' : 'bg-gray-50 text-black'}`}>
               <MyProfile/>
           </div>
       </div>
 
       {/* Header */}
-      <div className={`w-[320px] border-l sticky top-0 h-screen transition-all duration-300 ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
+      <div className={`hidden lg:block w-[320px] border-l sticky top-0 h-screen transition-all duration-300 ${darkMode ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-200'}`}>
           <Header />
       </div>
     </div>

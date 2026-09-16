@@ -30,7 +30,7 @@ export function SecuritySettings() {
     <div className="max-w-4xl mx-auto space-y-8">
 
       <div>
-        <h2 className="text-3xl font-semibold">
+        <h2 className="text-2xl font-semibold sm:text-3xl">
           Security Settings
         </h2>
 
