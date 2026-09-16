@@ -5,7 +5,7 @@ import { FaArrowLeft, FaTimes } from "react-icons/fa";
 import ChatTab from "../chat";
 import Sidebar from "../../sidebar";
 import ChatSidebar from "../ChatProfileBar";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { ChatPerson, Messages } from "@/lib/users";
@@ -22,6 +22,7 @@ const ChatWithPerson: React.FC = () => {
   const darkMode = useSelector((state: RootState) => state.theme.darkMode);
   const toast = useToast();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [activeTab, setActiveTab] = useState<number>(0);
   const [multipleActiveTab, setMultipleActiveTab] = useState<ChatPerson[]>([]);
@@ -55,6 +56,14 @@ const ChatWithPerson: React.FC = () => {
 
     if (myUserName) fetchChats();
   }, [myUserName]);
+
+  // A chat preview from the floating phone launcher opens the actual thread,
+  // instead of landing on an empty messages page.
+  useEffect(() => {
+    const chatId = searchParams.get("chatId");
+    const chat = chatPersons.find((item) => item.chatId === chatId);
+    if (chat && !mobileConversationOpen) openChatTab(chat);
+  }, [chatPersons, searchParams]);
 
   // Socket events arrive instantly; polling is a reliable fallback when the
   // socket service is temporarily unreachable on another device.

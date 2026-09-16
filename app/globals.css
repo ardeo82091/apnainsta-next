@@ -85,3 +85,8 @@ body {
 .dark-calendar::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
+
+@keyframes storyProgress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}

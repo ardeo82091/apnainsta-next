@@ -26,7 +26,7 @@ export default function MobileChatLauncher({ userName }: { userName?: string }) 
         <button aria-label="Close chat popup" onClick={() => setOpen(false)} className="rounded-full p-2 hover:bg-gray-100"><FaTimes /></button>
       </header>
       <div className="max-h-80 overflow-y-auto p-2">
-        {chats.length === 0 ? <p className="p-5 text-center text-sm text-gray-500">No chats yet</p> : chats.map((chat) => <button key={chat.chatId} onClick={() => router.push(`/components/chat/${userName}`)} className="flex w-full items-center gap-3 rounded-xl p-3 text-left hover:bg-gray-50">
+        {chats.length === 0 ? <p className="p-5 text-center text-sm text-gray-500">No chats yet</p> : chats.map((chat) => <button key={chat.chatId} onClick={() => router.push(`/components/chat/${userName}?chatId=${encodeURIComponent(chat.chatId)}`)} className="flex w-full items-center gap-3 rounded-xl p-3 text-left hover:bg-gray-50">
           <img className="h-10 w-10 rounded-full object-cover" src={chat.person.img || "/images/profile.jpg"} alt="" />
           <span className="min-w-0"><b className="block truncate text-sm">{chat.person.name || chat.person.userName}</b><small className="block truncate text-gray-500">{chat.lastMessage?.text || "No messages yet"}</small></span>
         </button>)}

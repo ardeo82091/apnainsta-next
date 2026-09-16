@@ -4,7 +4,7 @@ import Image from "next/image"
 import { useDispatch, useSelector } from "react-redux"
 import { RootState } from "@/redux/store"
 import { useEffect, useState } from "react"
-import { FaHeart, FaComment, FaPlay, FaCog } from "react-icons/fa"
+import { FaHeart, FaComment, FaPlay, FaCog, FaTimes } from "react-icons/fa"
 import { FaCamera } from "react-icons/fa";
 import { setUser } from "@/redux/userSlice";
 import { useToast } from "@/app/components/ui/ToastProvider";
@@ -20,6 +20,7 @@ export default function MyProfile() {
 
   const [activeTab, setActiveTab] = useState("posts")
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -29,12 +30,15 @@ export default function MyProfile() {
   const [databasePosts, setDatabasePosts] = useState<any[]>([])
   const [highlights, setHighlights] = useState<any[]>([])
   const [availableStories, setAvailableStories] = useState<any[]>([])
+  const [selectedPost, setSelectedPost] = useState<any>(null)
+  const [postComments, setPostComments] = useState<any[]>([])
+  const [commentText, setCommentText] = useState("")
 
   const saveProfile = async () => {
     const response = await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ fullName: editName, bio: editBio, isPrivate: editPrivate }) });
     const data = await response.json();
     if (!response.ok) return toast(data.message || "Could not save profile", "error");
-    dispatch(setUser(data.user)); setEditing(false); toast("Profile updated");
+    dispatch(setUser(data.user)); setProfile(data.user); setEditing(false); toast("Profile updated");
   };
   const shareProfile = async () => { await navigator.clipboard.writeText(`${window.location.origin}/components/profile/${user.userName}`); toast("Profile link copied"); };
   const togglePin = async (postId: string) => {
@@ -59,7 +63,7 @@ export default function MyProfile() {
       const response = await fetch("/api/profile", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profilePic }) });
       const data = await response.json();
       if (!response.ok) return toast(data.message || "Could not update photo", "error");
-      setProfileImage(profilePic); dispatch(setUser(data.user)); toast("Profile photo updated");
+      setProfileImage(profilePic); dispatch(setUser(data.user)); setProfile(data.user); toast("Profile photo updated");
     };
     reader.readAsDataURL(file);
   };
@@ -76,9 +80,10 @@ export default function MyProfile() {
 
   useEffect(() => {
     if (!user.userName) return
-    fetch(`/api/profile/${user.userName}`).then((response) => response.json()).then((data) => setDatabasePosts(data.posts || []) ).catch(() => undefined)
+    fetch(`/api/profile/${user.userName}`).then((response) => response.json()).then((data) => { setDatabasePosts(data.posts || []); setProfile(data.profile || null) }).catch(() => undefined)
   }, [user.userName])
   useEffect(() => { fetch("/api/highlights").then((response) => response.json()).then((data) => { setHighlights(data.highlights || []); setAvailableStories(data.stories || []) }).catch(() => undefined) }, [])
+  useEffect(() => { if (selectedPost?._id) fetch(`/api/comments?postId=${selectedPost._id}`).then((response) => response.json()).then((data) => setPostComments(data.comments || [])).catch(() => setPostComments([])) }, [selectedPost])
   const addHighlight = async () => {
     if (!availableStories[0]) return toast("Share a story first", "error")
     const title = window.prompt("Highlight name")?.trim()
@@ -89,6 +94,7 @@ export default function MyProfile() {
   }
 
   const posts: any[] = databasePosts.length ? databasePosts : user.posts || []
+  const displayUser = { ...user, ...(profile || {}) }
 
   const videos = posts.filter((p: any) => (p.media || []).some((m: any) => m.isVideo))
 
@@ -109,6 +115,15 @@ export default function MyProfile() {
         : activeTab === "liked"
           ? likedPosts
           : archivedPosts
+
+  const submitProfileComment = async (event: React.FormEvent) => {
+    event.preventDefault()
+    if (!selectedPost?._id || !commentText.trim()) return
+    const response = await fetch("/api/comments", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ postId: selectedPost._id, text: commentText }) })
+    const data = await response.json()
+    if (!response.ok) return toast(data.message || "Could not post comment", "error")
+    setPostComments((items) => [data.comment, ...items]); setCommentText("")
+  }
 
   return (
 
@@ -190,7 +205,7 @@ export default function MyProfile() {
 
           <div className="relative">
 
-            {profileImage ? (
+            {profileImage || displayUser.profilePic ? (
               <div
                 onClick={() =>
                   setShowProfileModal(true)
@@ -211,7 +226,7 @@ export default function MyProfile() {
                 `}
               >
                 <Image
-                  src={profileImage}
+                  src={profileImage || displayUser.profilePic}
                   alt="profile"
                   fill
                   sizes="140px"
@@ -275,25 +290,25 @@ export default function MyProfile() {
 
       </div>
 
-      <div className="px-10 pt-20">
+      <div className="px-4 pt-20 sm:px-10">
 
         <div className="flex justify-between items-start">
 
           <div>
 
             <h2 className="text-2xl font-bold">
-              {user.fullName}
+              {displayUser.fullName}
             </h2>
 
             <p className="text-gray-500 text-sm">
-              @{user.userName}
+              @{displayUser.userName}
             </p>
 
           </div>
 
           <div className="flex gap-3">
 
-            <button onClick={() => { setEditName(user.fullName); setEditBio(user.bio || ""); setEditPrivate(Boolean((user as any).isPrivate)); setEditing(true); }} className={`px-4 py-2 text-sm border rounded-md ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
+            <button onClick={() => { setEditName(displayUser.fullName); setEditBio(displayUser.bio || ""); setEditPrivate(Boolean(displayUser.isPrivate)); setEditing(true); }} className={`px-4 py-2 text-sm border rounded-md ${darkMode ? 'hover:bg-gray-700' : 'hover:bg-gray-100'}`}>
               Edit Profile
             </button>
 
@@ -308,7 +323,7 @@ export default function MyProfile() {
 
         {/* BIO */}
         <div className={`mt-4 text-sm ${darkMode ? 'text-gray-300' : 'text-gray-700'} max-w-xl`}>
-          {user.bio || "Add a bio to tell people about yourself."}
+          {displayUser.bio || "Add a bio to tell people about yourself."}
         </div>
 
 
@@ -325,7 +340,7 @@ export default function MyProfile() {
 
 
         {/* STATS */}
-        <div className="flex gap-16 mt-6">
+        <div className="flex gap-7 sm:gap-16 mt-6">
 
           <div className="text-center">
 
@@ -342,7 +357,7 @@ export default function MyProfile() {
           <div className="text-center">
 
             <p className="font-bold text-lg">
-              {user.friendAndRequests?.followers?.length || 0}
+              {displayUser.followers ?? user.friendAndRequests?.followers?.length ?? 0}
             </p>
 
             <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} text-sm`}>
@@ -354,7 +369,7 @@ export default function MyProfile() {
           <div className="text-center">
 
             <p className="font-bold text-lg">
-              {user.friendAndRequests?.followings?.length || 0}
+              {displayUser.following ?? user.friendAndRequests?.followings?.length ?? 0}
             </p>
 
             <p className={`${darkMode ? 'text-gray-400' : 'text-gray-500'} text-sm`}>
@@ -391,7 +406,7 @@ export default function MyProfile() {
 
       </div>
 
-      <div className="px-10 mt-12">
+      <div className="px-4 mt-12 sm:px-10">
 
         <h3 className="font-semibold mb-4">
           Pinned Posts
@@ -403,6 +418,7 @@ export default function MyProfile() {
 
             <div
               key={post.id}
+              onClick={() => setSelectedPost(post)}
               className="min-w-[220px] h-[220px] rounded-xl overflow-hidden relative group flex-shrink-0"
             >
 
@@ -427,7 +443,7 @@ export default function MyProfile() {
 
       </div>
 
-      <div className="sticky top-0 ${darkMode ? 'bg-gray-900' : 'bg-white'} z-30 px-10 mt-10 border-b">
+      <div className={`sticky top-0 z-30 mt-10 border-b px-4 sm:px-10 ${darkMode ? 'bg-gray-900' : 'bg-white'}`}>
 
         <div className="flex gap-10 py-3">
 
@@ -511,7 +527,7 @@ export default function MyProfile() {
 
       </div>
 
-      <div className="px-10 mt-6">
+      <div className="px-4 mt-6 sm:px-10">
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
 
@@ -519,6 +535,7 @@ export default function MyProfile() {
 
             <div
               key={post.id}
+              onClick={() => setSelectedPost(post)}
               className="relative aspect-square overflow-hidden rounded-lg group"
             >
 
@@ -528,7 +545,7 @@ export default function MyProfile() {
               />
 
               {!(post.media || []).some((m: any) => m.isVideo) && post._id && (
-                <button onClick={() => togglePin(post._id)} className="absolute left-2 top-2 rounded bg-black/60 px-2 py-1 text-xs text-white">{post.isPinned ? "Unpin" : "Pin"}</button>
+                <button onClick={(event) => { event.stopPropagation(); togglePin(post._id) }} className="absolute left-2 top-2 rounded bg-black/60 px-2 py-1 text-xs text-white">{post.isPinned ? "Unpin" : "Pin"}</button>
               )}
 
               {(post.media || []).some((m: any) => m.isVideo) && (
@@ -642,6 +659,8 @@ export default function MyProfile() {
           </div>
         </div>
       )}
+
+      {selectedPost && <div className="fixed inset-0 z-[70] flex items-end bg-black/70 sm:items-center sm:justify-center" onClick={() => setSelectedPost(null)}><article onClick={(event) => event.stopPropagation()} className={`max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-t-2xl p-4 sm:rounded-2xl ${darkMode ? "bg-gray-900" : "bg-white"}`}><div className="mb-3 flex items-center justify-between"><b>@{selectedPost.userName}</b><button onClick={() => setSelectedPost(null)} aria-label="Close post"><FaTimes /></button></div>{(selectedPost.media?.[0]?.isVideo || selectedPost.isVideo) ? <video controls autoPlay src={selectedPost.media?.[0]?.src || selectedPost.src} className="max-h-[55vh] w-full rounded-xl bg-black object-contain" /> : <img src={selectedPost.media?.[0]?.src || selectedPost.src} alt={selectedPost.caption || "Post"} className="max-h-[55vh] w-full rounded-xl object-contain" />}<p className="my-3 text-sm">{selectedPost.caption}</p><div className="max-h-48 space-y-2 overflow-y-auto border-t py-3">{postComments.map((comment) => <p key={comment._id} className="text-sm"><b>@{comment.authorUserName}</b> {comment.text}</p>)}{postComments.length === 0 && <p className="text-sm text-gray-500">No comments yet.</p>}</div><form onSubmit={submitProfileComment} className="flex gap-2 border-t pt-3"><input value={commentText} onChange={(event) => setCommentText(event.target.value)} placeholder="Add a comment…" className="min-w-0 flex-1 bg-transparent text-sm outline-none" /><button className="font-semibold text-blue-500">Post</button></form></article></div>}
       {editing && <div className="fixed inset-0 z-[1000] grid place-items-center bg-black/50 p-4"><div className={`w-full max-w-md rounded-2xl p-5 ${darkMode ? "bg-gray-900" : "bg-white"}`}><h2 className="font-semibold">Edit profile</h2><label className="mt-4 block text-sm">Name<input value={editName} onChange={(event) => setEditName(event.target.value)} className="mt-1 w-full rounded border p-2 text-black"/></label><label className="mt-3 block text-sm">Bio<textarea value={editBio} onChange={(event) => setEditBio(event.target.value)} maxLength={150} className="mt-1 w-full rounded border p-2 text-black"/></label><label className="mt-3 flex items-center gap-2 text-sm"><input type="checkbox" checked={editPrivate} onChange={(event) => setEditPrivate(event.target.checked)}/> Private account</label><div className="mt-5 flex justify-end gap-3"><button onClick={() => setEditing(false)}>Cancel</button><button onClick={saveProfile} className="rounded bg-blue-600 px-3 py-2 text-white">Save</button></div></div></div>}
     </div>
   )

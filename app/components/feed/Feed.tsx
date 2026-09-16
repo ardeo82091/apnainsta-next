@@ -433,12 +433,14 @@ export default function Feed({
                 {media &&
                   (media.isVideo ? (
                     <video
+                      onClick={() => setSelected(post)}
                       controls
                       className="max-h-[580px] w-full bg-black object-contain"
                       src={media.src}
                     />
                   ) : (
                     <img
+                      onClick={() => setSelected(post)}
                       className="max-h-[580px] w-full object-cover"
                       src={media.src}
                       alt={post.caption || "Post"}
@@ -497,7 +499,9 @@ export default function Feed({
                 <FaTimes />
               </button>
             </div>
-            <div className="max-h-[48vh] space-y-4 overflow-y-auto">
+            {(() => { const media = selected.media?.[0] || (selected.src ? { src: selected.src, isVideo: selected.isVideo } : null); return media ? <div className="mb-4 overflow-hidden rounded-xl bg-black">{media.isVideo ? <video controls autoPlay src={media.src} className="max-h-[42vh] w-full object-contain" /> : <img src={media.src} alt={selected.caption || "Post"} className="max-h-[42vh] w-full object-contain" />}</div> : null })()}
+            {selected.caption && <p className="mb-3 text-sm"><b>@{selected.userName}</b> {selected.caption}</p>}
+            <div className="max-h-[38vh] space-y-4 overflow-y-auto">
               {comments.map((comment) => (
                 <div key={comment._id} className="text-sm">
                   <p>
@@ -595,7 +599,15 @@ export default function Feed({
             >
               <FaTimes />
             </button>
-            <img
+            <div className="absolute left-3 right-3 top-3 z-10 h-1 overflow-hidden rounded-full bg-white/30"><div className="h-full w-full origin-left animate-[storyProgress_5s_linear_forwards] bg-white" /></div>
+            {story.mediaType === "video" ? <video
+              autoPlay controls
+              onLoadedData={() => {
+                if (story.userName !== user.userName) fetch(`/api/stories/${story._id}/view`, { method: "POST" });
+              }}
+              src={story.mediaUrl}
+              className="max-h-[72vh] w-full rounded-xl object-contain"
+            /> : <img
               onLoad={() => {
                 if (story.userName !== user.userName) {
                   fetch(`/api/stories/${story._id}/view`, { method: "POST" });
@@ -609,7 +621,7 @@ export default function Feed({
               src={story.mediaUrl}
               className="max-h-[72vh] w-full rounded-xl object-contain"
               alt={`${story.userName}'s story`}
-            />
+            />}
             <p className="mt-2 text-center text-sm text-white">
               @{story.userName}
             </p>
